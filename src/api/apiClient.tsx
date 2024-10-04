@@ -1,7 +1,8 @@
 import axios from "axios";
+const MONGODB_URI="mongodb+srv://hcmreact12:K262H6V1GvR4KaZY@team01mockproject.nsv3e.mongodb.net/?retryWrites=true&w=majority&appName=team01mockproject"
 
 const apiClient = axios.create({
-    baseURL: 'https://66f39cb871c84d805879453f.mockapi.io/',
+    baseURL: 'MONGODB_URI',
     headers: {
         'Content-Type': 'application/json',
     }
