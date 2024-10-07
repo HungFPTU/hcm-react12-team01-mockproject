@@ -1,20 +1,20 @@
 import { ReactNode } from "react";
 import Header from "../../components/Header";
-import GuestSideBar from "../../components/GuestComponents/GuestSidebar";
+import StudentSidebar from "../../components/StudentComponents/StudentSidebar";
 import Footer from "../../components/Footer";
 
-interface DefaultLayoutProps {
+interface StudentLayoutProps {
   children?: ReactNode;  // Make children optional
 }
 
-export const DefaultLayout = ({ children }: DefaultLayoutProps): JSX.Element => {
+export const StudentLayout = ({ children }: StudentLayoutProps): JSX.Element => {
   return (
     <div>
       <Header />
-      <GuestSideBar />
+      <StudentSidebar />
       <div className="content">{children}</div>
       <Footer />
     </div>
   );
 };
-export default DefaultLayout
+export default StudentLayout
