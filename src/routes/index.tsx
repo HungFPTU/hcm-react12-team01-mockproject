@@ -1,5 +1,5 @@
 import Home from "../pages/Home";
-import Login from "../pages/Login";
+import Login from "../pages/Login/Login";
 import { DefaultLayout } from "../layout";
 import { RoleEnum, RouteConfig } from "../model/RouteConfig";
 
