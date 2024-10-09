@@ -12,7 +12,7 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps): JSX.Element => 
     <div>
       <Header />
       <GuestSideBar />
-      <div className="content">{children}</div>
+      <div className="content flex justify-center">{children}</div>
       <Footer />
     </div>
   );
