@@ -1,10 +1,12 @@
 import { Layout, Input, Space, Button } from "antd";
 import assets from "../../assets/assets";
+import { useNavigate } from "react-router-dom";
+
 const { Header } = Layout;
 const { Search } = Input;
 
 export default function Home() {
-
+  const navigate = useNavigate();
   const onSearch = (value: string) => {
     console.log(value);
   };
@@ -57,10 +59,10 @@ export default function Home() {
 
         {/* Right */}
         <div className="right flex items-center justify-end flex-shrink-0 ml-auto mt-2 md:mt-0">
-          <Button type="text" className="register mr-3 md:mr-7 bg-transparent font-semibold cursor-pointer">
+          <Button onClick={() => navigate("/login")} type="text" className="register mr-3 md:mr-7 bg-transparent font-semibold cursor-pointer">
             Register
           </Button>
-          <Button className="login flex-shrink-0 px-4 py-2 md:px-5 md:py-2.5 rounded-full text-white bg-gradient-to-br from-[#d01bc7] to-[#ff5117] text-sm md:text-lg font-semibold cursor-pointer transition-opacity duration-200">
+          <Button onClick={() => navigate("/login")} className="login flex-shrink-0 px-4 py-2 md:px-5 md:py-2.5 rounded-full text-white bg-gradient-to-br from-[#d01bc7] to-[#ff5117] text-sm md:text-lg font-semibold cursor-pointer transition-opacity duration-200">
             Login
           </Button>
         </div>
