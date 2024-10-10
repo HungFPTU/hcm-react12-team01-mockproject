@@ -3,8 +3,9 @@ import { ComponentType } from "react";
 // Enum for roles (adjust based on your project's roles)
 export enum RoleEnum {
   Guest = "Guest",
-  User = "User",
   Admin = "Admin",
+  Instructor = "Instructor",
+  Student = "Student",
 }
 
 // Define RouteConfig to expect optional layouts and a required component
