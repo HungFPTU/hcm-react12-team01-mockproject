@@ -1,20 +1,71 @@
 import { ReactNode } from "react";
 import Header from "../../components/Header";
-import AdminSideBar from "../../components/AdminComponents/AdminSidebar";
 import Footer from "../../components/Footer";
+import { Layout, Menu } from "antd";
+import { useState } from "react";
+import {
+  AppstoreOutlined,
+  ShoppingCartOutlined,
+  LikeOutlined,
+  SettingOutlined 
+} from "@ant-design/icons";
+
+const { Content, Sider } = Layout;
 
 interface AdminLayoutProps {
-  children?: ReactNode;  // Make children optional
+  children?: ReactNode;
 }
 
 export const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <div>
+    <Layout style={{ minHeight: "100vh" }}>
       <Header />
-      <AdminSideBar />
-      <div className="content">{children}</div>
+      <Layout style={{ marginTop: "66px" }}>
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={(value) => setCollapsed(value)}
+          style={{ position: "fixed", left: 0, top: 66, bottom: 0 }} 
+        >
+          <Menu
+            theme="dark"
+            mode="inline"
+            defaultSelectedKeys={["1"]}
+            items={[
+              {
+                key: "1",
+                icon: <AppstoreOutlined />,
+                label: "Dashboard",
+              },
+              {
+                key: "2",
+                icon: <ShoppingCartOutlined />,
+                label: "Order",
+              },
+              {
+                key: "3",
+                icon: <LikeOutlined />,
+                label: "Subcription",
+              }, 
+              {
+                key: "4",
+                icon: <SettingOutlined />,
+                label: "Setting",
+              },
+            ]}
+          />
+        </Sider>
+        <Layout style={{ marginLeft: collapsed ? "80px" : "200px", transition: "all 0.2s" }}>
+          <Content style={{ margin: "24px 16px 0", padding: "24px", backgroundColor: "#fff" }}>
+            {children}
+          </Content>
+        </Layout>
+      </Layout>
       <Footer />
-    </div>
+    </Layout>
   );
 };
-export default AdminLayout
+
+export default AdminLayout;
