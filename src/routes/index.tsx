@@ -1,4 +1,5 @@
 import Home from "../pages/Home";
+// import Student from "../pages/DashboardStudent";
 import Login from "../pages/Login/Login";
 import { DefaultLayout, InstructorLayout } from "../layout";
 import { RoleEnum, RouteConfig } from "../model/RouteConfig";
