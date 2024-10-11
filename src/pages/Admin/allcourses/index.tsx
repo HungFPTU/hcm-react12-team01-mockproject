@@ -4,11 +4,13 @@ import TableCourses from "./tableCourses";
 import TableSession from "./tableSession";
 import TableLession from "./tableLession";
 
+
+
 const items: TabsProps["items"] = [
   {
     key: "1",
     label: "Courses",
-    children: <TableCourses />,
+    children: <TableCourses/>,
   },
   {
     key: "2",

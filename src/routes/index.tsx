@@ -1,6 +1,7 @@
 import { AdminLayout, DefaultLayout, StudentLayout } from "../layout";
 import { RoleEnum, RouteConfig } from "../model/RouteConfig";
-import AllCourses from "../pages/Admin/Allcourses";
+import AllCourses from "../pages/Admin/allcourses";
+
 import CoursesLog from "../pages/Admin/courselog";
 import PendingCourses from "../pages/Admin/PendingCourses";
 import PurchaseLog from "../pages/Admin/purchaselog";

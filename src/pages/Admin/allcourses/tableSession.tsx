@@ -1,7 +1,7 @@
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { Session } from "../../../model/Session";
 import SearchComponent from "../../../components/StudentComponents/search";
+import { Session } from "../../../model/Session";
 
 const dataSource: Session[] = [
   {
