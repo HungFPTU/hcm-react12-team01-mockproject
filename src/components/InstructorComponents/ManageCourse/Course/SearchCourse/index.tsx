@@ -8,7 +8,7 @@ interface SearchCourseProps {
   onSearch: (value: string) => void;
 }
 
-const SearchCourse: React.FC<SearchCourseProps> = ({ onSearch }) => {
+const SearchCourse = ({ onSearch }: SearchCourseProps): JSX.Element => {
   const handleSearch = (value: string) => {
     onSearch(value);
   };

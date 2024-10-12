@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Form, Input, Button } from 'antd';
 import { DeleteOutlined, LeftOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { CourseDetails } from '../../../../../model/Course';
+import { Course } from '../../../../../model/Course';
 
 interface CourseValues {
   title?: string;
@@ -10,12 +11,21 @@ interface CourseValues {
   // Thêm các trường khác nếu cần
 }
 
-const ViewDetailCourse: React.FC<{ courseId: string }> = ({ courseId }) => {
+interface CourseDetails extends Course {
+  id: string;
+  title: string;
+  description: string;
+  // Thêm các trường khác nếu cần
+}
+
+const ViewDetailCourse = () => {
+  const { courseId } = useParams();
   const [course] = useState<CourseDetails | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    
+    // Sử dụng courseId để tải thông tin khóa học
+    // Ví dụ: fetchCourseDetails(courseId)
   }, [courseId]);
 
   const onFinish = (values: CourseValues) => {

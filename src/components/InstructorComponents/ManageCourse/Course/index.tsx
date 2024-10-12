@@ -1,21 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ButtonCourse from './ButtonCourse';
 import SearchCourse from './SearchCourse';
 import type { Course } from '../../../../model/Course';
-import CourseTable from './TableCourse';
+import CourseTable from './CourseTable';
 
-const Course: React.FC = () => {
+const Course = () => {
+  const [courses] = useState<Course[]>([]);
+
   const handleSearch = () => {
-    // Define the handleSearch function to handle search logic
+    console.log('Searching for courses...');
   };
-
-  const courses: Course[] = []; // Chỉ định kiểu rõ ràng cho mảng courses
 
   const handleChangeStatus = () => {
-    // Define the handleChangeStatus function to handle status change logic
+    console.log('Changing status for courses...');
   };
+
   const handleViewDetail = () => {
-    // Define the handleViewDetail function to handle detail view logic
+    console.log('Viewing detail for courses...');
   };
 
   return (

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Button, Modal, Form, Input, Select, Radio, Upload, message } from 'antd';
 import { Editor } from '@tinymce/tinymce-react';
-import { Course} from '../../../../../model/Course';
+import { Course } from '../../../../../model/Course';
 
 const { Option } = Select;
 
-const ButtonCourse: React.FC = () => {
+const ButtonCourse = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = () => {
