@@ -219,7 +219,7 @@ const Home: React.FC = () => {
                   </Button>
                 </div>
               </Card>
-            </Link> {/* Kết thúc Link */}
+            </Link> 
           </Col>
         ))}
       </Row>
