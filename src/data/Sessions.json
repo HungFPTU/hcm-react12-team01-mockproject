@@ -1,0 +1,16 @@
+{
+    "sessions": [
+    {
+        "id": "1",
+        "name": "Lập trình cơ bản",
+        "createdAt": "2024-01-01T00:00:00Z",
+        "course_id": "1"
+    },
+    {   
+        "id": "2",
+        "name": "Thiết kế đồ họa",
+        "createdAt": "2024-02-01T00:00:00Z",
+        "course_id": "2"
+    }
+]
+}

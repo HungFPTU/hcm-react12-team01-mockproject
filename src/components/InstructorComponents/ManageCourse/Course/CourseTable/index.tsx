@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { Table, Button, Switch } from 'antd';
-// import type { ColumnsType } from 'antd/es/table';
 import { Course, CourseStatusEnum } from '../../../../../model/Course';
 import { useNavigate } from 'react-router-dom';
-// import course from '../../../../../data/Courses.json';
 import Courses from '../../../../../data/Courses.json';
 
 

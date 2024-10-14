@@ -1,21 +1,29 @@
 import React from 'react';
-import CourseTable from '../../../components/InstructorComponents/ManageCourse/Course/CourseTable';
-import ButtonCourse from '../../../components/InstructorComponents/ManageCourse/Course/ButtonCourse';
-import SearchCourse from '../../../components/InstructorComponents/ManageCourse/Course/SearchCourse';
-// import Course from '../../../components/InstructorComponents/ManageCourse/Course';
+import Course from '../../../components/InstructorComponents/ManageCourse/Course';
+import Session from '../../../components/InstructorComponents/ManageCourse/Session';
+// import Lesson from '../../../components/InstructorComponents/ManageCourse/Lesson/TableLesson';
+import { Tabs } from 'antd';
 const ManageCourse = () => {
+  const items = [
+    {
+      key: '1',
+      label: 'Course',
+      children: <Course/>,
+    },
+    {
+      key: '2',
+      label: 'Session',
+      children: <Session/>,
+    },
+    // {
+    //   key: '3',
+    //   label: 'Lesson',
+    //   children: <Lesson/>,
+    // },
+  ];
   return (
     <div className="manage-course-container">
-      <h1>Quản lý khóa học</h1>
-      <div className='mt-4'>
-        <ButtonCourse/>
-      </div>
-      <div className='mt-4'>
-        <SearchCourse onSearch={() => {}}/>
-      </div>
-      <div className='mt-4'>
-        <CourseTable/>
-      </div>
+      <Tabs items={items} />
     </div>
   );
 };
