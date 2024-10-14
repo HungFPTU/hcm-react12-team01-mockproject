@@ -44,8 +44,8 @@ function SidebarComponents() {
             icon: <FileTextOutlined />,
             label: "Payout Management",
           },
-          {
-            key: "/all-courses",
+          {          
+            key: "/admin",
             icon: <AppstoreOutlined />,
             label: "All Courses",
           },

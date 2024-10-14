@@ -23,12 +23,15 @@ import CategoryManagement from "../pages/Admin/CategoryManagement";
 import RequestManagement from "../pages/Admin/RequestManagement";
 import UserManagement from "../pages/Admin/UserManagement";
 import PayoutManagement from "../pages/Admin/PayoutManagement";
+import InstructorSub from "../pages/InstructorPage/InstructorSub";
 
+
+import All from "../pages/AllCourses";
 const publicRoute: RouteConfig[] = [
   { path: "/", component: Home, layout: DefaultLayout, role: RoleEnum.Guest },
   { path: "/login", component: Login, layout: null, role: RoleEnum.Guest },
   {
-    path: "/dashboard-instructor",
+    path: "/instructor",
     component: InstructorDashboard,
     layout: InstructorLayout,
     role: RoleEnum.Instructor,
@@ -39,8 +42,10 @@ const publicRoute: RouteConfig[] = [
     layout: InstructorLayout,
     role: RoleEnum.Instructor,
   },
+  { path: "/all", component: All, layout: DefaultLayout, role: RoleEnum.Guest},
+  { path: "/subcription-instructor", component: InstructorSub, layout: InstructorLayout, role: RoleEnum.Instructor },
   {
-    path: "/dashboard-student",
+    path: "/student",
     component: StudentDashboard,
     layout: StudentLayout,
     role: RoleEnum.Student,
@@ -101,7 +106,7 @@ const publicRoute: RouteConfig[] = [
     role: RoleEnum.Admin,
   },
   {
-    path: "/all-courses",
+    path: "/admin",
     component: AllCourses,
     layout: AdminLayout,
     role: RoleEnum.Admin,
@@ -128,6 +133,7 @@ const publicRoute: RouteConfig[] = [
 
 const studentRoute: RouteConfig[] = [];
 const adminRoute: RouteConfig[] = [];
+
 const privateRoute: RouteConfig[] = [];
 
 export { privateRoute, publicRoute, studentRoute, adminRoute };
