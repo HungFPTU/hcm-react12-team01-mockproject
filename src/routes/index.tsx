@@ -87,4 +87,4 @@ const adminRoute: RouteConfig[] = [
 ];
 const privateRoute: RouteConfig[] = [];
 
-export { privateRoute, publicRoute };
+export { privateRoute, publicRoute, studentRoute, adminRoute };
