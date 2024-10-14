@@ -155,7 +155,7 @@ const Home: React.FC = () => {
             md={8} 
             lg={6} 
           >
-            <Link to={`/course/${course.id}`}> {/* Link tới trang chi tiết khoá học */}
+            <Link to={`/course/${course.id}`}> 
               <Card
                 hoverable
                 style={{
