@@ -94,7 +94,8 @@ const DashboardTable: React.FC = () => {
                 <Column
                     title="Action"
                     key="action"
-                    render={(_: any, _record: DataType) => (
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    render={(_: unknown, _record: DataType) => (
                         <Space size="middle">
                             <a>Send request payout</a>
                         </Space>
