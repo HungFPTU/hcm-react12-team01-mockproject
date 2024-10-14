@@ -1,5 +1,5 @@
 export type Lession = {
-  key: string;
+  key: number;
   Name: string;
   CourseName: string;
   Type: string;
