@@ -1,7 +1,8 @@
-import { AdminLayout, DefaultLayout, StudentLayout } from "../layout";
+import InstructorDashboard from "../pages/InstructorPage/InstructorDashboard";
+import InstructorCourseLog from "../pages/InstructorPage/InstructorCourseLog";
+import { AdminLayout, DefaultLayout, StudentLayout, InstructorLayout } from "../layout";
 import { RoleEnum, RouteConfig } from "../model/RouteConfig";
 import AllCourses from "../pages/Admin/allcourses";
-
 import CoursesLog from "../pages/Admin/courselog";
 import PendingCourses from "../pages/Admin/PendingCourses";
 import PurchaseLog from "../pages/Admin/purchaselog";
@@ -18,7 +19,8 @@ const publicRoute: RouteConfig[] = [
   { path: "/", component: Home, layout: DefaultLayout, role: RoleEnum.Guest },
   { path: "/login", component: Login, layout: null, role: RoleEnum.Guest },
   { path: "/all", component: All, layout: DefaultLayout, role: RoleEnum.Guest},
-
+  { path: "/dashboard-instructor", component: InstructorDashboard, layout: InstructorLayout, role: RoleEnum.Instructor },
+  { path: "/course-log-instructor", component: InstructorCourseLog, layout: InstructorLayout, role: RoleEnum.Instructor },
   {
     path: "/all-courses",
     component: AllCourses,
@@ -43,40 +45,46 @@ const publicRoute: RouteConfig[] = [
     layout: AdminLayout,
     role: RoleEnum.Admin,
   },
+  
   {
     path: "/dashboard-student",
     component: StudentDashboard,
     layout: StudentLayout,
-    role: RoleEnum.User,
+    role: RoleEnum.Student,
   },
   
   {
     path: "/view-order",
     component: OrderPage,
     layout: StudentLayout,
-    role: RoleEnum.User,
+    role: RoleEnum.Student,
   },
   {
     path: "/view-order/completed-orders",
     component: CompletedOrderPage,
     layout: StudentLayout,
-    role: RoleEnum.User,
+    role: RoleEnum.Student,
   },
   {
     path: "/list-subscription",
     component: SubscriptionPage,
     layout: StudentLayout,
-    role: RoleEnum.User,
+    role: RoleEnum.Student,
   },
   {
     path: "/setting",
     component: SettingPage,
     layout: StudentLayout,
-    role: RoleEnum.User,
+    role: RoleEnum.Student,
   },
 ];
-
-
+    
+const studentRoute: RouteConfig[] = [
+  
+];
+const adminRoute: RouteConfig[] = [
+  
+];
 const privateRoute: RouteConfig[] = [];
 
 export { privateRoute, publicRoute };
