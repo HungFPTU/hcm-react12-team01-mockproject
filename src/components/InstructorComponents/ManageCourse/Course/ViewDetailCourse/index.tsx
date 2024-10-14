@@ -1,54 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Form, Input, Button } from 'antd';
-import { DeleteOutlined, LeftOutlined } from '@ant-design/icons';
+import { Form, Input, Button, InputNumber, Select } from 'antd';
+import { LeftOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { Course } from '../../../../../model/Course';
-
-interface CourseValues {
-  title?: string;
-  description?: string;
-  // Thêm các trường khác nếu cần
-}
-
-interface CourseDetails extends Course {
-  id: string;
-  title: string;
-  description: string;
-  // Thêm các trường khác nếu cần
-}
+import Courses from '../../../../../data/Courses.json';
+import { Editor } from '@tinymce/tinymce-react';
 
 const ViewDetailCourse = () => {
-  const { courseId } = useParams();
-  const [course] = useState<CourseDetails | null>(null);
+  const { courseId } = useParams<{ courseId: string }>();
+  const [course, setCourse] = useState<Course | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Sử dụng courseId để tải thông tin khóa học
-    // Ví dụ: fetchCourseDetails(courseId)
+    const course = Courses.courses.find((course) => course.id === courseId);
+    if (course) {
+      setCourse(course as unknown as Course);
+    } else {
+      navigate('/instructor/manage-course');
+    }
   }, [courseId]);
 
-  const onFinish = (values: CourseValues) => {
-    // Xử lý cập nhật thông tin khóa học
-    console.log('Updated course:', values);
-  };
-
-  const handleDelete = () => {
-    // Xử lý logic xóa khóa học ở đây
-    console.log('Xóa khóa học');
+  const onFinish = (values: Course) => {
+    console.log('Form values:', values);
+    // Xử lý cập nhật khóa học ở đây
   };
 
   const handleGoBack = () => {
     navigate(-1); // Quay lại trang trước đó
   };
 
-  if (!course) return <div>Loading...</div>;
+  const handleDelete = () => {
+    // Xử lý logic xóa khóa học ở đây
+    console.log('Xóa khóa học có ID:', courseId);
+  };
+
+  if (!course) return <div>Course not found</div>;
 
   return (
     <div>
-      <Button onClick={handleGoBack} icon={<LeftOutlined />}>
-        Back
-      </Button>
       
       <Form
         initialValues={course}
@@ -58,23 +48,77 @@ const ViewDetailCourse = () => {
         <Form.Item label="Course ID" name="id">
           <Input disabled />
         </Form.Item>
-        <Form.Item label="Title" name="title" rules={[{ required: true }]}>
-          <Input />
+        <Form.Item label="Course Name" name="name" rules={[{ required: true }]}>
+          <Input.TextArea />
+        </Form.Item>
+        <Form.Item label="Category" name="category_id">
+          <Select>
+            <Select.Option value="cat1">cat1</Select.Option>
+            <Select.Option value="cat2">cat2</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item label="Status" name="status">
+          <Input disabled />
         </Form.Item>
         <Form.Item label="Description" name="description">
           <Input.TextArea />
         </Form.Item>
-        {/* Thêm các Form.Item khác cho các trường thông tin khác */}
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Update
-          </Button>
+        <Form.Item label="Content" name="content">
+        <Editor
+              apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
+              init={{
+                height: 300,
+                menubar: 'favs file edit view insert format tools table help',
+                menu: {
+                  favs: { title: 'My Favorites', items: 'code visualaid | searchreplace | emoticons' }
+                },
+                plugins: [
+                  'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
+                  'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
+                  'media', 'table', 'emoticons', 'help'
+                ],
+                toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | ' +
+                  'bullist numlist outdent indent | link image | print preview media fullscreen | ' +
+                  'forecolor backcolor emoticons | help',
+                  content_css: 'css/content.css'
+              }}
+            />
+        </Form.Item>
+        <Form.Item label="Price" name="price">
+          <InputNumber />
+        </Form.Item>
+        <Form.Item label="Discount" name="discount">
+          <InputNumber />
+        </Form.Item>
+        <Form.Item label="Status_change" name="status_change">
+          <Select>
+            <Select.Option value="active">Active</Select.Option>
+            <Select.Option value="inactive">Inactive</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item label="Sessions" name="session">
+          <Input disabled />
+        </Form.Item>
+        <Form.Item label="Instructor" name="instructor">
+          <Input disabled />
         </Form.Item>
       </Form>
       
+      <div className='flex justify-between gap-2'>
+        <div className='flex gap-2'>
+      <Button type="primary" htmlType="submit">
+        Update
+      </Button>
       <Button onClick={handleDelete} type="primary" danger icon={<DeleteOutlined />}>
         Delete
       </Button>
+        </div>
+        <div>
+      <Button onClick={handleGoBack} icon={<LeftOutlined />}>
+        Back
+      </Button>
+        </div>
+      </div>
     </div>
   );
 };

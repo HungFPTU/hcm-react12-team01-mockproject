@@ -1,24 +1,20 @@
-// import { useState } from 'react';
+import { useState } from 'react';
 import { Table, Button, Switch } from 'antd';
 // import type { ColumnsType } from 'antd/es/table';
 import { Course, CourseStatusEnum } from '../../../../../model/Course';
 import { useNavigate } from 'react-router-dom';
 // import course from '../../../../../data/Courses.json';
-import CourseData from '../../../../../data/CoursesData.json';
+import Courses from '../../../../../data/Courses.json';
 
 
-const CourseTable = ({ searchQuery }: { searchQuery: string}) => {
+const CourseTable = () => {
   const navigate = useNavigate();
-  // const [courses, setCourses] = useState<CourseData[]>();
+  const [coursesData] = useState<Course[]>(Courses.courses as unknown as Course[]);
+  const [searchTerm] = useState<string>("");
 
-  const filteredCourses = CourseData.courses
-  .filter((course) =>
-  course.id.toLowerCase().includes(searchQuery.toLowerCase())|| 
-  course.name.toLowerCase().includes(searchQuery.toLowerCase()))
-  .map((course) => ({
-    ...course,
-    key: course.id
-  }))
+  const filteredCourses = coursesData.filter((course) =>
+  course.id.toLowerCase().includes(searchTerm.toLowerCase())|| 
+  course.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
   const handleViewDetails = (courseId: string) => {
     // Navigate to the user detail page
@@ -30,11 +26,6 @@ const CourseTable = ({ searchQuery }: { searchQuery: string}) => {
     // Xử lý logic thay đổi trạng thái ở đây
   };
 
-  // const onViewDetail = (id: string) => {
-  //   // Xử lý logic xem chi tiết ở đây, sử dụng id
-  //   navigate(`/instructor/course/${id}`);
-  // };
-
   const columns = [
     {
       title: 'Name',
@@ -43,13 +34,15 @@ const CourseTable = ({ searchQuery }: { searchQuery: string}) => {
     },
     {
       title: 'Category',
-      dataIndex: 'categoryName',
-      key: 'categoryName',
+      dataIndex: 'category_id',
+      key: 'category_id',
+      render: (category_id: string) => `${category_id}`,
     },
     {
       title: 'Sessions',
-      dataIndex: 'sessionCount',
-      key: 'sessionCount',
+      dataIndex: 'session',
+      key: 'session',
+      render: (session: string) => `${session}`,
     },
     {
       title: 'Status',
@@ -70,9 +63,9 @@ const CourseTable = ({ searchQuery }: { searchQuery: string}) => {
     },
     {
       title: 'Created At',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (date: Date) => date.toLocaleDateString('vi-VN'),
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (created_at: string) => `${created_at}`,
     },
     {
       title: 'Change Status',
@@ -93,18 +86,13 @@ const CourseTable = ({ searchQuery }: { searchQuery: string}) => {
           View Detail
         </Button>
       )
-    },
+    },  
   ];
 
   return (
     <Table<Course>
       columns={columns}
-      dataSource={filteredCourses.map((course) => ({
-        ...course,
-        createdAt: new Date(course.created_at),
-        status: course.status as CourseStatusEnum,
-        key: course.id
-      }))}
+      dataSource={filteredCourses}
       rowKey="id"
       className="w-full shadow-md rounded-lg overflow-hidden"
       pagination={{

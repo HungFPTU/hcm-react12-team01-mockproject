@@ -10,6 +10,7 @@ export enum CourseStatusEnum {
 export interface Course {
   id: string;
   name: string;
+  session: string;
   category_id: string;
   user_id: string;
   description: string;
@@ -19,7 +20,7 @@ export interface Course {
   image_url: string;
   price: number;
   discount: number;
-  created_at: Date;
-  updated_at: Date;
+  created_at: string;
+  updated_at: string;
   is_deleted: boolean;
 }
