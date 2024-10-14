@@ -11,25 +11,15 @@ import { useNavigate } from "react-router-dom";
 const StudentSidebar: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <div
-      style={{
-        width: "250px",
-        marginTop: "64px",
-        position: "relative",
-        height: "100vh",
-        overflow: "auto",
-        zIndex: 1,
-        boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
-      }}
-    >
+
       <Menu
-        theme="light"
+         theme="dark"
         mode="inline"
-        defaultSelectedKeys={["dashboard"]}
+        defaultSelectedKeys={["1"]}
         onClick={({ key }) => navigate(key)}
         items={[
           {
-            key: "/dashboard-student",
+            key: "/student",
             icon: <DashboardOutlined />,
             label: "Dashboard",
           },
@@ -50,7 +40,7 @@ const StudentSidebar: React.FC = () => {
           },
         ]}
       />
-    </div>
+
   );
 };
 export default StudentSidebar;

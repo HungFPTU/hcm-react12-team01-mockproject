@@ -18,12 +18,12 @@ import InstructorSub from "../pages/InstructorPage/InstructorSub";
 const publicRoute: RouteConfig[] = [
   { path: "/", component: Home, layout: DefaultLayout, role: RoleEnum.Guest },
   { path: "/login", component: Login, layout: null, role: RoleEnum.Guest },
-  { path: "/dashboard-instructor", component: InstructorDashboard, layout: InstructorLayout, role: RoleEnum.Instructor },
+  { path: "/instructor", component: InstructorDashboard, layout: InstructorLayout, role: RoleEnum.Instructor },
   { path: "/course-log-instructor", component: InstructorCourseLog, layout: InstructorLayout, role: RoleEnum.Instructor },
   { path: "/subcription-instructor", component: InstructorSub, layout: InstructorLayout, role: RoleEnum.Instructor },
   
   {
-    path: "/dashboard-student",
+    path: "/student",
     component: StudentDashboard,
     layout: StudentLayout,
     role: RoleEnum.Student,
@@ -54,7 +54,7 @@ const publicRoute: RouteConfig[] = [
     role: RoleEnum.Student,
   },
   {
-    path: "/all-courses",
+    path: "/admin",
     component: AllCourses,
     layout: AdminLayout,
     role: RoleEnum.Admin,

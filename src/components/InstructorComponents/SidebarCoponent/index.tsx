@@ -17,7 +17,7 @@ function SidebarComponents() {
         onClick={({ key }) => navigate(key)}
         items={[
           {
-            key: "/dashboard-instructor",
+            key: "/instructor",
             icon: <AppstoreOutlined />,
             label: "Dashboard",
           },
