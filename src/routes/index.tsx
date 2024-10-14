@@ -14,11 +14,38 @@ import OrderPage from "../pages/Student/order";
 import SettingPage from "../pages/Student/setting";
 import SubscriptionPage from "../pages/Student/view-subscription";
 
+import All from "../pages/AllCourses";
 const publicRoute: RouteConfig[] = [
   { path: "/", component: Home, layout: DefaultLayout, role: RoleEnum.Guest },
   { path: "/login", component: Login, layout: null, role: RoleEnum.Guest },
+  { path: "/all", component: All, layout: DefaultLayout, role: RoleEnum.Guest},
   { path: "/dashboard-instructor", component: InstructorDashboard, layout: InstructorLayout, role: RoleEnum.Instructor },
   { path: "/course-log-instructor", component: InstructorCourseLog, layout: InstructorLayout, role: RoleEnum.Instructor },
+  {
+    path: "/all-courses",
+    component: AllCourses,
+    layout: AdminLayout,
+    role: RoleEnum.Admin,
+  },
+  {
+    path: "/pending-courses",
+    component: PendingCourses,
+    layout: AdminLayout,
+    role: RoleEnum.Admin,
+  },
+  {
+    path: "/courses-log",
+    component: CoursesLog,
+    layout: AdminLayout,
+    role: RoleEnum.Admin,
+  },
+  {
+    path: "/pruchase-courses",
+    component: PurchaseLog,
+    layout: AdminLayout,
+    role: RoleEnum.Admin,
+  },
+  
   {
     path: "/dashboard-student",
     component: StudentDashboard,
@@ -50,33 +77,8 @@ const publicRoute: RouteConfig[] = [
     layout: StudentLayout,
     role: RoleEnum.Student,
   },
-  {
-    path: "/all-courses",
-    component: AllCourses,
-    layout: AdminLayout,
-    role: RoleEnum.Admin,
-  },
-  {
-    path: "/pending-courses",
-    component: PendingCourses,
-    layout: AdminLayout,
-    role: RoleEnum.Admin,
-  },
-  {
-    path: "/courses-log",
-    component: CoursesLog,
-    layout: AdminLayout,
-    role: RoleEnum.Admin,
-  },
-  {
-    path: "/pruchase-courses",
-    component: PurchaseLog,
-    layout: AdminLayout,
-    role: RoleEnum.Admin,
-  },
-
 ];
-
+    
 const studentRoute: RouteConfig[] = [
   
 ];
@@ -85,4 +87,4 @@ const adminRoute: RouteConfig[] = [
 ];
 const privateRoute: RouteConfig[] = [];
 
-export { privateRoute, publicRoute, studentRoute, adminRoute };
+export { privateRoute, publicRoute };
