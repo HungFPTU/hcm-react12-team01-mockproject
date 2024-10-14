@@ -1,22 +1,17 @@
-import { ReactNode } from "react";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import { Layout, Menu } from "antd";
-import { useState } from "react";
-import {
-  AppstoreOutlined,
-  ShoppingCartOutlined,
-  LikeOutlined,
-  SettingOutlined 
-} from "@ant-design/icons";
-
 const { Content, Sider } = Layout;
 
+import Footer from "../../components/Footer";
+import Header from "../../components/Header";
+import StudentSidebar from "../../components/StudentComponents/StudentSidebar";
+import { Layout } from "antd";
+import { ReactNode, useState } from "react";
 interface StudentLayoutProps {
-  children?: ReactNode;
+  children?: ReactNode; // Make children optional
 }
 
-export const StudentLayout = ({ children }: StudentLayoutProps): JSX.Element => {
+export const StudentLayout = ({
+  children,
+}: StudentLayoutProps): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -27,38 +22,24 @@ export const StudentLayout = ({ children }: StudentLayoutProps): JSX.Element => 
           collapsible
           collapsed={collapsed}
           onCollapse={(value) => setCollapsed(value)}
-          style={{ position: "fixed", left: 0, top: 66, bottom: 0 }} 
+          style={{ position: "fixed", left: 0, top: 66, bottom: 0 }}
         >
-          <Menu
-            theme="dark"
-            mode="inline"
-            defaultSelectedKeys={["1"]}
-            items={[
-              {
-                key: "1",
-                icon: <AppstoreOutlined />,
-                label: "Dashboard",
-              },
-              {
-                key: "2",
-                icon: <ShoppingCartOutlined />,
-                label: "Order",
-              },
-              {
-                key: "3",
-                icon: <LikeOutlined />,
-                label: "Subcription",
-              }, 
-              {
-                key: "4",
-                icon: <SettingOutlined />,
-                label: "Setting",
-              },
-            ]}
-          />
+          <StudentSidebar />
         </Sider>
-        <Layout style={{ marginLeft: collapsed ? "80px" : "200px", transition: "all 0.2s" }}>
-          <Content style={{ margin: "24px 16px 0", padding: "24px", backgroundColor: "#fff" }}>
+
+        <Layout
+          style={{
+            marginLeft: collapsed ? "80px" : "200px",
+            transition: "all 0.2s",
+          }}
+        >
+          <Content
+            style={{
+              margin: "24px 16px 0",
+              padding: "24px",
+              backgroundColor: "#fff",
+            }}
+          >
             {children}
           </Content>
         </Layout>

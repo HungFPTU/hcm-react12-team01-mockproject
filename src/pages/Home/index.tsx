@@ -2,7 +2,13 @@ import { Card, Button, Rate, Tooltip, Col, Row,Tag } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import React from "react";
 import asset from "../../assets/assets";
+
 import { Link } from "react-router-dom";
+
+
+import { Carousel } from "antd";
+import assets from "../../assets/assets"
+import { useNavigate  } from "react-router-dom";
 
 interface Course {
   id: number;
@@ -118,6 +124,8 @@ const user: User[] = [
   },
 ]
 
+
+
 const Home: React.FC = () => {
   const formatPrice = (price: number) => {
     return price.toLocaleString("vi-VN") + "₫"; // Format for Vietnamese dong (₫)
@@ -129,10 +137,34 @@ const Home: React.FC = () => {
     return hours > 0 ? `${hours}h${remainingMinutes > 0 ? remainingMinutes + 'p' : ''}` : `${remainingMinutes}p`;
   };
 
+  const imgStyle: React.CSSProperties = {
+    width: '100%',
+    height: 'auto', // Auto height for responsiveness
+    objectFit: 'cover',
+    borderRadius: "30px",
+  };
+  
+  const carouselContainer: React.CSSProperties = {
+    width: '85%', 
+    margin: '18px auto',
+    marginTop: '100px',
+  };
+
+  const navigate = useNavigate(); 
+
+  const goToAllCourses = () => {
+    navigate('/all'); // Redirects to the "all courses" page
+  };
   return (
     <div className="main mt-7 px-5">
-      <h1 className="text-center text-3xl mb-6 font-bold">All Courses</h1>
-      
+      <div style={carouselContainer}>
+      <Carousel arrows infinite={false} autoplay>
+        <div>
+          <img style={imgStyle} src={assets.petfood} alt="Pet Food" />
+        </div>
+      </Carousel>
+    </div>
+      <h1 className="text-center text-3xl mb-6 font-bold mt-14">All Courses</h1>
       <div className="categories mb-5 ">
         {categories.map((category: Categories) => (
           <Tag
@@ -225,7 +257,7 @@ const Home: React.FC = () => {
       </Row>
       
       <div className="flex justify-end mt-6">
-        <Button type="default" icon={<ArrowRightOutlined />}>
+        <Button type="default" icon={<ArrowRightOutlined />} onClick={goToAllCourses}>
           See all
         </Button>
       </div>
