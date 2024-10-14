@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { publicRoute } from './routes';
 import { DefaultLayout } from './layout';
@@ -6,6 +6,8 @@ import { DefaultLayout } from './layout';
 function App() {
   return (
     <Router>
+      <Suspense fallback='loading'>
+
       <div className="App">
         <Routes>  
           {publicRoute.map((route, index) => {
@@ -36,6 +38,8 @@ function App() {
           })}
         </Routes>
       </div>
+      </Suspense>
+      
     </Router>
   );
 }
