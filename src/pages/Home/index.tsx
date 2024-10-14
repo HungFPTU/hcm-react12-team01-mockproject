@@ -2,6 +2,7 @@ import { Card, Button, Rate, Tooltip, Col, Row,Tag } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import React from "react";
 import asset from "../../assets/assets";
+import { Link } from "react-router-dom";
 
 interface Course {
   id: number;
@@ -154,69 +155,71 @@ const Home: React.FC = () => {
             md={8} 
             lg={6} 
           >
-            <Card
-              hoverable
-              style={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-              }}
-              cover={
-                <img
-                  alt={course.title}
-                  src={course.image}
-                  className="course-image w-full h-[200px] object-cover"
-                />
-              }
-            >
-              <div className="course-info flex items-center justify-between mb-3">
-                <div className="bg-gray-100 px-2 py-1 rounded-full text-gray-500 text-sm">
-                  {course.session_count} sessions
+            <Link to={`/course/${course.id}`}> {/* Link tới trang chi tiết khoá học */}
+              <Card
+                hoverable
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}
+                cover={
+                  <img
+                    alt={course.title}
+                    src={course.image}
+                    className="course-image w-full h-[200px] object-cover"
+                  />
+                }
+              >
+                <div className="course-info flex items-center justify-between mb-3">
+                  <div className="bg-gray-100 px-2 py-1 rounded-full text-gray-500 text-sm">
+                    {course.session_count} sessions
+                  </div>
+                  <div className="bg-gray-100 px-2 py-1 rounded-full text-gray-500 text-sm">
+                    {course.lession_count} lessons
+                  </div>
+                  <div className="bg-gray-100 px-2 py-1 rounded-full text-gray-500 text-sm">
+                    {formatTime(course.fulltime)}
+                  </div>
                 </div>
-                <div className="bg-gray-100 px-2 py-1 rounded-full text-gray-500 text-sm">
-                  {course.lession_count} lessons
+
+                <Tooltip placement="top" title={course.title}>
+                  <h2
+                    className="text-lg font-semibold mb-2 truncate"
+                    style={{ maxWidth: "250px" }}
+                  >
+                    {course.title}
+                  </h2>
+                </Tooltip>
+
+                <Rate disabled defaultValue={course.rating} className="mb-3" />
+
+                <div className="flex items-center justify-between mt-2">
+                  {course.discount ? (
+                    <>
+                      <p
+                        className="original-price text-lg"
+                        style={{
+                          textDecoration: "line-through",
+                          opacity: 0.5,
+                        }}
+                      >
+                        {formatPrice(course.price)}
+                      </p>
+                      <p className="discounted-price text-lg text-red-500">
+                        {formatPrice(course.discount)}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="price text-lg">{formatPrice(course.price)}</p>
+                  )}
+                  <Button type="primary" danger>
+                    Buy Now
+                  </Button>
                 </div>
-                <div className="bg-gray-100 px-2 py-1 rounded-full text-gray-500 text-sm">
-                  {formatTime(course.fulltime)}
-                </div>
-              </div>
-
-              <Tooltip placement="top" title={course.title}>
-                <h2
-                  className="text-lg font-semibold mb-2 truncate"
-                  style={{ maxWidth: "250px" }}
-                >
-                  {course.title}
-                </h2>
-              </Tooltip>
-
-              <Rate disabled defaultValue={course.rating} className="mb-3" />
-
-              <div className="flex items-center justify-between mt-2">
-                {course.discount ? (
-                  <>
-                    <p
-                      className="original-price text-lg"
-                      style={{
-                        textDecoration: "line-through",
-                        opacity: 0.5,
-                      }}
-                    >
-                      {formatPrice(course.price)}
-                    </p>
-                    <p className="discounted-price text-lg text-red-500">
-                      {formatPrice(course.discount)}
-                    </p>
-                  </>
-                ) : (
-                  <p className="price text-lg">{formatPrice(course.price)}</p>
-                )}
-                <Button type="primary" danger>
-                  Buy Now
-                </Button>
-              </div>
-            </Card>
+              </Card>
+            </Link> {/* Kết thúc Link */}
           </Col>
         ))}
       </Row>
@@ -228,56 +231,56 @@ const Home: React.FC = () => {
       </div>
         
       <div className="instructor">
-      <h1 className="text-center text-3xl mb-6 font-bold">Instructor</h1>
-      <Row gutter={[16, 16]}>
-              {user.map((user: User) => (
-                <Col
-                  key={user.id}
-                  span={24}
-                  xs={24} 
-                  sm={12} 
-                  md={8} 
-                  lg={6}
-                >
-                  <Card
-                    hoverable
+        <h1 className="text-center text-3xl mb-6 font-bold">Instructor</h1>
+        <Row gutter={[16, 16]}>
+          {user.map((user: User) => (
+            <Col
+              key={user.id}
+              span={24}
+              xs={24} 
+              sm={12} 
+              md={8} 
+              lg={6}
+            >
+              <Card
+                hoverable
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center", // Center the content horizontally
+                  justifyContent: "center", // Center the content vertically
+                }}
+                cover={
+                  <img
+                    alt="avatar"
+                    src={user.avatar}
+                    className="course-image w-full h-[200px] object-cover rounded-full"
                     style={{
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center", // Center the content horizontally
-                      justifyContent: "center", // Center the content vertically
+                      width: "150px", 
+                      height: "150px",
+                      borderRadius: "50%", 
+                      margin: "10px auto", 
+                      objectFit: "cover",
                     }}
-                    cover={
-                      <img
-                        alt="avatar"
-                        src={user.avatar}
-                        className="course-image w-full h-[200px] object-cover rounded-full"
-                        style={{
-                          width: "150px", 
-                          height: "150px",
-                          borderRadius: "50%", 
-                          margin: "10px auto", 
-                          objectFit: "cover",
-                        }}
-                      />
-                    }
-                  >
-                    <div
-                      className="text-lg font-semibold mb-2 truncate"
-                      style={{ maxWidth: "250px", textAlign: "center" }} 
-                    >
-                      {user.name}
-                    </div>
-                    <div 
-                      className="text-lg font-semibold mb-2 truncate"
-                      style={{ maxWidth: "250px", textAlign: "center" }} 
-                    >
-                      {user.description}
-                    </div>
-                  </Card>
-                </Col>
-              ))}
+                  />
+                }
+              >
+                <div
+                  className="text-lg font-semibold mb-2 truncate"
+                  style={{ maxWidth: "250px", textAlign: "center" }} 
+                >
+                  {user.name}
+                </div>
+                <div 
+                  className="text-lg font-semibold mb-2 truncate"
+                  style={{ maxWidth: "250px", textAlign: "center" }} 
+                >
+                  {user.description}
+                </div>
+              </Card>
+            </Col>
+          ))}
         </Row> 
 
       </div> 

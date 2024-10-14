@@ -1,7 +1,7 @@
 import LoginGoogle from '../../components/LoginGoogle/LoginGoogle';
 import LoginEmailPassword from '../../components/LoginEmailPassword/LoginEmailPassword';
 import YOUR_IMAGE from '../../assets/Login&Register.jpg';
-import LOGO from '../../assets/LogoCourseApp.png';
+import LOGO from '../../assets/logo.png';
 import { useNavigate } from 'react-router-dom';  
 
 const Login = () => {
@@ -21,14 +21,17 @@ const Login = () => {
           </h1>
 
           <div className="w-full flex flex-col mb-4">
-            <h3 className="text-xl font-semibold mb-2">Hello Friends</h3>
+            {/* <h3 className="text-xl font-semibold mb-2">Hello Friends</h3> */}
             <p className="text-base mb-2">Please! Login with your account</p>
           </div>
 
-          <LoginEmailPassword />
-          <LoginGoogle />
+     
+          <div className="flex-grow">
+            <LoginEmailPassword />
+           <LoginGoogle />
+          </div>
 
-          <div className="w-full flex flex-col justify-between h-full">
+          <div className="w-full flex flex-col justify-between h-full mt-4">
             <div className="w-full flex items-center justify-center mt-auto">
               <p className="text-sm font-normal text-black">
                 Don't have an account? 
