@@ -1,6 +1,6 @@
 import {
   AppstoreOutlined,
-  ShoppingCartOutlined,
+  NodeExpandOutlined,
   LikeOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
@@ -17,19 +17,19 @@ function SidebarComponents() {
         onClick={({ key }) => navigate(key)}
         items={[
           {
-            key: "/admin",
+            key: "/instructor",
             icon: <AppstoreOutlined />,
-            label: "All Courses",
+            label: "Dashboard",
           },
           {
-            key: "/pending-courses",
-            icon: <ShoppingCartOutlined />,
-            label: "PendingCourses",
+            key: "/course-log-instructor",
+            icon: <NodeExpandOutlined />,
+            label: "Course Log",
           },
           {
-            key: "/courses-log",
+            key: "/subcription-instructor",
             icon: <LikeOutlined />,
-            label: "CoursesLog",
+            label: "Subcription",
           },
           {
             key: "/pruchase-courses",
