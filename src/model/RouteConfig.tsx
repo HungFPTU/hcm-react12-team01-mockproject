@@ -3,7 +3,8 @@ import { ComponentType } from "react";
 // Enum for roles (adjust based on your project's roles)
 export enum RoleEnum {
   Guest = "Guest",
-  User = "User",
+  Instructor = "Instructor",
+  Student = "Student",
   Admin = "Admin",
 }
 
@@ -14,5 +15,3 @@ export interface RouteConfig {
   layout?: ComponentType | null;  // Optional layout, can be null or a component
   role: RoleEnum;  // Role associated with the route
 }
-
-
