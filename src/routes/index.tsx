@@ -13,12 +13,15 @@ import StudentDashboard from "../pages/Student/dashboard";
 import OrderPage from "../pages/Student/order";
 import SettingPage from "../pages/Student/setting";
 import SubscriptionPage from "../pages/Student/view-subscription";
+import InstructorSub from "../pages/InstructorPage/InstructorSub";
 
 const publicRoute: RouteConfig[] = [
   { path: "/", component: Home, layout: DefaultLayout, role: RoleEnum.Guest },
   { path: "/login", component: Login, layout: null, role: RoleEnum.Guest },
   { path: "/dashboard-instructor", component: InstructorDashboard, layout: InstructorLayout, role: RoleEnum.Instructor },
   { path: "/course-log-instructor", component: InstructorCourseLog, layout: InstructorLayout, role: RoleEnum.Instructor },
+  { path: "/subcription-instructor", component: InstructorSub, layout: InstructorLayout, role: RoleEnum.Instructor },
+  
   {
     path: "/dashboard-student",
     component: StudentDashboard,
