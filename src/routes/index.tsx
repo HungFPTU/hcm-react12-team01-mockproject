@@ -15,13 +15,14 @@ import SettingPage from "../pages/Student/setting";
 import SubscriptionPage from "../pages/Student/view-subscription";
 import InstructorSub from "../pages/InstructorPage/InstructorSub";
 
+import All from "../pages/AllCourses";
 const publicRoute: RouteConfig[] = [
   { path: "/", component: Home, layout: DefaultLayout, role: RoleEnum.Guest },
   { path: "/login", component: Login, layout: null, role: RoleEnum.Guest },
   { path: "/instructor", component: InstructorDashboard, layout: InstructorLayout, role: RoleEnum.Instructor },
+  { path: "/all", component: All, layout: DefaultLayout, role: RoleEnum.Guest},
   { path: "/course-log-instructor", component: InstructorCourseLog, layout: InstructorLayout, role: RoleEnum.Instructor },
   { path: "/subcription-instructor", component: InstructorSub, layout: InstructorLayout, role: RoleEnum.Instructor },
-  
   {
     path: "/student",
     component: StudentDashboard,
@@ -77,9 +78,8 @@ const publicRoute: RouteConfig[] = [
     layout: AdminLayout,
     role: RoleEnum.Admin,
   },
-
 ];
-
+    
 const studentRoute: RouteConfig[] = [
   
 ];
