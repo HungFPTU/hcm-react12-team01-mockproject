@@ -7,7 +7,10 @@ import {
   AppstoreOutlined,
   ShoppingCartOutlined,
   LikeOutlined,
-  SettingOutlined 
+  SettingOutlined,
+  BookOutlined,
+  DollarOutlined,
+  StarOutlined
 } from "@ant-design/icons";
 
 const { Content, Sider } = Layout;
@@ -41,16 +44,31 @@ export const InstructorLayout = ({ children }: InstructorLayoutProps): JSX.Eleme
               },
               {
                 key: "2",
+                icon: <BookOutlined />,
+                label: "Manage Course",
+              },
+              {
+                key: "3",
+                icon: <DollarOutlined />,
+                label: "Payout",
+              },
+              {
+                key: "4",
                 icon: <ShoppingCartOutlined />,
                 label: "Order",
               },
               {
-                key: "3",
+                key: "5",
                 icon: <LikeOutlined />,
                 label: "Subcription",
-              }, 
+              },
               {
-                key: "4",
+                key: "6",
+                icon: <StarOutlined />,
+                label: "Review",
+              },
+              {
+                key: "7",
                 icon: <SettingOutlined />,
                 label: "Setting",
               },

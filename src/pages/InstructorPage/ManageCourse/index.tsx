@@ -1,7 +1,7 @@
 import React from 'react';
 import Course from '../../../components/InstructorComponents/ManageCourse/Course';
 import Session from '../../../components/InstructorComponents/ManageCourse/Session';
-// import Lesson from '../../../components/InstructorComponents/ManageCourse/Lesson/TableLesson';
+import Lesson from '../../../components/InstructorComponents/ManageCourse/Lesson';
 import { Tabs } from 'antd';
 const ManageCourse = () => {
   const items = [
@@ -15,11 +15,11 @@ const ManageCourse = () => {
       label: 'Session',
       children: <Session/>,
     },
-    // {
-    //   key: '3',
-    //   label: 'Lesson',
-    //   children: <Lesson/>,
-    // },
+    {
+      key: '3',
+      label: 'Lesson',
+      children: <Lesson/>,
+    },
   ];
   return (
     <div className="manage-course-container">

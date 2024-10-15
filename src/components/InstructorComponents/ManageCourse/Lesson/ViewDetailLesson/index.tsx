@@ -1,27 +1,28 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Form, Input, Button, InputNumber, Select } from 'antd';
+import { Form, Input, Button, InputNumber, Select, Upload } from 'antd';
 import { LeftOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { Course } from '../../../../../model/Course';
-import Courses from '../../../../../data/Courses.json';
 import { Editor } from '@tinymce/tinymce-react';
+import { Lesson } from '../../../../../model/Lesson';
+import Lessons from '../../../../../data/Lessons.json';
+import { UploadOutlined } from '@ant-design/icons';
 
-const ViewDetailCourse = () => {
-  const { courseId } = useParams<{ courseId: string }>();
-  const [course, setCourse] = useState<Course | null>(null);
+const ViewDetailLesson = () => {
+  const { lessonId } = useParams<{ lessonId: string }>();
+  const [lesson, setLesson] = useState<Lesson | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const course = Courses.courses.find((course) => course.id === courseId);
-    if (course) {
-      setCourse(course as unknown as Course);
+    const lesson = Lessons.lessons.find((l) => l.id === lessonId);
+    if (lesson) {
+      setLesson(lesson as unknown as Lesson);
     } else {
-      navigate('/instructor/manage-course');
+      navigate('/instructor/manage-course/session');
     }
-  }, [courseId, navigate]);
+  }, [lessonId, navigate]);
 
-  const onFinish = (values: Course) => {
+  const onFinish = (values: Lesson) => {
     console.log('Form values:', values);
     // Xử lý cập nhật khóa học ở đây
   };
@@ -32,38 +33,35 @@ const ViewDetailCourse = () => {
 
   const handleDelete = () => {
     // Xử lý logic xóa khóa học ở đây
-    console.log('Xóa khóa học có ID:', courseId);
+    console.log('Xóa khóa học có ID:', lessonId);
   };
 
-  if (!course) return <div>Course not found</div>;
+  if (!lesson) return <div>Lesson not found</div>;
 
   return (
     <div>
-      
       <Form
-        initialValues={course}
+        initialValues={lesson}
         onFinish={onFinish}
         layout="vertical"
       >
-        <Form.Item label="Course ID" name="id">
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="Course Name" name="name" rules={[{ required: true }]}>
+        <Form.Item label="Lesson Name" name="name" rules={[{ required: true }]}>
           <Input.TextArea />
         </Form.Item>
-        <Form.Item label="Category" name="category_id">
+        <Form.Item label="Course Name" name="courseName" rules={[{ required: true }]}>
+          <Input disabled />
+        </Form.Item>
+        <Form.Item label="Session Name" name="sessionName" rules={[{ required: true }]}>
+          <Input disabled/>
+        </Form.Item>
+        <Form.Item label="Lesson Type" name="lesson_type" rules={[{ required: true }]}>
           <Select>
-            <Select.Option value="cat1">cat1</Select.Option>
-            <Select.Option value="cat2">cat2</Select.Option>
+            <Select.Option value="Text">Text</Select.Option>
+            <Select.Option value="Video">Video</Select.Option>
+            <Select.Option value="Audio">Audio</Select.Option>
           </Select>
         </Form.Item>
-        <Form.Item label="Status" name="status">
-          <Input disabled />
-        </Form.Item>
         <Form.Item label="Description" name="description">
-          <Input.TextArea />
-        </Form.Item>
-        <Form.Item label="Content" name="content">
         <Editor
               apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
               init={{
@@ -84,43 +82,38 @@ const ViewDetailCourse = () => {
               }}
             />
         </Form.Item>
-        <Form.Item label="Price" name="price">
-          <InputNumber />
-        </Form.Item>
-        <Form.Item label="Discount" name="discount">
-          <InputNumber />
-        </Form.Item>
-        <Form.Item label="Status_change" name="status_change">
-          <Select>
-            <Select.Option value="active">Active</Select.Option>
-            <Select.Option value="inactive">Inactive</Select.Option>
-          </Select>
-        </Form.Item>
-        <Form.Item label="Sessions" name="session">
+        <Form.Item label="Created At" name="created_at">
           <Input disabled />
         </Form.Item>
-        <Form.Item label="Instructor" name="instructor">
-          <Input disabled />
+        <Form.Item label="Media" name="media">
+          <Upload>
+            <Button icon={<UploadOutlined />}>Upload</Button>
+          </Upload>
+        </Form.Item>
+        <Form.Item label="Full Time" name="full_time" rules={[{ required: true }]}>
+          <InputNumber/>
+        </Form.Item>
+        <Form.Item label="Position Order" name="position_order" rules={[{ required: true }]}>
+          <InputNumber/>
         </Form.Item>
       </Form>
-      
       <div className='flex justify-between gap-2'>
         <div className='flex gap-2'>
-      <Button type="primary" htmlType="submit">
-        Update
-      </Button>
-      <Button onClick={handleDelete} type="primary" danger icon={<DeleteOutlined />}>
-        Delete
-      </Button>
+          <Button type="primary" htmlType="submit">
+            Update
+          </Button>
+          <Button onClick={handleDelete} type="primary" danger icon={<DeleteOutlined />}>
+            Delete
+          </Button>
         </div>
         <div>
-      <Button onClick={handleGoBack} icon={<LeftOutlined />}>
-        Back
-      </Button>
+          <Button onClick={handleGoBack} icon={<LeftOutlined />}>
+            Back
+          </Button>
         </div>
       </div>
     </div>
   );
 };
 
-export default ViewDetailCourse;
+export default ViewDetailLesson;

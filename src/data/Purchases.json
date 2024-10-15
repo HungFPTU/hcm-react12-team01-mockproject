@@ -1,0 +1,32 @@
+{
+    "purchases": [
+        {
+        "id": "purchase_1",
+        "purchase_no": "PURCHASE-001",
+        "status": "completed",
+        "price_paid": 500,
+        "price": 600,
+        "discount": 100,
+        "cart_id": "cart_1",
+        "created_at": "2024-01-05",
+        "updated_at": "2024-01-06",
+        "is_deleted": false,
+        "student_name": "Nguyen Van A", 
+        "course_name": "Lập trình TypeScript"
+    },
+    {
+        "id": "purchase_2",
+        "purchase_no": "PURCHASE-002",
+        "status": "new",
+        "price_paid": 200,
+        "price": 250,
+        "discount": 50,
+        "cart_id": "cart_2",
+        "created_at": "2024-01-07",
+        "updated_at": "2024-01-08",
+        "is_deleted": false,
+        "student_name": "Tran Thi B",
+        "course_name": "Thiết kế Web"
+        }
+    ]
+}

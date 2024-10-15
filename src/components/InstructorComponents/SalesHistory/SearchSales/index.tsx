@@ -3,11 +3,11 @@ import { SearchOutlined } from '@ant-design/icons';
 
 const { Search } = Input;
 
-interface SearchSessionProps {
+interface SearchSalesProps {
   onSearch: (value: string) => void;
 }
 
-const SearchSession = ({ onSearch }: SearchSessionProps): JSX.Element => {
+const SearchSales = ({ onSearch }: SearchSalesProps): JSX.Element => {
   const handleSearch = (value: string) => {
     onSearch(value);
   };
@@ -15,7 +15,7 @@ const SearchSession = ({ onSearch }: SearchSessionProps): JSX.Element => {
   return (
     <div className="mb-4">
       <Search
-        placeholder="Tìm kiếm bài học..."
+        placeholder="Tìm kiếm hóa đơn..."
         allowClear
         enterButton={<SearchOutlined />}
         size="large"
@@ -26,4 +26,4 @@ const SearchSession = ({ onSearch }: SearchSessionProps): JSX.Element => {
   );
 };
 
-export default SearchSession;
+export default SearchSales;

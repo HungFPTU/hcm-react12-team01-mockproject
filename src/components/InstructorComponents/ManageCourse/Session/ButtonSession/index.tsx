@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Button, Modal, Form, Input, Select, Radio, Upload, message } from 'antd';
+import { Button, Modal, Form, Input} from 'antd';
 import { Editor } from '@tinymce/tinymce-react';
-import { Course } from '../../../../../model/Course';
+import { Session } from '../../../../../model/Session';
 
-const { Option } = Select;
+// const { Option } = Select;
 
-const ButtonCourse = () => {
+const ButtonSession = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = () => {
@@ -16,44 +16,31 @@ const ButtonCourse = () => {
     setIsModalVisible(false);
   };
 
-  const handleSubmit = (values: Course) => {
+  const handleSubmit = (values: Session) => {
     console.log('Submitted values:', values);
     setIsModalVisible(false);
   };
 
-  const handleRequestApproval = () => {
-    console.log('Gửi yêu cầu duyệt khóa học');
-    message.success('Đã gửi yêu cầu duyệt khóa học lên admin');
-  };
-
   return (
     <>
-      <Button onClick={showModal} style={{ marginRight: '10px' }}>Create Course</Button>
-      <Button onClick={handleRequestApproval} type="primary">Send Request</Button>
+      <Button onClick={showModal} style={{ marginRight: '10px' }}>Create Session</Button>
       
       <Modal
-        title="Tạo khóa học mới"
+        title="Create Session"
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
       >
         <Form onFinish={handleSubmit}>
-          <Form.Item name="courseName" label="Tên khóa học" rules={[{ required: true }]}>
+            <Form.Item name= "sessionName" label="Session Name" rules={[{ required: true}]} >
+                <Input.TextArea/>
+            </Form.Item>
+
+          <Form.Item name="courseName" label="Course Name" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
 
-          <Form.Item name="category" label="Thể loại" rules={[{ required: true }]}>
-            <Select>
-              <Option value="category1">Thể loại 1</Option>
-              <Option value="category2">Thể loại 2</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item name="description" label="Mô tả">
-            <Input.TextArea />
-          </Form.Item>
-
-          <Form.Item name="content" label="Nội dung">
+          <Form.Item name="description" label="Description">
             <Editor
               apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
               init={{
@@ -75,28 +62,9 @@ const ButtonCourse = () => {
             />
           </Form.Item>
 
-          <Form.Item name="image" label="Image">
-            <Upload>
-              <Button>Upload Image</Button>
-            </Upload>
-          </Form.Item>
-
-          <Form.Item name="video" label="Video">
-            <Upload>
-              <Button>Upload Video</Button>
-            </Upload>
-          </Form.Item>
-
-          <Form.Item name="courseType" label="Course Type">
-            <Radio.Group>
-              <Radio value="free">Free</Radio>
-              <Radio value="paid">Paid</Radio>
-            </Radio.Group>
-          </Form.Item>
-
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Create Course
+              Create Session
             </Button>
           </Form.Item>
         </Form>
@@ -105,4 +73,4 @@ const ButtonCourse = () => {
   );
 };
 
-export default ButtonCourse;
+export default ButtonSession;

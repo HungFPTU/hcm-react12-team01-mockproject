@@ -1,36 +1,36 @@
 import { useState, useEffect } from 'react';
 import { Table, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import Sessions from '../../../../../data/Sessions.json';
+import Lessons from '../../../../../data/Lessons.json';
 import Courses from '../../../../../data/Courses.json';
-import { Session } from '../../../../../model/Session';
+import { Lesson } from '../../../../../model/Lesson';
 import { Course } from '../../../../../model/Course';
 
-const TableSession = () => {
+const TableLesson = () => {
   const navigate = useNavigate();
-  const [sessionsData, setSessionsData] = useState<Session[]>([]);
+  const [lessonsData, setLessonsData] = useState<Lesson[]>([]);
   const [searchTerm] = useState<string>("");
 
   useEffect(() => {
     const courses = Courses.courses as Course[];
-    const sessions = Sessions.sessions as unknown as Session[];
+    const lessons = Lessons.lessons as unknown as Lesson[];
 
     // Gắn tên khóa học vào từng session
-    const sessionsWithCourseName = sessions.map(session => ({
-      ...session,
-      courseName: courses.find(course => course.id === session.course_id)?.name || 'Không xác định',
+    const lessonsWithCourseName = lessons.map(lesson => ({
+      ...lesson,
+      courseName: courses.find(course => course.id === lesson.course_id)?.name || 'Không xác định',
     }));
     
-    setSessionsData(sessionsWithCourseName);
+    setLessonsData(lessonsWithCourseName);
   }, []);
 
-  const filteredSessions = sessionsData.filter((session) =>
-    session.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    session.name.toLowerCase().includes(searchTerm.toLowerCase())  
+  const filteredLessons = lessonsData.filter((lesson) =>
+    lesson.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    lesson.name.toLowerCase().includes(searchTerm.toLowerCase())  
   );
 
-  const handleViewDetails = (sessionId: string) => {
-    navigate(`/instructor/manage-course/session/${sessionId}`);
+  const handleViewDetails = (lessonId: string) => {
+    navigate(`/instructor/manage-course/lesson/${lessonId}`);
   };
 
   const columns = [
@@ -46,9 +46,14 @@ const TableSession = () => {
       render: (text: string) => text,
     },
     {
-      title: 'Lesson',
-      dataIndex: 'lesson',
-      key: 'lesson',
+      title: 'Lesson Type',
+      dataIndex: 'lesson_type',
+      key: 'lesson_type',
+    },
+    {
+      title: 'Full Time',
+      dataIndex: 'full_time',
+      key: 'full_time',
       render: (text: string) => text,
     },
     {
@@ -57,9 +62,15 @@ const TableSession = () => {
       key: 'created_at',
     },
     {
+      title: 'Media',
+      dataIndex: 'media',
+      key: 'media',
+      render: (text: string) => text,
+    },
+    {
       title: 'Action',
       key: 'action',
-      render: (_: unknown, record: Session) => (
+      render: (_: unknown, record: Lesson) => (
         <Button type="primary" onClick={() => handleViewDetails(record.id)}>
           View Details
         </Button>
@@ -68,8 +79,8 @@ const TableSession = () => {
   ];
 
   return (
-    <Table<Session>
-      dataSource={filteredSessions}
+    <Table<Lesson>
+      dataSource={filteredLessons}
       columns={columns}
       rowKey="id"
       className="w-full shadow-md rounded-lg overflow-hidden"
@@ -82,4 +93,4 @@ const TableSession = () => {
   );
 };
 
-export default TableSession;
+export default TableLesson;

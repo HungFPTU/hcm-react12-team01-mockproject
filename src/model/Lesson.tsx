@@ -1,4 +1,4 @@
-export type Lession = {
+export type Lesson = {
   id: string;
   name: string;
   course_id: string;

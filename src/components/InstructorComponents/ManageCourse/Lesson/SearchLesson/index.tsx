@@ -3,11 +3,11 @@ import { SearchOutlined } from '@ant-design/icons';
 
 const { Search } = Input;
 
-interface SearchSessionProps {
+interface SearchLessonProps {
   onSearch: (value: string) => void;
 }
 
-const SearchSession = ({ onSearch }: SearchSessionProps): JSX.Element => {
+const SearchLesson = ({ onSearch }: SearchLessonProps): JSX.Element => {
   const handleSearch = (value: string) => {
     onSearch(value);
   };
@@ -26,4 +26,4 @@ const SearchSession = ({ onSearch }: SearchSessionProps): JSX.Element => {
   );
 };
 
-export default SearchSession;
+export default SearchLesson;

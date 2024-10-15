@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Button, Modal, Form, Input, Select, Radio, Upload, message } from 'antd';
+import { Button, Modal, Form, Input, Select, Upload, InputNumber } from 'antd';
 import { Editor } from '@tinymce/tinymce-react';
-import { Course } from '../../../../../model/Course';
+import { Lesson } from '../../../../../model/Lesson';
 
 const { Option } = Select;
 
-const ButtonCourse = () => {
+const ButtonLesson = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = () => {
@@ -16,44 +16,41 @@ const ButtonCourse = () => {
     setIsModalVisible(false);
   };
 
-  const handleSubmit = (values: Course) => {
+  const handleSubmit = (values: Lesson) => {
     console.log('Submitted values:', values);
     setIsModalVisible(false);
   };
 
-  const handleRequestApproval = () => {
-    console.log('Gửi yêu cầu duyệt khóa học');
-    message.success('Đã gửi yêu cầu duyệt khóa học lên admin');
-  };
-
   return (
     <>
-      <Button onClick={showModal} style={{ marginRight: '10px' }}>Create Course</Button>
-      <Button onClick={handleRequestApproval} type="primary">Send Request</Button>
+      <Button onClick={showModal} style={{ marginRight: '10px' }}>Create Lesson</Button>
       
       <Modal
-        title="Tạo khóa học mới"
+        title="Tạo bài học mới"
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
       >
         <Form onFinish={handleSubmit}>
-          <Form.Item name="courseName" label="Tên khóa học" rules={[{ required: true }]}>
+          <Form.Item name="lessonName" label="Tên bài học" rules={[{ required: true }]}>
             <Input />
-          </Form.Item>
+        </Form.Item>
+        <Form.Item name="courseName" label="Tên khóa học" rules={[{ required: true }]}>
+          <Input disabled={true} />
+        </Form.Item>
+        <Form.Item name="session" label="Session" rules={[{ required: true }]}>
+          <Input disabled/>
+        </Form.Item>
 
-          <Form.Item name="category" label="Thể loại" rules={[{ required: true }]}>
+        <Form.Item name="type" label="Loại bài học" rules={[{ required: true }]}>
             <Select>
-              <Option value="category1">Thể loại 1</Option>
-              <Option value="category2">Thể loại 2</Option>
+              <Option value="video">Video</Option>
+              <Option value="text">Text</Option>
+              <Option value="audio">Audio</Option>
             </Select>
           </Form.Item>
 
           <Form.Item name="description" label="Mô tả">
-            <Input.TextArea />
-          </Form.Item>
-
-          <Form.Item name="content" label="Nội dung">
             <Editor
               apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
               init={{
@@ -75,28 +72,22 @@ const ButtonCourse = () => {
             />
           </Form.Item>
 
-          <Form.Item name="image" label="Image">
-            <Upload>
-              <Button>Upload Image</Button>
-            </Upload>
-          </Form.Item>
-
           <Form.Item name="video" label="Video">
             <Upload>
               <Button>Upload Video</Button>
             </Upload>
           </Form.Item>
+          <Form.Item name="fullTime" label="Full Time">
+            <InputNumber/>
+          </Form.Item>
 
-          <Form.Item name="courseType" label="Course Type">
-            <Radio.Group>
-              <Radio value="free">Free</Radio>
-              <Radio value="paid">Paid</Radio>
-            </Radio.Group>
+          <Form.Item name="position" label="Position">
+            <InputNumber/>
           </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Create Course
+              Create Lesson
             </Button>
           </Form.Item>
         </Form>
@@ -105,4 +96,4 @@ const ButtonCourse = () => {
   );
 };
 
-export default ButtonCourse;
+export default ButtonLesson;
