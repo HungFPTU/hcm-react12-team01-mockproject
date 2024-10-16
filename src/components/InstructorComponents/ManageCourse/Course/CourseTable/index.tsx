@@ -16,7 +16,7 @@ const CourseTable = () => {
 
   const handleViewDetails = (courseId: string) => {
     // Navigate to the user detail page
-    navigate(`/instructor/course/${courseId}`);
+    navigate(`/${courseId}`);
   };
 
   const onChangeStatus = (id: string, status: CourseStatusEnum) => {

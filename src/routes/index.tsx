@@ -1,4 +1,3 @@
-
 import ManageCourse from "../pages/InstructorPage/ManageCourse";
 import ViewDetailCourse from "../components/InstructorComponents/ManageCourse/Course/ViewDetailCourse";
 import ViewDetailSession from "../components/InstructorComponents/ManageCourse/Session/ViewDetailSession";
@@ -33,12 +32,10 @@ import PayoutManagement from "../pages/Admin/PayoutManagement";
 import InstructorSub from "../pages/InstructorPage/InstructorSub";
 
 
-
 import All from "../pages/AllCourses";
 const publicRoute: RouteConfig[] = [
   { path: "/", component: Home, layout: DefaultLayout, role: RoleEnum.Guest },
   { path: "/login", component: Login, layout: null, role: RoleEnum.Guest },
-
   { path: "/manage-course", component: ManageCourse, layout: InstructorLayout, role: RoleEnum.Instructor},
   { path: "/:courseId", component: ViewDetailCourse, layout: InstructorLayout, role: RoleEnum.Instructor},
   { path: "/:sessionId", component: ViewDetailSession, layout: InstructorLayout, role: RoleEnum.Instructor},
