@@ -1,4 +1,3 @@
-import React from 'react';
 import Course from '../../../components/InstructorComponents/ManageCourse/Course';
 import Session from '../../../components/InstructorComponents/ManageCourse/Session';
 import Lesson from '../../../components/InstructorComponents/ManageCourse/Lesson';
