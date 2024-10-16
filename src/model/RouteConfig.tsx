@@ -15,5 +15,3 @@ export interface RouteConfig {
   layout?: ComponentType | null;  // Optional layout, can be null or a component
   role: RoleEnum;  // Role associated with the route
 }
-
-

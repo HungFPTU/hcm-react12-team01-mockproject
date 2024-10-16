@@ -1,9 +1,11 @@
 import { Layout } from "antd";
+
 import React,{ ReactNode, useState } from "react";
 
 const Footer = React.lazy(() => import("../../components/Footer"));
 const Header = React.lazy(() => import("../../components/Header"));
 import Sidebar from "../../components/InstructorComponents/Sidebar";
+
 
 const { Content, Sider } = Layout;
 
@@ -23,7 +25,10 @@ export const InstructorLayout = ({ children }: InstructorLayoutProps): JSX.Eleme
           onCollapse={(value) => setCollapsed(value)}
           style={{ position: "fixed", left: 0, top: 66, bottom: 0 }}
         >
+
           <Sidebar />
+
+          
         </Sider>
 
         <Layout

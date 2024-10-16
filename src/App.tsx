@@ -7,7 +7,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Routes>
+        <Routes>  
           {publicRoute.map((route, index) => {
             const Page = route.component;
             const role = route.role;
