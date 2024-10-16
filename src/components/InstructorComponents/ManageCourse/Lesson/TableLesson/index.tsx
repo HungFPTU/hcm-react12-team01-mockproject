@@ -30,7 +30,7 @@ const TableLesson = () => {
   );
 
   const handleViewDetails = (lessonId: string) => {
-    navigate(`/instructor/manage-course/lesson/${lessonId}`);
+    navigate(`/${lessonId}`);
   };
 
   const columns = [

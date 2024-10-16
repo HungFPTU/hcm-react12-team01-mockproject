@@ -30,7 +30,7 @@ const TableSession = () => {
   );
 
   const handleViewDetails = (sessionId: string) => {
-    navigate(`/instructor/manage-course/session/${sessionId}`);
+    navigate(`/${sessionId}`);
   };
 
   const columns = [
