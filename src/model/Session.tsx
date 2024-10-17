@@ -1,4 +1,5 @@
 export type Session = {
+  key: string;
   id: string;
   name: string;
   course_id: string;

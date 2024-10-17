@@ -32,42 +32,50 @@ const ButtonLesson = () => {
         footer={null}
       >
         <Form onFinish={handleSubmit}>
-          <Form.Item name="lessonName" label="Tên bài học" rules={[{ required: true }]}>
-            <Input />
+          <Form.Item name="lessonName" label="Tên bài học" labelCol={{
+            span: 24,
+          }} rules={[{ required: true }]}>
+            <Input.TextArea style={{height: '20px', width: '100%'}}/>
         </Form.Item>
-        <Form.Item name="courseName" label="Tên khóa học" rules={[{ required: true }]}>
-          <Input disabled={true} />
+        <Form.Item name="courseName" label="Tên khóa học" labelCol={{
+            span: 24,
+          }} rules={[{ required: true }]}>
+          <Input.TextArea disabled={true} style={{height: '20px', width: '100%'}}/>
         </Form.Item>
-        <Form.Item name="session" label="Session" rules={[{ required: true }]}>
-          <Input disabled/>
+        <Form.Item name="session" label="Session" labelCol={{
+            span: 24,
+          }} rules={[{ required: true }]}>
+          <Input.TextArea disabled style={{height: '20px', width: '100%'}}/>
         </Form.Item>
 
-        <Form.Item name="type" label="Loại bài học" rules={[{ required: true }]}>
-            <Select>
+        <Form.Item name="type" label="Loại bài học" labelCol={{
+            span: 24,
+          }} rules={[{ required: true }]}>
+            <Select style={{width: '100%'}}>
               <Option value="video">Video</Option>
               <Option value="text">Text</Option>
               <Option value="audio">Audio</Option>
             </Select>
           </Form.Item>
 
-          <Form.Item name="description" label="Mô tả">
+          <Form.Item name="description" label="Mô tả" labelCol={{
+            span: 24,
+          }}>
             <Editor
               apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
               init={{
+                width: '100%',
                 height: 300,
-                menubar: 'favs file edit view insert format tools table help',
-                menu: {
-                  favs: { title: 'My Favorites', items: 'code visualaid | searchreplace | emoticons' }
-                },
                 plugins: [
                   'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
-                  'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
-                  'media', 'table', 'emoticons', 'help'
+                  'searchreplace', 'wordcount', 'visualblocks', 'code', 'fullscreen', 'insertdatetime', 'media',
+                  'table', 'emoticons', 'help'
                 ],
                 toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | ' +
                   'bullist numlist outdent indent | link image | print preview media fullscreen | ' +
                   'forecolor backcolor emoticons | help',
-                content_css: 'css/content.css'
+                menubar: 'file edit view insert format tools table help',
+                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }'
               }}
             />
           </Form.Item>
@@ -77,12 +85,16 @@ const ButtonLesson = () => {
               <Button>Upload Video</Button>
             </Upload>
           </Form.Item>
-          <Form.Item name="fullTime" label="Full Time">
-            <InputNumber/>
+          <Form.Item name="fullTime" label="Full Time" labelCol={{
+            span: 24,
+          }}>
+            <InputNumber style={{width: '100%'}}/>
           </Form.Item>
 
-          <Form.Item name="position" label="Position">
-            <InputNumber/>
+          <Form.Item name="position" label="Position" labelCol={{
+            span: 24,
+          }}>
+            <InputNumber style={{width: '100%'}}/> 
           </Form.Item>
 
           <Form.Item>

@@ -12,7 +12,7 @@ const TableLesson = () => {
   const [searchTerm] = useState<string>("");
 
   useEffect(() => {
-    const courses = Courses.courses as Course[];
+    const courses = Courses.courses as unknown as Course[];
     const lessons = Lessons.lessons as unknown as Lesson[];
 
     // Gắn tên khóa học vào từng session
@@ -30,7 +30,7 @@ const TableLesson = () => {
   );
 
   const handleViewDetails = (lessonId: string) => {
-    navigate(`/instructor/manage-course/lesson/${lessonId}`);
+    navigate(`/${lessonId}`);
   };
 
   const columns = [

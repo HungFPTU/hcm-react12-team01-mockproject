@@ -11,6 +11,7 @@ export interface Course {
   id: string;
   name: string;
   session: string;
+  categoryName: string;
   category_id: string;
   user_id: string;
   description: string;

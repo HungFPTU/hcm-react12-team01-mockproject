@@ -1,17 +1,9 @@
-import { ReactNode } from "react";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import { Layout, Menu } from "antd";
-import { useState } from "react";
-import {
-  AppstoreOutlined,
-  ShoppingCartOutlined,
-  LikeOutlined,
-  SettingOutlined,
-  BookOutlined,
-  DollarOutlined,
-  StarOutlined
-} from "@ant-design/icons";
+import { Layout } from "antd";
+import React,{ ReactNode, useState } from "react";
+
+const Footer = React.lazy(() => import("../../components/Footer"));
+const Header = React.lazy(() => import("../../components/Header"));
+import SidebarComponents from "../../components/InstructorComponents/SidebarCoponent";
 
 const { Content, Sider } = Layout;
 
@@ -21,7 +13,6 @@ interface InstructorLayoutProps {
 
 export const InstructorLayout = ({ children }: InstructorLayoutProps): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Header />
@@ -30,53 +21,24 @@ export const InstructorLayout = ({ children }: InstructorLayoutProps): JSX.Eleme
           collapsible
           collapsed={collapsed}
           onCollapse={(value) => setCollapsed(value)}
-          style={{ position: "fixed", left: 0, top: 66, bottom: 0 }} 
+          style={{ position: "fixed", left: 0, top: 66, bottom: 0 }}
         >
-          <Menu
-            theme="dark"
-            mode="inline"
-            defaultSelectedKeys={["1"]}
-            items={[
-              {
-                key: "1",
-                icon: <AppstoreOutlined />,
-                label: "Dashboard",
-              },
-              {
-                key: "2",
-                icon: <BookOutlined />,
-                label: "Manage Course",
-              },
-              {
-                key: "3",
-                icon: <DollarOutlined />,
-                label: "Payout",
-              },
-              {
-                key: "4",
-                icon: <ShoppingCartOutlined />,
-                label: "Order",
-              },
-              {
-                key: "5",
-                icon: <LikeOutlined />,
-                label: "Subcription",
-              },
-              {
-                key: "6",
-                icon: <StarOutlined />,
-                label: "Review",
-              },
-              {
-                key: "7",
-                icon: <SettingOutlined />,
-                label: "Setting",
-              },
-            ]}
-          />
+          <SidebarComponents />
         </Sider>
-        <Layout style={{ marginLeft: collapsed ? "80px" : "200px", transition: "all 0.2s" }}>
-          <Content style={{ margin: "24px 16px 0", padding: "24px", backgroundColor: "#fff" }}>
+
+        <Layout
+          style={{
+            marginLeft: collapsed ? "80px" : "200px",
+            transition: "all 0.2s",
+          }}
+        >
+          <Content
+            style={{
+              margin: "24px 16px 0",
+              padding: "24px",
+              backgroundColor: "#fff",
+            }}
+          >
             {children}
           </Content>
         </Layout>
