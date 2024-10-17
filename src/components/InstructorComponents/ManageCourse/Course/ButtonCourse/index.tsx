@@ -61,7 +61,7 @@ const ButtonCourse = () => {
                 menubar: 'favs file edit view insert format tools table help',
                 menu: {
                   favs: { title: 'My Favorites', items: 'code visualaid | searchreplace | emoticons' }
-                },
+                },  
                 plugins: [
                   'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
                   'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
