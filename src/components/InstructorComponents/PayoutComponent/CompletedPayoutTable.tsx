@@ -1,44 +1,49 @@
 import React, { useState } from 'react';
-import { Table, Tag, Divider, Radio, Button, } from 'antd';
+import { Table, Tag, Divider, Radio, } from 'antd';
 import type { TableProps } from 'antd';
 // import type { TableProps } from 'antd';
 const { Column } = Table;
 interface DataType {
     key: string;
     payoutNo: string;
-    date: string;
-    payoutAmount: number;
     statuss: string[];
+    date: string;
+    transactionId: string;
+    balanceOrigin: number;
+    balanceInsPaid: number
+    balanceReceived: number;
 }
 
 const data: DataType[] = [
     {
         key: '1',
-        payoutNo: "PAYOUT_0001",
-        date: "12/1/2024 12:01:00AM",
-        payoutAmount: 100,
-        statuss: ['new'],
+        payoutNo: 'PO-123',
+        statuss: ['completed'],
+        date: '2024-10-18',
+        transactionId: 'TX-456',
+        balanceOrigin: 1000,
+        balanceInsPaid: 500,
+        balanceReceived: 500,
     },
     {
         key: '2',
-        payoutNo: "PAYOUT_0002",
-        date: "12/1/2024 12:01:00AM",
-        payoutAmount: 200,
-        statuss: ['inProgress'],
+        payoutNo: 'PO-789',
+        statuss: ['completed'],
+        date: '2024-10-17',
+        transactionId: 'TX-111',
+        balanceOrigin: 2000,
+        balanceInsPaid: 200,
+        balanceReceived: 1800,
     },
     {
         key: '3',
-        payoutNo: "PAYOUT_0003",
-        date: "12/1/2024 12:01:00AM",
-        payoutAmount: 300,
-        statuss: ['rejected'],
-    },
-    {
-        key: '4',
-        payoutNo: "PAYOUT_0004",
-        date: "12/1/2024 12:01:00AM",
-        payoutAmount: 400,
+        payoutNo: 'PO-101',
         statuss: ['completed'],
+        date: '2024-10-16',
+        transactionId: 'TX-222',
+        balanceOrigin: 500,
+        balanceInsPaid: 0,
+        balanceReceived: 0,
     },
 ];
 
@@ -51,7 +56,7 @@ const rowSelection: TableProps<DataType>['rowSelection'] = {
         name: `payout-${record.key}`,
     }),
 };
-const DashboardTable: React.FC = () => {
+const CompletedPayoutTable: React.FC = () => {
     const [selectionType, setSelectionType] = useState<'checkbox' | 'radio'>('checkbox');
     return (
         <>
@@ -64,9 +69,6 @@ const DashboardTable: React.FC = () => {
                 rowSelection={{ type: selectionType, ...rowSelection }}
                 dataSource={data}>
                 <Column title="Payout No" dataIndex="payoutNo" key="payoutNo" />
-                <Column title="Date" dataIndex="date" key="date" />
-                <Column title="Payout Amount" dataIndex="payoutAmount" key="payoutAmount" />
-
                 <Column
                     title="Status"
                     dataIndex="statuss"
@@ -91,20 +93,15 @@ const DashboardTable: React.FC = () => {
                         </>
                     )}
                 />
-                <Column
-                    title="Action"
-                    key="action"
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    render={(_: unknown, _record: DataType) => (
-                        <Button size="middle">
-                            Send request payout
-                        </Button>
-                    )}
-                />
+                <Column title="Create At" dataIndex="date" key="date" />
+                <Column title="Transaction Id" dataIndex="transactionId" key="transactionId" />
+                <Column title="Balance Origin" dataIndex="balanceOrigin" key="balanceOrigin" />
+                <Column title="Balance Instructor Paid" dataIndex="balanceInsPaid" key="balanceInsPaid" />
+                <Column title="Balance Received" dataIndex="balanceReceived" key="balanceReceived" />
             </Table>
         </>
 
     );
 }
 
-export default DashboardTable;
+export default CompletedPayoutTable;
