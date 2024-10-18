@@ -1,20 +1,21 @@
-import { Fragment } from "react";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { DefaultLayout } from "./layout";
-import { publicRoute, studentRoute } from "./routes";
+import { Fragment, Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { publicRoute } from './routes';
+import { DefaultLayout } from './layout';
 
 function App() {
   return (
     <Router>
+      <Suspense fallback='loading'>
+
       <div className="App">
-        <Routes>
-          {[...publicRoute, ...studentRoute].map((route, index) => {
+        <Routes>  
+          {publicRoute.map((route, index) => {
             const Page = route.component;
             const role = route.role;
-            console.log(role);
+            console.log(role)
             // Allow Layout to be any valid component (functional or class) with children
-            let Layout: React.ComponentType<{ children?: React.ReactNode }> =
-              DefaultLayout;
+            let Layout: React.ComponentType<{ children?: React.ReactNode }> = DefaultLayout;
 
             // Check if a layout is specified
             if (route.layout) {
@@ -37,6 +38,8 @@ function App() {
           })}
         </Routes>
       </div>
+      </Suspense>
+      
     </Router>
   );
 }

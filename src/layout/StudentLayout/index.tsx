@@ -1,8 +1,10 @@
-import { ReactNode } from "react";
-import Footer from "../../components/Footer";
-import Header from "../../components/Header";
-import StudentSidebar from "../../components/StudentComponents/StudentSidebar";
+const { Content, Sider } = Layout;
 
+import Footer from "../../components/Footer";
+import HeaderStudent from "../../components/StudentComponents/headerStudent";
+import StudentSidebar from "../../components/StudentComponents/StudentSidebar";
+import { Layout } from "antd";
+import { ReactNode, useState } from "react";
 interface StudentLayoutProps {
   children?: ReactNode; // Make children optional
 }
@@ -10,18 +12,40 @@ interface StudentLayoutProps {
 export const StudentLayout = ({
   children,
 }: StudentLayoutProps): JSX.Element => {
-  return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <StudentSidebar />
+  const [collapsed, setCollapsed] = useState(false);
 
-      {/* Main content with Header and Footer */}
-      <div className="flex-1 flex flex-col">
-        <Header />
-        <div className="flex-1 p-5 bg-gray-100">{children}</div>
-        <Footer />
-      </div>
-    </div>
+  return (
+    <Layout style={{ minHeight: "100vh" }}>
+      <HeaderStudent />
+      <Layout style={{ marginTop: "66px" }}>
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={(value) => setCollapsed(value)}
+          style={{ position: "fixed", left: 0, top: 66, bottom: 0 }}
+        >
+          <StudentSidebar />
+        </Sider>
+
+        <Layout
+          style={{
+            marginLeft: collapsed ? "80px" : "200px",
+            transition: "all 0.2s",
+          }}
+        >
+          <Content
+            style={{
+              margin: "24px 16px 0",
+              padding: "24px",
+              backgroundColor: "#fff",
+            }}
+          >
+            {children}
+          </Content>
+        </Layout>
+      </Layout>
+      <Footer />
+    </Layout>
   );
 };
 
