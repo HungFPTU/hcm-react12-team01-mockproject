@@ -1,0 +1,42 @@
+{
+    "courses": [
+        {
+        "id": "1",
+        "name": "Khóa học lập trình cơ bản",
+        "instructor": "Instructor 1",
+        "session": "1",
+        "category_id": "cat1",
+        "user_id": "user1",
+        "description": "Khóa học lập trình dành cho người mới bắt đầu.",
+        "content": "Giới thiệu về lập trình, ngôn ngữ lập trình cơ bản, thực hành lập trình.",
+        "status": "New",
+        "video_url": "http://example.com/video1.mp4",
+        "image_url": "http://example.com/image1.jpg",
+        "price": 100,
+        "discount": 10,
+        "status_change": "Active",
+        "created_at": "2023-06-01T10:00:00Z",
+        "updated_at": "2024-01-02T00:00:00Z",
+        "is_deleted": false
+    },
+    {
+        "id": "2",
+        "name": "Khóa học thiết kế đồ họa",
+        "instructor": "Instructor 2",
+        "session": "2",
+        "category_id": "cat2",
+        "user_id": "user2",
+        "description": "Khóa học giúp bạn tạo ra những thiết kế đồ họa đẹp mắt.",
+        "content": "Công cụ thiết kế, nguyên tắc thiết kế, thực hành dự án.",
+        "status": "Active",
+        "video_url": "http://example.com/video2.mp4",
+        "image_url": "http://example.com/image2.jpg",
+        "price": 200,
+        "discount": 20,
+        "status_change": "Active",
+        "created_at": "2023-06-01T10:00:00Z",
+        "updated_at": "2024-02-02T00:00:00Z",
+        "is_deleted": false
+    }
+    ]
+}

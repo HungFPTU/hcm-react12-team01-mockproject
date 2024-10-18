@@ -1,0 +1,65 @@
+{
+    "reviews": [
+    {
+        "id": "review_1",
+        "name": "Nguyễn Văn A",
+        "course_id": "course_1",
+        "user_id": "user_1",
+        "comment": "Khóa học rất bổ ích, tôi đã học được nhiều kiến thức mới.",
+        "rating": 5,
+        "current_rating": 5,
+        "created_at": "2024-01-01",
+        "updated_at": "2024-01-02",
+        "is_deleted": false
+    },
+    {
+        "id": "review_2",
+        "name": "Nguyễn Văn B",
+        "course_id": "course_1",
+        "user_id": "user_2",
+        "comment": "Nội dung chưa sâu, mong có thêm nhiều bài tập thực hành.",
+        "rating": 5,
+        "current_rating": 4,
+        "created_at": "2024-01-03",
+        "updated_at": "2024-01-04",
+        "is_deleted": false
+    },
+    {
+        "id": "review_3",
+        "name": "Nguyễn Văn C",
+        "course_id": "course_2",
+        "user_id": "user_3",
+        "comment": "Giảng viên rất nhiệt tình, nhưng phần lý thuyết hơi khô khan.",
+        "rating": 5,
+        "current_rating": 5,
+        "created_at": "2024-01-05",
+        "updated_at": "2024-01-06",
+        "is_deleted": false
+    },
+    {
+        "id": "review_4",
+        "name": "Nguyễn Văn D",
+        "course_id": "course_3",
+        "user_id": "user_4",
+        "comment": "Tôi không hài lòng với chất lượng video.",
+        "rating": 5,
+        "current_rating": 4,
+        "created_at": "2024-01-07",
+        "updated_at": "2024-01-08",
+        "is_deleted": false
+    },
+    {
+        "id": "review_5",
+        "name": "Nguyễn Văn E",
+        "course_id": "course_2",
+        "user_id": "user_5",
+        "comment": "Khóa học rất tốt, tôi đã áp dụng kiến thức vào công việc ngay lập tức!",
+        "rating": 5,
+        "current_rating": 5,
+        "created_at": "2024-01-09",
+        "updated_at": "2024-01-10",
+        "is_deleted": false
+    }
+]
+}
+
