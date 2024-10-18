@@ -41,7 +41,7 @@ function SidebarComponents() {
             label: "Sales History",
           },
           {
-            key: "5",
+            key: "/instructor-payout",
             icon: <DollarOutlined />,
             label: "Payout",
           },
