@@ -1,0 +1,56 @@
+{
+    "carts": [
+    {
+        "id": "cart_1",
+        "cart_no": "CART-001",
+        "status": "new",
+        "price_paid": 0,
+        "price": 600,
+        "discount": 0,
+        "course_id": "course_1",
+        "student_id": "student_1",
+        "created_at": "2024-01-01",
+        "updated_at": "2024-01-01",
+        "is_deleted": false
+    },
+    {
+        "id": "cart_2",
+        "cart_no": "CART-002",
+        "status": "waiting_paid",
+        "price_paid": 200,
+        "price": 250,
+        "discount": 50,
+        "course_id": "course_2",
+        "student_id": "student_2",
+        "created_at": "2024-01-05",
+        "updated_at": "2024-01-06",
+        "is_deleted": false
+    },
+    {
+        "id": "cart_3",
+        "cart_no": "CART-003",
+        "status": "completed",
+        "price_paid": 500,
+        "price": 600,
+        "discount": 100,
+        "course_id": "course_3",
+        "student_id": "student_3",
+        "created_at": "2024-01-10",
+        "updated_at": "2024-01-11",
+        "is_deleted": false
+    },
+    {
+        "id": "cart_4",
+        "cart_no": "CART-004",
+        "status": "cancel",
+        "price_paid": 0,
+        "price": 300,
+        "discount": 0,
+        "course_id": "course_4",
+        "student_id": "student_4",
+        "created_at": "2024-01-12",
+        "updated_at": "2024-01-12",
+        "is_deleted": true
+        }
+    ]
+}

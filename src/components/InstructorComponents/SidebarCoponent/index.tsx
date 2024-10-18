@@ -2,6 +2,10 @@ import {
   AppstoreOutlined,
   NodeExpandOutlined,
   LikeOutlined,
+  BookOutlined,
+  ShoppingCartOutlined,
+  StarOutlined,
+  DollarOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
@@ -22,9 +26,24 @@ function SidebarComponents() {
             label: "Dashboard",
           },
           {
+            key: "/manage-course",
+            icon: <BookOutlined />,
+            label: "Manage Course",
+          },
+          {
             key: "/course-log-instructor",
             icon: <NodeExpandOutlined />,
             label: "Course Log",
+          },
+          {
+            key: "/sales-history",
+            icon: <ShoppingCartOutlined />,
+            label: "Sales History",
+          },
+          {
+            key: "5",
+            icon: <DollarOutlined />,
+            label: "Payout",
           },
           {
             key: "/subcription-instructor",
@@ -32,9 +51,19 @@ function SidebarComponents() {
             label: "Subcription",
           },
           {
-            key: "/pruchase-courses",
+            key: "/review",
+            icon: <StarOutlined />,
+            label: "Review",
+          },
+          {
+            key: "/purchase-courses",
             icon: <SettingOutlined />,
             label: "PurchaseLog",
+          },
+          {
+            key: "9",
+            icon: <SettingOutlined />,
+            label: "Setting",
           },
         ]}
       />

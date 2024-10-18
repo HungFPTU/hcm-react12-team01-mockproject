@@ -1,0 +1,31 @@
+{
+    "payouts": [
+        {
+            "id": "payout_1",
+        "payout_no": "PAYOUT-001",
+        "status": "new",
+        "instructor_id": "instructor_1",
+        "instructor_ratio": 0.8,
+        "balance_origin": 1000,
+        "balance_instructor_paid": 800,
+        "balance_instructor_received": 800,
+        "created_at": "2024-01-01",
+        "updated_at": "2024-01-02",
+        "is_deleted": false
+    },
+    {
+        "id": "payout_2",
+        "payout_no": "PAYOUT-002",
+        "status": "completed",
+        "instructor_id": "instructor_2",
+        "instructor_ratio": 0.75,
+        "balance_origin": 2000,
+        "balance_instructor_paid": 1500,
+        "balance_instructor_received": 1500,
+        "created_at": "2024-01-10",
+        "updated_at": "2024-01-11",
+        "is_deleted": false
+        }
+    ]
+}
+
