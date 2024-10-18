@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Table, Button, Input, Select } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-
-const { Search } = Input;
-const { Option } = Select;
+import { Table } from "antd";
+import SearchBar from "./SearchBar";
+import ActionButtons from "./ActionButtons";
+import AddCategoryButton from "./AddCategoryButton";
 
 // Sample data for categories
 const initialCategories = [
@@ -70,27 +69,17 @@ const CategoryManagement: React.FC = () => {
       title: "Actions",
       key: "actions",
       render: (_: any, record: any) => (
-        <>
-          <Button
-            icon={<EditOutlined />}
-            type="primary"
-            onClick={() => handleEdit(record.key)}
-            style={{ marginRight: 8 }}
-          />
-          <Button
-            icon={<DeleteOutlined />}
-            type="primary"
-            danger
-            onClick={() => handleDelete(record.key)}
-          />
-        </>
+        <ActionButtons
+          recordKey={record.key}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       ),
     },
   ];
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2 style={{ fontSize: 20, color: "green" }}>Category Management</h2>
       <div
         style={{
           display: "flex",
@@ -98,33 +87,19 @@ const CategoryManagement: React.FC = () => {
           marginBottom: "20px",
         }}
       >
-        <div>
-          <Select
-            defaultValue="Sub Category"
-            style={{ width: 150, marginRight: 8 }}
-          >
-            <Option value="Sub Category">Sub Category</Option>
-            <Option value="Parent Category">Parent Category</Option>
-          </Select>
-          <Search
-            placeholder="Search by category name"
-            onSearch={handleSearch}
-            style={{ width: 300 }}
-          />
-        </div>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleAddCategory}
-        >
-          New Category
-        </Button>
+        <SearchBar onSearch={handleSearch} />
+        <AddCategoryButton onAdd={handleAddCategory} />
       </div>
 
       <Table
         columns={columns}
         dataSource={filteredCategories}
-        pagination={{ pageSize: 10 }}
+        pagination={{
+          defaultPageSize: 5,
+          showSizeChanger: true,
+          pageSizeOptions: ["4", "8"],
+          position: ["bottomRight"],
+        }}
       />
     </div>
   );
