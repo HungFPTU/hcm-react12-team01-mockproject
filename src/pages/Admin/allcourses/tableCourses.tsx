@@ -129,17 +129,17 @@ const dataSource: Partial<Course>[] = [
 const columns: ColumnsType<Partial<Course>> = [
   {
     title: "Name",
-    dataIndex: "Name",
+    dataIndex: "name",
     key: "name",
   },
   {
     title: "Category",
-    dataIndex: "CategoryName",
+    dataIndex: "categoryName",
     key: "category",
   },
   {
     title: "Status",
-    dataIndex: "Status",
+    dataIndex: "status",
     key: "status",
     render: (status) => {
       if (status === "Active") {
@@ -153,18 +153,18 @@ const columns: ColumnsType<Partial<Course>> = [
   },
   {
     title: "Price",
-    dataIndex: "Price",
+    dataIndex: "price",
     key: "price",
     render: (price) => `$${price}`,
   },
   {
     title: "Discount (%)",
-    dataIndex: "Discount",
+    dataIndex: "discount",
     key: "discount",
   },
   {
     title: "Created At",
-    dataIndex: "CreatedAt",
+    dataIndex: "created_at",
     key: "createdAt",
   },
 ];
