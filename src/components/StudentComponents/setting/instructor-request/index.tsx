@@ -1,12 +1,16 @@
 import { UploadOutlined } from "@ant-design/icons";
+import { Editor } from "@tinymce/tinymce-react";
 import { Button, DatePicker, Form, Input, Select, Upload } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { AnyObject } from "yup";
+import AvatarUpload from "./avatar/AvatarUpload";
+import VideoUpload from "./video/VideoUpload";
 
 const { Option } = Select;
 
 const InstructorRequestForm: React.FC = () => {
   const [form] = Form.useForm();
+  const [description, setDescription] = useState<string>("");
 
   const onFinish = (values: AnyObject) => {
     console.log("Form values:", values);
@@ -69,6 +73,16 @@ const InstructorRequestForm: React.FC = () => {
       </Form.Item>
 
       <Form.Item
+        name="certificate"
+        label="Upload Certificate"
+        rules={[{ required: true, message: "Please upload your certificate" }]}
+      >
+        <Upload name="certificate" action="/upload" listType="text">
+          <Button icon={<UploadOutlined />}>Click to Upload</Button>
+        </Upload>
+      </Form.Item>
+
+      <Form.Item
         name="resume"
         label="Upload Resume"
         rules={[{ required: true, message: "Please upload your resume" }]}
@@ -77,6 +91,31 @@ const InstructorRequestForm: React.FC = () => {
           <Button icon={<UploadOutlined />}>Click to Upload</Button>
         </Upload>
       </Form.Item>
+
+      <Form.Item
+        name="description"
+        label="Description"
+        rules={[{ required: true, message: "Please enter a description" }]}
+      >
+        <Editor
+          value={description}
+          init={{
+            height: 300,
+            menubar: true,
+            plugins: [
+              "advlist autolink lists link image charmap print preview anchor",
+              "searchreplace visualblocks code fullscreen",
+              "insertdatetime media table paste code help wordcount",
+            ],
+            toolbar:
+              "undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help",
+          }}
+          onEditorChange={(content) => setDescription(content)}
+        />
+      </Form.Item>
+
+      <AvatarUpload />
+      <VideoUpload />
 
       <Form.Item>
         <Button type="primary" htmlType="submit">

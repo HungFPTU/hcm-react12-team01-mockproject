@@ -15,7 +15,6 @@ const SubscriptionTabs: React.FC<SubscriptionTabsProps> = ({
   return (
     <Tabs activeKey={activeTab} onChange={onTabChange}>
       <TabPane tab="Subscribed" key="1" />
-      <TabPane tab="Subscriber" key="2" />
     </Tabs>
   );
 };
