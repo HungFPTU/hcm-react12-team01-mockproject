@@ -37,6 +37,7 @@ const OrderList: React.FC<OrderListProps> = ({
             isSelected={selectedOrders.includes(order.id)}
             onSelectOrder={onSelectOrder}
             onDeleteOrder={onDeleteOrder}
+            variant="waiting"
           />
         ))}
       </div>

@@ -19,7 +19,6 @@ import PendingCourses from "../pages/Admin/PendingCourses";
 import PurchaseLog from "../pages/Admin/purchaselog";
 import Home from "../pages/Home";
 import Login from "../pages/Login/Login";
-import CompletedOrderPage from "../pages/Student/completed";
 import StudentDashboard from "../pages/Student/dashboard";
 import OrderPage from "../pages/Student/order";
 import SettingPage from "../pages/Student/setting";
@@ -35,6 +34,8 @@ import InstructorSub from "../pages/InstructorPage/InstructorSub";
 import All from "../pages/AllCourses";
 import PayoutInstructorPage from "../pages/InstructorPage/PayoutInstructorPage";
 import Unauthorized from "../pages/unauthorize";
+import CartPage from "../pages/Student/cart";
+import CheckoutPage from "../pages/Student/order/checkout";
 const publicRoute: RouteConfig[] = [
   {
     path: "/",
@@ -149,8 +150,14 @@ const publicRoute: RouteConfig[] = [
     role: [RoleEnum.Student],
   },
   {
-    path: "/view-order/completed-orders",
-    component: CompletedOrderPage,
+    path: "/cart",
+    component: CartPage,
+    layout: StudentLayout,
+    role: [RoleEnum.Student],
+  },
+  {
+    path: "/checkout",
+    component: CheckoutPage,
     layout: StudentLayout,
     role: [RoleEnum.Student],
   },
@@ -228,8 +235,6 @@ const publicRoute: RouteConfig[] = [
   },
 ];
 
-const studentRoute: RouteConfig[] = [];
-const adminRoute: RouteConfig[] = [];
 const privateRoute: RouteConfig[] = [];
 
-export { privateRoute, publicRoute, studentRoute, adminRoute };
+export { privateRoute, publicRoute};

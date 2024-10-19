@@ -15,7 +15,7 @@ const SettingTabs: React.FC<SettingTabsProps> = ({
   return (
     <Tabs activeKey={activeTab} onChange={onTabChange}>
       <TabPane tab="Account" key="1" />
-      <TabPane tab="ChangePassword" key="2" />
+      <TabPane tab="Change Password" key="2" />
       <TabPane tab="Send Request Instructors" key="3" />
     </Tabs>
   );
