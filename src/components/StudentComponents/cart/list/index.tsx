@@ -1,5 +1,4 @@
 import { Checkbox, Empty } from "antd";
-import React from "react";
 import CartItem from "../item";
 
 interface CartListProps {
@@ -18,13 +17,13 @@ interface CartListProps {
   onDeleteItem: (id: number) => void;
 }
 
-const CartList: React.FC<CartListProps> = ({
+const CartList = ({
   items,
   selectedItems,
   onSelectItem,
   onSelectAll,
   onDeleteItem,
-}) => {
+}: CartListProps) => {
   return (
     <div>
       <div className="flex items-center mb-4">

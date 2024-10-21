@@ -1,5 +1,4 @@
 import { Tabs } from "antd";
-import React from "react";
 
 const { TabPane } = Tabs;
 
@@ -8,10 +7,10 @@ interface SettingTabsProps {
   onTabChange: (key: string) => void;
 }
 
-const SettingTabs: React.FC<SettingTabsProps> = ({
+const SettingTabs = ({
   activeTab,
   onTabChange,
-}) => {
+}: SettingTabsProps) => {
   return (
     <Tabs activeKey={activeTab} onChange={onTabChange}>
       <TabPane tab="Account" key="1" />

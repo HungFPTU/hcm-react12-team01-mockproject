@@ -4,7 +4,6 @@ import {
   TagOutlined,
 } from "@ant-design/icons";
 import { Button, notification } from "antd";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 interface OrderSummaryProps {
@@ -16,14 +15,14 @@ interface OrderSummaryProps {
   variant?: "waiting" | "checkout";
 }
 
-const OrderSummary: React.FC<OrderSummaryProps> = ({
+const OrderSummary = ({
   subtotal,
   totalDiscount,
   total,
   hasSelectedOrders = false,
   onCheckout,
   variant = "waiting",
-}) => {
+}: OrderSummaryProps) => {
   const navigate = useNavigate();
 
   const handleConfirmPurchase = () => {

@@ -2,7 +2,7 @@ import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Badge, Button, Dropdown, Input, Layout, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import assets from "../../../assets/assets";
-import "./index.css"; // Import your CSS
+import "./index.css";
 
 const { Header } = Layout;
 const { Search } = Input;

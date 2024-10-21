@@ -1,5 +1,4 @@
 import { Tabs } from "antd";
-import React from "react";
 
 const { TabPane } = Tabs;
 
@@ -8,7 +7,7 @@ interface OrderTabsProps {
   onTabChange: (key: string) => void;
 }
 
-const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange }) => {
+const OrderTabs = ({ activeTab, onTabChange }: OrderTabsProps) => {
   return (
     <Tabs activeKey={activeTab} onChange={onTabChange}>
       <TabPane tab="Waiting" key="1" />
