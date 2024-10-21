@@ -1,10 +1,10 @@
 const { Content, Sider } = Layout;
-
-import Footer from "../../components/Footer";
-import HeaderStudent from "../../components/StudentComponents/headerStudent";
-import StudentSidebar from "../../components/StudentComponents/StudentSidebar";
 import { Layout } from "antd";
-import { ReactNode, useState } from "react";
+import React, { ReactNode, useState } from "react";
+
+const Footer = React.lazy(() => import("../../components/Footer"));
+const HeaderStudent = React.lazy(()=> import ('../../components/StudentComponents/headerStudent'));
+const StudentSidebar = React.lazy(()=> import ("../../components/StudentComponents/StudentSidebar"));
 interface StudentLayoutProps {
   children?: ReactNode; // Make children optional
 }

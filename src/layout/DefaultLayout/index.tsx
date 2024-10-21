@@ -1,6 +1,7 @@
+import React from "react";
 import { ReactNode } from "react";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
+const Footer = React.lazy(() => import("../../components/Footer"));
+const Header = React.lazy(() => import("../../components/Header"));
 
 interface DefaultLayoutProps {
   children?: ReactNode;  // Make children optional
