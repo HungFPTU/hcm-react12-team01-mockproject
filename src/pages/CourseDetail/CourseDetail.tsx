@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Button, Row, Col, Collapse } from "antd";
+import { Card, Button, Row, Col, Collapse,Progress } from "antd";
 import {
     ReadOutlined,
     ScheduleOutlined,
@@ -12,7 +12,7 @@ import {
 } from "@ant-design/icons";
 import asset from "../../assets/assets";
 import bannerImage from "../../assets/bgrCourseDetail.jpg";
-
+import { Rate } from 'antd';
 
 const { Panel } = Collapse;
 
@@ -92,6 +92,44 @@ const courses: Course[] = [
         },
     },
 ];
+
+// interface Reviews {
+//     id: string;
+//     course_id: string;
+//     user_id: string;
+//     comment: string;
+//     rating: number;
+//     created_at: string;
+//     updated_at: string;
+//     is_deleted: boolean;
+// }
+
+// const reviews: Reviews[] =[
+//     {
+//         id: "1",
+//         course_id: "101",
+//         user_id: "user_01",
+//         comment: "Khóa học rất bổ ích, giảng viên dạy dễ hiểu.",
+//         rating: 5,
+//         created_at: "2024-10-21T10:00:00Z",
+//         updated_at: "2024-10-21T10:00:00Z",
+//         is_deleted: false
+//     },
+//     {
+//         id: "2",
+//         course_id: "102",
+//         user_id: "user_02",
+//         comment: "Nội dung cần cải thiện, một số bài không rõ ràng.",
+//         rating: 3,
+//         created_at: "2024-10-21T11:00:00Z",
+//         updated_at: "2024-10-21T11:00:00Z",
+//         is_deleted: false
+//     }
+// ]
+
+
+
+
 
 const CourseDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -205,11 +243,14 @@ const CourseDetail: React.FC = () => {
                                     {course.description.dessix}
                                 </p>
                             </div>
-                            <h1 className="text-3xl text-left font-bold pl-12">Course Content</h1>
-                            <div className="courseContent ml-9">
+{/* Course Content */}
+                            <h1 className="text-3xl text-left font-bold pl-12 mt-6">Course Content</h1>
+                            <div className="courseContent ml-9 mt-5 ">
                                 <Collapse
                                         defaultActiveKey={['1']}
                                         onChange={onChange}
+                                        className="bg-white"
+                                        size="large"
                                     >
                                         <Panel header="This is panel header 1" key="1" extra={genExtra()}>
                                             <div>Panel content 1</div>
@@ -222,14 +263,106 @@ const CourseDetail: React.FC = () => {
                                         </Panel>
                                     </Collapse>
                                     <br />
-                                </div>
-                        </Col>
+                            </div>
 
+                            <div className="Reviews ml-9">
+                                <h1 className="text-3xl text-left font-bold pl-12" >Review</h1>
+                                <div className="flex md:flex-row flex-col gap-8 border-b-1 border-neutral-200 pb-20">
+                                    <div className="reviewAll lg:w-[200px] md:w-[200px] xl:w-[200px] w-full">
+                                        <div className="leftReview h-[144px] rounded-[12px] bg-[#ebedf1] flex flex-col items-center justify-center">
+                                            <p className="reviewsNumber md:text-[36px] text-[30px] text-neutral-900 font-bold">5</p>
+                                            <Rate disabled defaultValue={5} />
+                                            <p className="reviews md:text-[16px] text-[14px] text-neutral-800">0 Reviews</p>
+                                        </div>
+                                        <Button className="commentButton rounded-full h-12 w-full flex items-center justify-center mt-4 bg-[#fae368]">
+                                            <span className="comment font-semibold text-[16px]">Comment</span>
+                                        </Button>
+                                    </div>
+
+                                    <div className="proStar w-full flex flex-col justify-between border rounded-xl bg-white">
+                                        <div className="flex items-center gap-4 p-3">
+                                            <p className="text-[20px]">5</p>
+                                            <svg
+                                                    height="24px" 
+                                                    width="24px" 
+                                                    viewBox="0 0 53.867 53.867" 
+                                                    xmlns="http://www.w3.org/2000/svg" 
+                                                    fill="#f2c307"
+                                                >
+                                                    <polygon points="26.934,1.318 35.256,18.182 53.867,20.887 40.4,34.013 43.579,52.549 26.934,43.798 10.288,52.549 13.467,34.013 0,20.887 18.611,18.182" />
+                                            </svg>
+                                             <Progress percent={0} showInfo={false} />
+                                             <p className="md:text-16 text-14 text-[#5979F2]">(0)</p>                                       
+                                        </div>
+                                        <div className="flex items-center gap-4 p-3">
+                                            <p className="text-[20px]">4</p>
+                                            <svg
+                                                    height="24px" 
+                                                    width="24px" 
+                                                    viewBox="0 0 53.867 53.867" 
+                                                    xmlns="http://www.w3.org/2000/svg" 
+                                                    fill="#f2c307"
+                                                >
+                                                    <polygon points="26.934,1.318 35.256,18.182 53.867,20.887 40.4,34.013 43.579,52.549 26.934,43.798 10.288,52.549 13.467,34.013 0,20.887 18.611,18.182" />
+                                            </svg>
+                                             <Progress percent={0} showInfo={false} />
+                                             <p className="md:text-16 text-14 text-[#5979F2]">(0)</p>                                       
+                                        </div>
+                                        <div className="flex items-center gap-4 p-3">
+                                            <p className="text-[20px]">3</p>
+                                            <svg
+                                                    height="24px" 
+                                                    width="24px" 
+                                                    viewBox="0 0 53.867 53.867" 
+                                                    xmlns="http://www.w3.org/2000/svg" 
+                                                    fill="#f2c307"
+                                                >
+                                                    <polygon points="26.934,1.318 35.256,18.182 53.867,20.887 40.4,34.013 43.579,52.549 26.934,43.798 10.288,52.549 13.467,34.013 0,20.887 18.611,18.182" />
+                                            </svg>
+                                             <Progress percent={0} showInfo={false} />
+                                             <p className="md:text-16 text-14 text-[#5979F2]">(0)</p>                                       
+                                        </div>
+                                        <div className="flex items-center gap-4 p-3">
+                                            <p className="text-[20px]">2</p>
+                                            <svg
+                                                    height="24px" 
+                                                    width="24px" 
+                                                    viewBox="0 0 53.867 53.867" 
+                                                    xmlns="http://www.w3.org/2000/svg" 
+                                                    fill="#f2c307"
+                                                >
+                                                    <polygon points="26.934,1.318 35.256,18.182 53.867,20.887 40.4,34.013 43.579,52.549 26.934,43.798 10.288,52.549 13.467,34.013 0,20.887 18.611,18.182" />
+                                            </svg>
+                                             <Progress percent={0} showInfo={false} />
+                                             <p className="md:text-16 text-14 text-[#5979F2]">(0)</p>                                       
+                                        </div>
+                                        <div className="flex items-center gap-4 p-3">
+                                            <p className="text-[20px]">1</p>
+                                            <svg
+                                                    height="24px" 
+                                                    width="24px" 
+                                                    viewBox="0 0 53.867 53.867" 
+                                                    xmlns="http://www.w3.org/2000/svg" 
+                                                    fill="#f2c307"
+                                                >
+                                                    <polygon points="26.934,1.318 35.256,18.182 53.867,20.887 40.4,34.013 43.579,52.549 26.934,43.798 10.288,52.549 13.467,34.013 0,20.887 18.611,18.182" />
+                                            </svg>
+                                             <Progress percent={0} showInfo={false}  />
+                                             <p className="md:text-16 text-14 text-[#5979F2]">(0)</p>                                       
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+ 
+ 
+ 
+ {/* Card */}
                         <Col
                             span={8}
-                            className="absolute top-56 left-3/4 transform -translate-x-1/2 w-full sm:top-44 sm:left-3/4"
+                            className="absolute top-56 left-3/4 transform -translate-x-1/2 w-full sm:top-44 sm:left-3/4 "
                         >
-                            <Card className="max-w-lg mx-auto shadow-lg backdrop-blur-md my-3">
+                            <Card className="max-w-lg mx-auto shadow-lg backdrop-blur-md my-3 sticky">
                                 <img alt={course.title} src={course.image} className="w-full h-auto" />
                                 <p className="text-3xl font-semibold my-2">
                                     {formatPrice(course.discount ? course.discount : course.price)}
