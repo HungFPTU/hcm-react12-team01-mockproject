@@ -3,7 +3,7 @@ import { useState } from "react";
 import SearchComponent from "../../../../components/StudentComponents/search";
 import { subscribedInstructors } from "../../../../components/StudentComponents/subsription/subscribed/SubscribedInstructor";
 
-const SubscriberPage: React.FC = () => {
+const SubscriberPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 

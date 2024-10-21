@@ -1,12 +1,10 @@
 import { Input, Pagination } from "antd";
-import React from "react";
-import { completedOrders } from "../../../components/StudentComponents/completed-order/completedMockData";
-import CompletedList from "../../../components/StudentComponents/completed-order/lists";
-import OrderTabs from "../../../components/StudentComponents/order/tabs";
+import { completedOrders } from "../../../../components/StudentComponents/order/completed-order/completedMockData";
+import CompletedList from "../../../../components/StudentComponents/order/completed-order/lists";
 
 const { Search } = Input;
 
-const CompletedOrderPage: React.FC = () => {
+const CompletedOrderPage = () => {
   const handleSearch = (value: string) => {
     console.log(`Search value: ${value}`);
     // Add search functionality if needed
@@ -19,7 +17,6 @@ const CompletedOrderPage: React.FC = () => {
 
   return (
     <div className="p-8 mt-5">
-      <OrderTabs onTabChange={(key) => console.log(`Tab changed to: ${key}`)} />
       <div className="mb-6">
         <Search
           placeholder="Search by purchase number"

@@ -1,7 +1,7 @@
 const { Content, Sider } = Layout;
 
 import Footer from "../../components/Footer";
-import Header from "../../components/Header";
+import HeaderStudent from "../../components/StudentComponents/headerStudent";
 import StudentSidebar from "../../components/StudentComponents/StudentSidebar";
 import { Layout } from "antd";
 import { ReactNode, useState } from "react";
@@ -16,7 +16,7 @@ export const StudentLayout = ({
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Header />
+      <HeaderStudent />
       <Layout style={{ marginTop: "66px" }}>
         <Sider
           collapsible

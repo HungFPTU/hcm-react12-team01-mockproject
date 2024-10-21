@@ -1,10 +1,10 @@
 import { Pagination } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
 import SearchComponent from "../../../../components/StudentComponents/search";
 import { subscribedInstructors } from "../../../../components/StudentComponents/subsription/subscribed/SubscribedInstructor";
 import SubscribedList from "../../../../components/StudentComponents/subsription/subscribed/list/index";
 
-const SubscribedPage: React.FC = () => {
+const SubscribedPage = () => {
   const [filteredInstructors, setFilteredInstructors] = useState(
     subscribedInstructors
   );
