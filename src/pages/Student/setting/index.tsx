@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import SettingTabs from "../../../components/StudentComponents/setting/tab";
 import ChangePasswordPage from "./change-password";
 import InstructionReuqestPage from "./instructor-request";
 import ProfilePage from "./profile";
 
-const SettingPage: React.FC = () => {
+const SettingPage = () => {
   const [activeTab, setActiveTab] = useState<string>("1");
 
   const handleTabChange = (key: string) => {

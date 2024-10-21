@@ -1,5 +1,5 @@
 import { notification } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CartList from "../../../components/StudentComponents/cart/list";
 import OrderSummary from "../../../components/StudentComponents/order/summary";
@@ -25,7 +25,7 @@ const mockCartItems = [
   },
 ];
 
-const CartPage: React.FC = () => {
+const CartPage = () => {
   const [cartItems, setCartItems] = useState(mockCartItems);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const navigate = useNavigate(); // Initialize the router navigation hook

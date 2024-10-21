@@ -1,8 +1,8 @@
 import { Editor } from "@tinymce/tinymce-react";
 import { Button, DatePicker, Form, Input } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
 
-const ProfileForm: React.FC = () => {
+const ProfileForm = () => {
   const [description, setDescription] = useState<string>("");
 
   const handleSaveChanges = () => {

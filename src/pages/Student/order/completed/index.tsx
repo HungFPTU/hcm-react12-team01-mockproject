@@ -1,11 +1,10 @@
 import { Input, Pagination } from "antd";
-import React from "react";
 import { completedOrders } from "../../../../components/StudentComponents/order/completed-order/completedMockData";
 import CompletedList from "../../../../components/StudentComponents/order/completed-order/lists";
 
 const { Search } = Input;
 
-const CompletedOrderPage: React.FC = () => {
+const CompletedOrderPage = () => {
   const handleSearch = (value: string) => {
     console.log(`Search value: ${value}`);
     // Add search functionality if needed

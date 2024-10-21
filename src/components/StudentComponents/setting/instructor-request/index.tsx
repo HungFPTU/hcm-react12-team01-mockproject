@@ -1,14 +1,14 @@
 import { UploadOutlined } from "@ant-design/icons";
 import { Editor } from "@tinymce/tinymce-react";
 import { Button, DatePicker, Form, Input, Select, Upload } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
 import { AnyObject } from "yup";
 import AvatarUpload from "./avatar/AvatarUpload";
 import VideoUpload from "./video/VideoUpload";
 
 const { Option } = Select;
 
-const InstructorRequestForm: React.FC = () => {
+const InstructorRequestForm = () => {
   const [form] = Form.useForm();
   const [description, setDescription] = useState<string>("");
 

@@ -6,7 +6,7 @@ interface SubscribedListProps {
   instructors: SubscribedInstructor[];
 }
 
-const SubscribedList: React.FC<SubscribedListProps> = ({ instructors }) => {
+const SubscribedList = ({ instructors }: SubscribedListProps) => {
   if (instructors.length === 0) {
     return (
       <Empty
