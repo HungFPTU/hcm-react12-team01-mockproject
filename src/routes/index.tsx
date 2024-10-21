@@ -37,7 +37,7 @@ import Unauthorized from "../pages/unauthorize";
 import CartPage from "../pages/Student/cart";
 import CheckoutPage from "../pages/Student/order/checkout";
 const publicRoute: RouteConfig[] = [
-  {
+  {   
     path: "/",
     component: Home,
     layout: DefaultLayout,
