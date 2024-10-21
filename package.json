@@ -25,6 +25,7 @@
     "react-toastify": "^10.0.5",
     "sass": "^1.79.3",
     "tailwindcss": "^3.4.13",
+    "tinymce": "^5.10.7",
     "yup": "^1.4.0"
   },
   "devDependencies": {

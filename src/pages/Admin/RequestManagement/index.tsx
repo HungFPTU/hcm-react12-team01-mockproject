@@ -1,7 +1,9 @@
+// RequestManagement.tsx
 import React, { useState } from "react";
-import { Table, Avatar, Button, Input } from "antd";
-
-const { Search } = Input;
+import { Table } from "antd";
+import AvatarRenderer from "./AvatarRenderer";
+import ActionsRenderer from "./ActionsRenderer";
+import SearchBar from "./SearchBar";
 
 // Sample data for the request management
 const initialRequests = [
@@ -77,8 +79,7 @@ const RequestManagement: React.FC = () => {
       title: "Avatar",
       dataIndex: "avatar",
       key: "avatar",
-      render: (avatar: string) =>
-        avatar ? <Avatar src={avatar} /> : <Avatar>{avatar || "N"}</Avatar>,
+      render: (avatar: string) => <AvatarRenderer avatar={avatar} />,
     },
     {
       title: "User Name",
@@ -105,41 +106,27 @@ const RequestManagement: React.FC = () => {
       title: "Action",
       key: "action",
       render: (_: any, record: any) => (
-        <>
-          <Button
-            type="primary"
-            onClick={() => handleApprove(record.key)}
-            style={{ marginRight: 8 }}
-          >
-            Approve
-          </Button>
-          <Button
-            type="primary"
-            danger
-            onClick={() => handleReject(record.key)}
-          >
-            Reject
-          </Button>
-        </>
+        <ActionsRenderer
+          key={record.key}
+          onApprove={handleApprove}
+          onReject={handleReject}
+        />
       ),
     },
   ];
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2 style={{ fontSize: 20, color: "green" }}>Request Management</h2>
-      <div style={{ marginBottom: "20px" }}>
-        <Search
-          placeholder="Search by user name or email"
-          onSearch={handleSearch}
-          style={{ width: 300 }}
-        />
-      </div>
-
+      <SearchBar onSearch={handleSearch} />
       <Table
         columns={columns}
         dataSource={filteredRequests}
-        pagination={{ pageSize: 10 }}
+        pagination={{
+          defaultPageSize: 5,
+          showSizeChanger: true,
+          pageSizeOptions: ["4", "8"],
+          position: ["bottomRight"],
+        }}
       />
     </div>
   );

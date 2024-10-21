@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Space, Table, Tag, Divider, Radio, } from 'antd';
+import { Table, Tag, Divider, Radio, Button, } from 'antd';
 import type { TableProps } from 'antd';
 // import type { TableProps } from 'antd';
 const { Column } = Table;
@@ -96,9 +96,9 @@ const DashboardTable: React.FC = () => {
                     key="action"
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     render={(_: unknown, _record: DataType) => (
-                        <Space size="middle">
-                            <a>Send request payout</a>
-                        </Space>
+                        <Button size="middle">
+                            Send request payout
+                        </Button>
                     )}
                 />
             </Table>

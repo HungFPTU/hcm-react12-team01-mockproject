@@ -1,7 +1,6 @@
-import React from "react";
 import SettingProfile from "../../../../components/StudentComponents/setting/profile";
 
-const ProfilePage: React.FC = () => {
+const ProfilePage = () => {
   return (
     <div className="p-8">
       <h2 className="text-2xl font-bold mb-2">Basic Profile</h2>

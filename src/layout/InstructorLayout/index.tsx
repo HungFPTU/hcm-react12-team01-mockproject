@@ -1,8 +1,8 @@
 import { Layout } from "antd";
-import { ReactNode, useState } from "react";
+import React,{ ReactNode, useState } from "react";
 
-import Footer from "../../components/Footer";
-import Header from "../../components/Header";
+const Footer = React.lazy(() => import("../../components/Footer"));
+const Header = React.lazy(() => import("../../components/Header"));
 import SidebarComponents from "../../components/InstructorComponents/SidebarCoponent";
 
 const { Content, Sider } = Layout;
