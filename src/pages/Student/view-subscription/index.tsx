@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import SubscriptionTabs from "../../../components/StudentComponents/subsription/tabs";
 import SubscribedPage from "./subscribed";
 import SubscriberPage from "./subscriber";
 
-const SubscriptionPage: React.FC = () => {
+const SubscriptionPage  = () => {
   const [activeTab, setActiveTab] = useState<string>("1");
 
   const handleTabChange = (key: string) => {

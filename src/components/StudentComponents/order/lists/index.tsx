@@ -1,5 +1,4 @@
 import { Checkbox } from "antd";
-import React from "react";
 import OrderItem from "../item";
 import { Order } from "../mockData";
 
@@ -12,14 +11,14 @@ interface OrderListProps {
   allSelected: boolean;
 }
 
-const OrderList: React.FC<OrderListProps> = ({
+const OrderList = ({
   orders,
   selectedOrders,
   onSelectOrder,
   onDeleteOrder,
   onSelectAll,
   allSelected,
-}) => {
+}: OrderListProps) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
@@ -37,6 +36,7 @@ const OrderList: React.FC<OrderListProps> = ({
             isSelected={selectedOrders.includes(order.id)}
             onSelectOrder={onSelectOrder}
             onDeleteOrder={onDeleteOrder}
+            variant="waiting"
           />
         ))}
       </div>
