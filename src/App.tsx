@@ -1,4 +1,4 @@
-import { Fragment, Suspense } from 'react';
+import { Fragment, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { publicRoute } from './routes';
 import { DefaultLayout } from './layout';
@@ -16,7 +16,10 @@ function App() {
         <div className="App">
           <Routes>
             {publicRoute.map((route, index) => {
-              const Page = route.component;
+              // const Unauthorized = lazy(() => import('./pages/Unauthorized'));
+              const importLink = route.importURL
+              const Page = lazy(() => import(importLink));
+              // const Page = route.importURL;
               const roles = route.role;
               let Layout: React.ComponentType<{ children?: React.ReactNode }> = DefaultLayout;
 
