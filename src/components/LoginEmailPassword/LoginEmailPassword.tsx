@@ -57,7 +57,7 @@ const LoginEmailPassword = () => {
     >
       {({ handleChange, handleBlur, values }) => (
         <Form className='w-full flex flex-col' noValidate>
-          <div className="relative mb-1">
+          <div className="relative mb-2">
             <Field
               as={Input}
               name="email"
@@ -90,7 +90,7 @@ const LoginEmailPassword = () => {
           <div className='w-full flex flex-col my-4'>
             <Button 
               type="primary" 
-              className='w-full my-2 font-semibold bg-[#2563EB]' 
+              className='w-full my-2 font-semibold bg-[#a928c3]' 
               htmlType="submit"
               loading={loading}
             >
