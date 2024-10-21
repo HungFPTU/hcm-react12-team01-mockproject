@@ -1,7 +1,7 @@
 import React from "react";
 import { Tabs } from "antd";
-import PayoutTable from "./PayoutTable";
 import SearchInput from "./SearchInput";
+import PayoutTable from "./PayoutTable";
 
 const { TabPane } = Tabs;
 
