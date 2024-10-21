@@ -1,6 +1,4 @@
 import { Tabs } from "antd";
-import React from "react";
-
 const { TabPane } = Tabs;
 
 interface SubscriptionTabsProps {
