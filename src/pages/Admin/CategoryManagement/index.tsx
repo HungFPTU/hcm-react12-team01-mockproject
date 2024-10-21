@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Table } from "antd";
-import SearchBar from "./SearchBar";
-import ActionButtons from "./ActionButtons";
-import AddCategoryButton from "./AddCategoryButton";
+import SearchBar from "../../../components/AdminComponents/CategoryManagement/SearchBar";
+import ActionButtons from "../../../components/AdminComponents/CategoryManagement/ActionButtons";
+import AddCategoryButton from "../../../components/AdminComponents/CategoryManagement/AddCategoryButton";
 
 // Sample data for categories
 const initialCategories = [

@@ -30,7 +30,6 @@ import UserManagement from "../pages/Admin/UserManagement";
 import PayoutManagement from "../pages/Admin/PayoutManagement";
 import InstructorSub from "../pages/InstructorPage/InstructorSub";
 
-
 import All from "../pages/AllCourses";
 import PayoutInstructorPage from "../pages/InstructorPage/PayoutInstructorPage";
 import Unauthorized from "../pages/unauthorize";
@@ -41,100 +40,85 @@ const publicRoute: RouteConfig[] = [
     path: "/",
     component: Home,
     layout: DefaultLayout,
-    role: [RoleEnum.Guest]
-
+    role: [RoleEnum.Guest],
   },
   {
     path: "/login",
     component: Login,
     layout: null,
-    role: [RoleEnum.Guest]
-
-
+    role: [RoleEnum.Guest],
   },
   {
     path: "/manage-course",
     component: ManageCourse,
     layout: InstructorLayout,
-    role: [RoleEnum.Instructor]
+    role: [RoleEnum.Instructor],
   },
   {
     path: "/instructor-payout",
     component: PayoutInstructorPage,
     layout: InstructorLayout,
-    role: [RoleEnum.Instructor]
-
+    role: [RoleEnum.Instructor],
   },
   {
     path: "/:courseId",
     component: ViewDetailCourse,
     layout: InstructorLayout,
-    role: [RoleEnum.Instructor]
-
+    role: [RoleEnum.Instructor],
   },
   {
     path: "/:sessionId",
     component: ViewDetailSession,
     layout: InstructorLayout,
-    role: [RoleEnum.Instructor]
-
+    role: [RoleEnum.Instructor],
   },
   {
     path: "/:lessonId",
     component: ViewDetailLesson,
     layout: InstructorLayout,
-    role: [RoleEnum.Instructor]
-
+    role: [RoleEnum.Instructor],
   },
   {
     path: "/sales-history",
     component: SalesHistory,
     layout: InstructorLayout,
-    role: [RoleEnum.Instructor]
-
+    role: [RoleEnum.Instructor],
   },
   {
     path: "/review",
     component: Review,
     layout: InstructorLayout,
-    role: [RoleEnum.Instructor]
-
+    role: [RoleEnum.Instructor],
   },
   {
     path: "/purchase-courses",
     component: PurchaseLog,
     layout: InstructorLayout,
-    role: [RoleEnum.Instructor]
-
+    role: [RoleEnum.Instructor],
   },
   {
     path: "/instructor",
     component: InstructorDashboard,
     layout: InstructorLayout,
-    role: [RoleEnum.Instructor]
-
+    role: [RoleEnum.Instructor],
   },
   {
     path: "/course-log-instructor",
     component: InstructorCourseLog,
     layout: InstructorLayout,
-    role: [RoleEnum.Instructor]
-
+    role: [RoleEnum.Instructor],
   },
   {
     path: "/all",
     component: All,
     layout: DefaultLayout,
-    role: [RoleEnum.Guest]
-
+    role: [RoleEnum.Guest],
   },
   {
     path: "/subcription-instructor",
     component: InstructorSub,
     layout: InstructorLayout,
-    role: [RoleEnum.Instructor]
-
-
+    role: [RoleEnum.Instructor],
   },
   {
     path: "/student",
@@ -237,4 +221,4 @@ const publicRoute: RouteConfig[] = [
 
 const privateRoute: RouteConfig[] = [];
 
-export { privateRoute, publicRoute};
+export { privateRoute, publicRoute };
