@@ -1,18 +1,15 @@
 import { Layout } from "antd";
-import React,{ ReactNode, useState } from "react";
-
-const Footer = React.lazy(() => import("../../components/Footer"));
-const Header = React.lazy(() => import("../../components/Header"));
+import { useState } from "react";
+import { Outlet } from 'react-router-dom'; // Import Outlet
 import SidebarComponents from "../../components/AdminComponents/SidebarCoponent";
+import Footer from "../../components/Footer";
+import Header from "../../components/Header";
 
 const { Content, Sider } = Layout;
 
-interface AdminLayoutProps {
-  children?: ReactNode;
-}
-
-export const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
+export const AdminLayout = (): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Header />
@@ -39,7 +36,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps): JSX.Element => {
               backgroundColor: "#fff",
             }}
           >
-            {children}
+            <Outlet /> {/* Render the nested route content */}
           </Content>
         </Layout>
       </Layout>

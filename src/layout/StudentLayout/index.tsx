@@ -1,19 +1,15 @@
 const { Content, Sider } = Layout;
 import { Layout } from "antd";
-import React, { ReactNode, useState } from "react";
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
 
 const Footer = React.lazy(() => import("../../components/Footer"));
-const HeaderStudent = React.lazy(()=> import ('../../components/StudentComponents/headerStudent'));
-const StudentSidebar = React.lazy(()=> import ("../../components/StudentComponents/StudentSidebar"));
-interface StudentLayoutProps {
-  children?: ReactNode; // Make children optional
-}
+const HeaderStudent = React.lazy(() => import('../../components/StudentComponents/headerStudent'));
+const StudentSidebar = React.lazy(() => import("../../components/StudentComponents/StudentSidebar"));
 
-export const StudentLayout = ({
-  children,
-}: StudentLayoutProps): JSX.Element => {
+
+export const StudentLayout = (): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <HeaderStudent />
@@ -40,7 +36,8 @@ export const StudentLayout = ({
               backgroundColor: "#fff",
             }}
           >
-            {children}
+            <Outlet />
+
           </Content>
         </Layout>
       </Layout>
