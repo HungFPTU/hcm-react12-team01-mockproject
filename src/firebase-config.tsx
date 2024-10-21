@@ -9,14 +9,13 @@ import {
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAEpURzr4TIMLSvQIPiplRY0y8Co3AsDZ4",
-  authDomain: "course-flearning.firebaseapp.com",
-  projectId: "course-flearning",
-  storageBucket: "course-flearning.appspot.com",
-  messagingSenderId: "874647449745",
-  appId: "1:874647449745:web:e1607414ee9dc4680b4f30"
+  apiKey: "AIzaSyDlB2XJtTy6zNhWdgIeUOo_6C6dI-DQ0WY",
+  authDomain: "course-online-caa38.firebaseapp.com",
+  projectId: "course-online-caa38",
+  storageBucket: "course-online-caa38.appspot.com",
+  messagingSenderId: "517392375363",
+  appId: "1:517392375363:web:f7e0faf0bcf1c7b3a73ef6"
 };
-
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app); 
