@@ -1,4 +1,4 @@
-import { Card, Button, Rate, Tooltip, Col, Row,Tag } from "antd";
+import { Card, Button, Rate, Tooltip, Col, Row, Tag } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import React from "react";
 import asset from "../../assets/assets";
@@ -8,8 +8,8 @@ import { Link } from "react-router-dom";
 
 import { Carousel } from "antd";
 import assets from "../../assets/assets"
-import { useNavigate  } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import { RoleEnum } from "../../model/RouteConfig";
 interface Course {
   id: number;
   title: string;
@@ -43,7 +43,7 @@ const courses: Course[] = [
     rating: 4,
     session_count: 15,
     lession_count: 30,
-    fulltime: 90, 
+    fulltime: 90,
   },
   {
     id: 2,
@@ -53,7 +53,7 @@ const courses: Course[] = [
     rating: 5,
     session_count: 10,
     lession_count: 20,
-    fulltime: 60, 
+    fulltime: 60,
   },
   {
     id: 3,
@@ -64,7 +64,7 @@ const courses: Course[] = [
     discount: 199000,
     session_count: 12,
     lession_count: 25,
-    fulltime: 120, 
+    fulltime: 120,
   },
   {
     id: 4,
@@ -128,6 +128,7 @@ const user: User[] = [
 
 const Home: React.FC = () => {
   const formatPrice = (price: number) => {
+    localStorage.setItem('userRole', RoleEnum.Instructor);
     return price.toLocaleString("vi-VN") + "₫"; // Format for Vietnamese dong (₫)
   };
 
@@ -143,14 +144,14 @@ const Home: React.FC = () => {
     objectFit: 'cover',
     borderRadius: "30px",
   };
-  
+
   const carouselContainer: React.CSSProperties = {
-    width: '85%', 
+    width: '85%',
     margin: '18px auto',
     marginTop: '100px',
   };
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const goToAllCourses = () => {
     navigate('/all'); // Redirects to the "all courses" page
@@ -158,12 +159,12 @@ const Home: React.FC = () => {
   return (
     <div className="main mt-7 px-5">
       <div style={carouselContainer}>
-      <Carousel arrows infinite={false} autoplay>
-        <div>
-          <img style={imgStyle} src={assets.petfood} alt="Pet Food" />
-        </div>
-      </Carousel>
-    </div>
+        <Carousel arrows infinite={false} autoplay>
+          <div>
+            <img style={imgStyle} src={assets.petfood} alt="Pet Food" />
+          </div>
+        </Carousel>
+      </div>
       <h1 className="text-center text-3xl mb-6 font-bold mt-14">All Courses</h1>
       <div className="categories mb-5 ">
         {categories.map((category: Categories) => (
@@ -176,16 +177,16 @@ const Home: React.FC = () => {
           </Tag>
         ))}
       </div>
-      
+
       <Row gutter={[16, 16]}>
         {courses.map((course: Course) => (
           <Col
             key={course.id}
             span={24}
-            xs={24} 
-            sm={12} 
-            md={8} 
-            lg={6} 
+            xs={24}
+            sm={12}
+            md={8}
+            lg={6}
           >
             <Link to={`/course/${course.id}`}> 
               <Card
@@ -255,13 +256,13 @@ const Home: React.FC = () => {
           </Col>
         ))}
       </Row>
-      
+
       <div className="flex justify-end mt-6">
         <Button type="default" icon={<ArrowRightOutlined />} onClick={goToAllCourses}>
           See all
         </Button>
       </div>
-        
+
       <div className="instructor">
         <h1 className="text-center text-3xl mb-6 font-bold">Instructor</h1>
         <Row gutter={[16, 16]}>
@@ -269,9 +270,9 @@ const Home: React.FC = () => {
             <Col
               key={user.id}
               span={24}
-              xs={24} 
-              sm={12} 
-              md={8} 
+              xs={24}
+              sm={12}
+              md={8}
               lg={6}
             >
               <Card
@@ -289,10 +290,10 @@ const Home: React.FC = () => {
                     src={user.avatar}
                     className="course-image w-full h-[200px] object-cover rounded-full"
                     style={{
-                      width: "150px", 
+                      width: "150px",
                       height: "150px",
-                      borderRadius: "50%", 
-                      margin: "10px auto", 
+                      borderRadius: "50%",
+                      margin: "10px auto",
                       objectFit: "cover",
                     }}
                   />
@@ -300,22 +301,22 @@ const Home: React.FC = () => {
               >
                 <div
                   className="text-lg font-semibold mb-2 truncate"
-                  style={{ maxWidth: "250px", textAlign: "center" }} 
+                  style={{ maxWidth: "250px", textAlign: "center" }}
                 >
                   {user.name}
                 </div>
-                <div 
+                <div
                   className="text-lg font-semibold mb-2 truncate"
-                  style={{ maxWidth: "250px", textAlign: "center" }} 
+                  style={{ maxWidth: "250px", textAlign: "center" }}
                 >
                   {user.description}
                 </div>
               </Card>
             </Col>
           ))}
-        </Row> 
+        </Row>
 
-      </div> 
+      </div>
 
     </div>
   );
