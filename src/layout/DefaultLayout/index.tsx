@@ -8,9 +8,10 @@ interface DefaultLayoutProps {
 
 export const DefaultLayout = ({ children }: DefaultLayoutProps): JSX.Element => {
   return (
-    <div>
+    <div className="bg-gradient-to-br from-[#e673d4] to-[#ff8a55]">
+      
       <Header />
-      <div className="content flex justify-center">{children}</div>
+      <div className="content">{children}</div>
       <Footer />
     </div>
   );
