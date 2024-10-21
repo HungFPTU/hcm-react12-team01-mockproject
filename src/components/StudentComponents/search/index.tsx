@@ -1,5 +1,4 @@
 import { Input } from "antd";
-import React from "react";
 import "./index.css";
 
 const { Search } = Input;
@@ -9,10 +8,10 @@ interface SearchComponentProps {
   onSearch: (value: string) => void;
 }
 
-const SearchComponent: React.FC<SearchComponentProps> = ({
+const SearchComponent = ({
   placeholder,
   onSearch,
-}) => {
+}: SearchComponentProps) => {
   return (
     <Search
       placeholder={placeholder}

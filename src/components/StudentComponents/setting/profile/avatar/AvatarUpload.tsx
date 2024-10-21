@@ -1,9 +1,9 @@
 import { DeleteOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Modal, Upload } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
 import { AnyObject } from "yup";
 
-const AvatarUpload: React.FC = () => {
+const AvatarUpload = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 

@@ -5,10 +5,9 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const StudentSidebar: React.FC = () => {
+const StudentSidebar = () => {
   const navigate = useNavigate();
   return (
 

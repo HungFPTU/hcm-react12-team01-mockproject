@@ -1,11 +1,11 @@
 import { Empty, Modal, notification } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OrderList from "../../../../components/StudentComponents/order/lists";
 import { orders as mockOrders } from "../../../../components/StudentComponents/order/mockData";
 import OrderSummary from "../../../../components/StudentComponents/order/summary";
 
-const WaitingPage: React.FC = () => {
+const WaitingPage= () => {
   const [selectedOrders, setSelectedOrders] = useState<number[]>([]);
   const [orders, setOrders] = useState(mockOrders);
   const navigate = useNavigate();
