@@ -5,8 +5,6 @@ import { DefaultLayout } from './layout';
 import { RoleEnum } from './model/RouteConfig';
 import Unauthorized from './pages/unauthorize';
 
-// const Unauthorized = lazy(() => import('./pages/Unauthorized')); // Lazy load the Unauthorized page
-
 function App() {
   const userRole = localStorage.getItem('userRole') as RoleEnum | null; // Type assertion for clarity
 
@@ -18,7 +16,9 @@ function App() {
             {publicRoute.map((route, index) => {
               // const Unauthorized = lazy(() => import('./pages/Unauthorized'));
               const importLink = route.importURL
-              const Page = lazy(() => import(importLink));
+              // console.log('asdsadasdiughsdaidsa>>>>>>>>>>', importLink)
+              // const Page = lazy(() => import(importLink));
+              const Page = lazy(() => import(/* @vite-ignore */ importLink));
               // const Page = route.importURL;
               const roles = route.role;
               let Layout: React.ComponentType<{ children?: React.ReactNode }> = DefaultLayout;
