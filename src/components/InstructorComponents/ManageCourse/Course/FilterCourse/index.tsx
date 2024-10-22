@@ -11,13 +11,15 @@ const CourseStatusSelect = ({ onChange }: { onChange: (status: CourseStatusEnum)
   };
 
   return (
-    <select value={selectedStatus} onChange={handleChange}>
-      {Object.values(CourseStatusEnum).map((status) => (
-        <option key={status} value={status}>
-          {status}
-        </option>
-      ))}
-    </select>
+    <div>
+      <select value={selectedStatus} onChange={handleChange} style={{ width: '30%', padding: '8px', fontSize: '16px' }}>
+        {Object.values(CourseStatusEnum).map((status) => (
+          <option key={status} value={status}>
+            {status}
+          </option>
+        ))}
+      </select>
+  </div>
   );
 };
 
