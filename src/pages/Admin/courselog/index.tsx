@@ -1,3 +1,4 @@
+import  { CSSProperties } from "react";
 import { Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useState } from "react";
@@ -72,18 +73,61 @@ function CourseLogTable() {
       title: "Old Status",
       dataIndex: "oldStatus",
       key: "oldStatus",
+      render: (status) => {
+        const style: CSSProperties = {
+          width: 150,
+          display: "inline-block",
+          textAlign: "center",
+        };
+        if (status === "ACTIVE") {
+          return (
+            <span style={style}>
+              <Tag color="green">{status}</Tag>
+            </span>
+          );
+        } else if (status === "WAITING_APPROVE") {
+          return (
+            <span style={style}>
+              <Tag color="gold">{status}</Tag>
+            </span>
+          );
+        } else {
+          return (
+            <span style={style}>
+              <Tag color="red">{status}</Tag>
+            </span>
+          );
+        }
+      },
     },
     {
       title: "New Status",
       dataIndex: "newStatus",
       key: "newStatus",
       render: (status) => {
+        const style: CSSProperties = {
+          width: 150,
+          display: "inline-block",
+          textAlign: "center",
+        };
         if (status === "ACTIVE") {
-          return <Tag color="green">{status}</Tag>;
-        } else if (status == "WAITING_APPROVE") {
-          return <Tag color="gold">{status}</Tag>;
+          return (
+            <span style={style}>
+              <Tag color="green">{status}</Tag>
+            </span>
+          );
+        } else if (status === "WAITING_APPROVE") {
+          return (
+            <span style={style}>
+              <Tag color="gold">{status}</Tag>
+            </span>
+          );
         } else {
-          return <Tag color="red">{status}</Tag>;
+          return (
+            <span style={style}>
+              <Tag color="red">{status}</Tag>
+            </span>
+          );
         }
       },
     },

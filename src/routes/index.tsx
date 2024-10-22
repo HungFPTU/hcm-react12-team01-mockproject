@@ -225,7 +225,7 @@ const publicRoute: RouteConfig[] = [
     path: "/pruchase-courses",
     component: PurchaseLog,
     layout: AdminLayout,
-    role: [RoleEnum.Admin],
+    role: [RoleEnum.Guest],
   },
   {
     path: "/unauthorized",

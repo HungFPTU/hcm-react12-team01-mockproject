@@ -9,15 +9,26 @@ import {
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { useNavigate } from "react-router-dom";
-function SidebarComponents() {
+interface SidebarComponentsProps {
+  setLoading: (loading: boolean) => void; // Accept the setLoading prop
+}
+
+const SidebarComponents = ({ setLoading }: SidebarComponentsProps) => {
   const navigate = useNavigate();
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+    setLoading(true); // Start loading
+    navigate(key); // Navigate to the selected route
+    setTimeout(() => setLoading(false), 5000); // Simulate loading completion
+  };
+
   return (
     <>
       <Menu
         theme="dark"
         mode="inline"
         defaultSelectedKeys={["1"]}
-        onClick={({ key }) => navigate(key)}
+        onClick={handleMenuClick}
         items={[
           {
             key: "/daskboard-admin",
@@ -44,7 +55,7 @@ function SidebarComponents() {
             icon: <FileTextOutlined />,
             label: "Payout Management",
           },
-          {          
+          {
             key: "/admin",
             icon: <AppstoreOutlined />,
             label: "All Courses",
@@ -68,6 +79,6 @@ function SidebarComponents() {
       />
     </>
   );
-}
+};
 
 export default SidebarComponents;
