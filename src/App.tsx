@@ -30,7 +30,6 @@ const UserManagement = lazy(
 const PayoutManagement = lazy(
   () => import("./pages/Admin/PayoutManagement"),
 );
-
 const InstructorDashboard = lazy(
   () => import("./pages/InstructorPage/InstructorDashboard"),
 );
