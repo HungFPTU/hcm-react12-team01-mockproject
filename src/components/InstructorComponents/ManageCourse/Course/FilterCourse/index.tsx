@@ -12,7 +12,7 @@ const CourseStatusSelect = ({ onChange }: { onChange: (status: CourseStatusEnum)
 
   return (
     <div>
-      <select value={selectedStatus} onChange={handleChange} style={{ width: '30%', padding: '8px', fontSize: '16px' }}>
+      <select value={selectedStatus} onChange={handleChange} style={{ width: '15%', padding: '8px', fontSize: '16px' }}>
         {Object.values(CourseStatusEnum).map((status) => (
           <option key={status} value={status}>
             {status}
