@@ -1,8 +1,7 @@
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, Form, Upload } from "antd";
-import React from "react";
 
-const VideoUpload: React.FC = () => {
+const VideoUpload = () => {
   return (
     <Form.Item name="video" label="Upload Video">
       <Upload name="video" action="/upload" listType="text">

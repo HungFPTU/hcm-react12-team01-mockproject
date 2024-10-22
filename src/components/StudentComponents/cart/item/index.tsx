@@ -16,12 +16,7 @@ interface CartItemProps {
   onDeleteItem: (id: number) => void;
 }
 
-const CartItem: React.FC<CartItemProps> = ({
-  item,
-  isSelected,
-  onSelectItem,
-  onDeleteItem,
-}) => {
+const CartItem = ({ item, isSelected, onSelectItem, onDeleteItem }: CartItemProps) => {
   return (
     <Card className="my-cart-item shadow-md">
       <div className="flex items-center space-x-4">

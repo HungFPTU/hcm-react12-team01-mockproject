@@ -1,6 +1,5 @@
 import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Button, Card } from "antd";
-import React from "react";
 
 interface SubscriptionItemProps {
   name: string;
@@ -10,13 +9,13 @@ interface SubscriptionItemProps {
   onUnsubscribe: () => void;
 }
 
-const SubscribedItem: React.FC<SubscriptionItemProps> = ({
+const SubscribedItem = ({
   name,
   phone,
   email,
   avatarUrl,
   onUnsubscribe,
-}) => {
+}: SubscriptionItemProps) => {
   return (
     <Card
       className="shadow-md hover:shadow-lg transition-transform"

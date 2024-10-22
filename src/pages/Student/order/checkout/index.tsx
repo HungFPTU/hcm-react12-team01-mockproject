@@ -3,7 +3,7 @@ import OrderItem from "../../../../components/StudentComponents/order/item";
 import { Order } from "../../../../components/StudentComponents/order/mockData";
 import OrderSummary from "../../../../components/StudentComponents/order/summary";
 
-const CheckoutPage: React.FC = () => {
+const CheckoutPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
