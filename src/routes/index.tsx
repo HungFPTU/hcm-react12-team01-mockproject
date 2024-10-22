@@ -29,7 +29,7 @@ import RequestManagement from "../pages/Admin/RequestManagement";
 import UserManagement from "../pages/Admin/UserManagement";
 import PayoutManagement from "../pages/Admin/PayoutManagement";
 import InstructorSub from "../pages/InstructorPage/InstructorSub";
-
+import CourseDetail from "../pages/CourseDetail/CourseDetail"
 
 import All from "../pages/AllCourses";
 import PayoutInstructorPage from "../pages/InstructorPage/PayoutInstructorPage";
@@ -233,6 +233,12 @@ const publicRoute: RouteConfig[] = [
     layout: null,
     role: [RoleEnum.Guest],
   },
+  {
+    path: "course/:id",
+    component: CourseDetail,
+    layout: DefaultLayout,
+    role: [RoleEnum.Guest],
+  }
 ];
 
 const privateRoute: RouteConfig[] = [];
