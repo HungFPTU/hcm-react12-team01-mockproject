@@ -26,39 +26,39 @@ function SidebarComponents() {
             label: "Dashboard",
           },
           {
-            key: "/manage-course",
+            key: "/instructor/manage-course",
             icon: <BookOutlined />,
             label: "Manage Course",
           },
           {
-            key: "/course-log-instructor",
+            key: "/instructor/course-log",
             icon: <NodeExpandOutlined />,
             label: "Course Log",
           },
           {
-            key: "/sales-history",
+            key: "/instructor/sales-history",
             icon: <ShoppingCartOutlined />,
             label: "Sales History",
           },
           {
-            key: "/instructor-payout",
+            key: "/instructor/payouts",
             icon: <DollarOutlined />,
             label: "Payout",
           },
           {
-            key: "/subcription-instructor",
+            key: "/instructor/subscriptions",
             icon: <LikeOutlined />,
             label: "Subcription",
           },
           {
-            key: "/review",
+            key: "/instructor/review",
             icon: <StarOutlined />,
             label: "Review",
           },
           {
-            key: "/purchase-courses",
+            key: "/instructor/purchase-log",
             icon: <SettingOutlined />,
-            label: "PurchaseLog",
+            label: "Purchase Log",
           },
           {
             key: "9",
