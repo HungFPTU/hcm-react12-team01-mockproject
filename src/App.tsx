@@ -83,14 +83,12 @@ const Home = lazy(() => import("./pages/Home"));
 const LoginPage = lazy(() => import("./pages/Login/Login"));
 const AllCoursesGuest = lazy(() => import("./pages/AllCourses"));
 const App: React.FC = () => {
-  const newUserRole: RoleEnum = RoleEnum.Admin; 
-
-// Store the new role in localStorage:
-  localStorage.setItem('userRole', newUserRole);
+//   const newUserRole: RoleEnum = RoleEnum.Admin; 
+//   localStorage.setItem('userRole', newUserRole);
   const userRole = localStorage.getItem('userRole') as RoleEnum | null;
 
   const getRoutes = (role: RoleEnum | null): JSX.Element => {
-    switch (userRole) {
+    switch (role) {
       case RoleEnum.Admin:
         return (
           <>
@@ -187,6 +185,7 @@ const App: React.FC = () => {
         <div className="App">
           <Routes>
             {getRoutes(userRole)}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </Suspense>
