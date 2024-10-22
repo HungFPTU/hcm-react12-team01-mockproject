@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Button, Row, Col, Collapse,Progress } from "antd";
+import { Card, Button, Row, Col, Collapse,Progress,Form,Select, Empty,List,message,Avatar } from "antd";
+import VirtualList from 'rc-virtual-list';
 import {
     ReadOutlined,
     ScheduleOutlined,
@@ -135,6 +136,7 @@ const CourseDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const course = courses.find((course) => course.id === Number(id));
     const [isExpanded, setIsExpanded] = useState(false);
+    const [form] = Form.useForm();
 
     const formatPrice = (price: number) => {
         return price.toLocaleString("vi-VN") + "₫";
@@ -186,6 +188,50 @@ const CourseDetail: React.FC = () => {
             }}
         />
     );
+
+    const handleChange = (value: { value: string; label: React.ReactNode }) => {
+        console.log(value); // { value: "lucy", key: "lucy", label: "Lucy (101)" }
+      };
+      interface UserItem {
+        email: string;
+        gender: string;
+        name: {
+          first: string;
+          last: string;
+          title: string;
+        };
+        nat: string;
+        picture: {
+          large: string;
+          medium: string;
+          thumbnail: string;
+        };
+      }
+      
+      const fakeDataUrl =
+        'https://randomuser.me/api/?results=20&inc=name,gender,email,nat,picture&noinfo';
+      const ContainerHeight = 400;
+      const [data, setData] = useState<UserItem[]>([]);
+
+      const appendData = () => {
+        fetch(fakeDataUrl)
+          .then((res) => res.json())
+          .then((body) => {
+            setData(data.concat(body.results));
+            message.success(`${body.results.length} more items loaded!`);
+          });
+      };
+    
+      useEffect(() => {
+        appendData();
+      }, []);
+
+      const onScroll = (e: React.UIEvent<HTMLElement, UIEvent>) => {
+        
+        if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - ContainerHeight) <= 1) {
+          appendData();
+        }
+      };
 
     return (
         <div className="w-full relative">
@@ -265,9 +311,9 @@ const CourseDetail: React.FC = () => {
                                     <br />
                             </div>
 
-                            <div className="Reviews ml-9">
+                            <div className="Reviews ml-9 ">
                                 <h1 className="text-3xl text-left font-bold pl-12" >Review</h1>
-                                <div className="flex md:flex-row flex-col gap-8 border-b-1 border-neutral-200 pb-20">
+                                <div className="flex md:flex-row flex-col gap-8 border-b-1 border-neutral-200 pb-20 mt-5">
                                     <div className="reviewAll lg:w-[200px] md:w-[200px] xl:w-[200px] w-full">
                                         <div className="leftReview h-[144px] rounded-[12px] bg-[#ebedf1] flex flex-col items-center justify-center">
                                             <p className="reviewsNumber md:text-[36px] text-[30px] text-neutral-900 font-bold">5</p>
@@ -279,7 +325,7 @@ const CourseDetail: React.FC = () => {
                                         </Button>
                                     </div>
 
-                                    <div className="proStar w-full flex flex-col justify-between border rounded-xl bg-white">
+                                    <div className="proStar w-full flex flex-col justify-between border rounded-xl bg-[#fff1e4]">
                                         <div className="flex items-center gap-4 p-3">
                                             <p className="text-[20px]">5</p>
                                             <svg
@@ -353,6 +399,121 @@ const CourseDetail: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
+                            
+                            
+                                <Form
+                                    layout="vertical"
+                                    form={form}
+                                    style={{ maxWidth: 600, marginLeft: "36px", fontWeight: "600" }}
+                                    >
+                                    <Row style={{ marginLeft: "-6px", marginRight: "-6px" }}>
+                                        <Col
+                                        span={12}
+                                        style={{
+                                            paddingLeft: "6px",
+                                            paddingRight: "6px",
+                                        }}
+                                        >
+                                        <Form.Item label="Sort">
+                                            <Select
+                                             size="large"
+                                             labelInValue
+                                             defaultValue={{ value: 'date-newest', label: 'Date created newest' }}
+                                             style={{ width: 300,height: 50 }}
+                                             onChange={handleChange}
+                                             options={[
+                                                 {
+                                                   value: 'quantity-increase',
+                                                   label: 'Quantity star increase',
+                                                 },
+                                                 {
+                                                   value: 'quantity-decrease',
+                                                   label: 'Quantity star decrease',
+                                                 },
+                                                 {
+                                                     value: 'date-newest',
+                                                     label: 'Date created newest',
+                                                   },
+                                                   {
+                                                     value: 'date-oldest',
+                                                     label: 'Date created oldest',
+                                                   },
+                                               ]}
+                                            />
+                                        </Form.Item>
+                                        </Col>
+                                        <Col
+                                        span={8}
+                                        style={{
+                                            paddingLeft: "6px",
+                                            paddingRight: "6px",
+                                        }}
+                                        >
+                                        <Form.Item label="Filter">
+                                            <Select
+                                            size="large"
+                                            labelInValue
+                                            defaultValue={{ value: 'all-star', label: 'All Star' }}
+                                            style={{ width: 300,height: 50 }}
+                                            onChange={handleChange}
+                                            options={[
+                                                {
+                                                  value: 'all-star',
+                                                  label: 'All Star',
+                                                },
+                                                {
+                                                  value: 'star1',
+                                                  label: '1*',
+                                                },
+                                                {
+                                                    value: 'star2',
+                                                    label: '2*',
+                                                  },
+                                                  {
+                                                    value: 'star3',
+                                                    label: '3*',
+                                                  },
+                                                  {
+                                                    value: 'star4',
+                                                    label: '4*',
+                                                  },
+                                                  {
+                                                    value: 'star4',
+                                                    label: '4*',
+                                                  },
+                                              ]}
+                                            />
+                                            
+                                        </Form.Item>
+                                        </Col>
+                                    </Row>
+                                </Form>
+                                <div className="ml-9 bg-[#fff1e4] rounded-xl">
+                                    {data.length === 0 ? (
+                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data" />
+                                    ) : (
+                                        <List>
+                                        <VirtualList
+                                            data={data}
+                                            height={ContainerHeight}
+                                            itemHeight={47}
+                                            itemKey="email"
+                                            onScroll={onScroll}
+                                        >
+                                            {(item: UserItem) => (
+                                            <List.Item key={item.email}>
+                                                <List.Item.Meta
+                                                avatar={<Avatar src={item.picture.large} />}
+                                                title={<a href="https://ant.design">{item.name.last}</a>}
+                                                description={item.email}
+                                                />
+                                                <div>Content</div>
+                                            </List.Item>
+                                            )}
+                                        </VirtualList>
+                                        </List>
+                                    )}
+                                </div>             
                         </Col>
  
  

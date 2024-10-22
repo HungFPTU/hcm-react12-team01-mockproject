@@ -78,6 +78,7 @@ const CheckoutPage = lazy(
 const Unauthorized = lazy(
   () => import('./pages/unauthorize')
 );
+const CourseDetail = lazy(() => import('./pages/CourseDetail/CourseDetail'));
 const Home = lazy(() => import("./pages/Home"));
 const LoginPage = lazy(() => import("./pages/Login/Login"));
 const AllCoursesGuest = lazy(() => import("./pages/AllCourses"));
@@ -130,6 +131,7 @@ const App: React.FC = () => {
             <Route path="/" element={<DefaultLayout />}>
               <Route index element={<Home />} />
               <Route path="alls" element={<AllCoursesGuest />} />
+              <Route path='course/:id' element={<CourseDetail/>}/>
             </Route>
             <Route path="/admin/*" element={<Navigate to="/login" replace />} />
             <Route path="/student/*" element={<Navigate to="/login" replace />} />
@@ -150,6 +152,7 @@ const App: React.FC = () => {
             <Route path="/" element={<DefaultLayout />}>
               <Route index element={<Home />} />
               <Route path="alls" element={<AllCoursesGuest />} />
+              <Route path='course/:id' element={<CourseDetail/>}/>
             </Route>
             <Route path="/admin/*" element={<Navigate to="/unauthorized" replace />} />
             <Route path="/instructor/*" element={<Navigate to="/unauthorized" replace />} />
@@ -161,6 +164,7 @@ const App: React.FC = () => {
             <Route path="/" element={<DefaultLayout />}>
               <Route index element={<Home />} />
               <Route path="alls" element={<AllCoursesGuest />} />
+              <Route path='course/:id' element={<CourseDetail/>}/>
             </Route>
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/admin/*" element={<Navigate to="/unauthorized" replace />} />
