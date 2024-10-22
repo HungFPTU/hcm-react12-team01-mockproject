@@ -46,13 +46,6 @@ const CourseTable = () => {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      render: (_: unknown, record: Course) => (
-        <Switch
-          checked={record.status === CourseStatusEnum.Active}
-          onChange={(checked) => onChangeStatus(record.id, checked ? CourseStatusEnum.Active : CourseStatusEnum.Inactive)}
-          className="bg-blue-500"
-        />
-      ),
     },
     {
       title: 'Price',
