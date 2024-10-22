@@ -85,7 +85,7 @@ const AllCoursesGuest = lazy(() => import("./pages/AllCourses"));
 const App: React.FC = () => {
 //   const newUserRole: RoleEnum = RoleEnum.Admin; 
 //   localStorage.setItem('userRole', newUserRole);
-  const userRole = localStorage.getItem('userRole') as RoleEnum | null;
+  const userRole: RoleEnum = localStorage.getItem('userRole') as RoleEnum || RoleEnum.Guest;
 
   const getRoutes = (role: RoleEnum | null): JSX.Element => {
     switch (role) {
