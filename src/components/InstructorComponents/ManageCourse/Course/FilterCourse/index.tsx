@@ -12,14 +12,20 @@ const CourseStatusSelect = ({ onChange }: { onChange: (status: CourseStatusEnum)
 
   return (
     <div>
-      <select value={selectedStatus} onChange={handleChange} style={{ width: '15%', padding: '8px', fontSize: '16px' }}>
+      <select 
+        value={selectedStatus} 
+        onChange={handleChange} 
+        style={{ width: '15%', padding: '8px', fontSize: '16px', border: '2px solid #a1a1a1', borderRadius: '6px' }} 
+        onFocus={(e) => e.currentTarget.style.borderColor = 'blue'} 
+        onBlur={(e) => e.currentTarget.style.borderColor = '#a1a1a1'}
+      >
         {Object.values(CourseStatusEnum).map((status) => (
           <option key={status} value={status}>
             {status}
           </option>
         ))}
       </select>
-  </div>
+    </div>
   );
 };
 
