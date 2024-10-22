@@ -106,7 +106,7 @@ const App: React.FC = () => {
             </Route>
             <Route path="/" element={<DefaultLayout />}>
               <Route index element={<Home />} />
-              <Route path="order" element={<AllCoursesGuest />} />
+              <Route path="alls" element={<AllCoursesGuest />} />
             </Route>
           </>
         );
@@ -130,7 +130,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<DefaultLayout />}>
               <Route index element={<Home />} />
-              <Route path="order" element={<AllCoursesGuest />} />
+              <Route path="alls" element={<AllCoursesGuest />} />
             </Route>
             <Route path="/admin/*" element={<Navigate to="/login" replace />} />
             <Route path="/student/*" element={<Navigate to="/login" replace />} />
@@ -150,7 +150,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<DefaultLayout />}>
               <Route index element={<Home />} />
-              <Route path="order" element={<AllCoursesGuest />} />
+              <Route path="alls" element={<AllCoursesGuest />} />
             </Route>
             <Route path="/admin/*" element={<Navigate to="/unauthorized" replace />} />
             <Route path="/instructor/*" element={<Navigate to="/unauthorized" replace />} />
@@ -161,7 +161,7 @@ const App: React.FC = () => {
           <>
             <Route path="/" element={<DefaultLayout />}>
               <Route index element={<Home />} />
-              <Route path="order" element={<AllCoursesGuest />} />
+              <Route path="alls" element={<AllCoursesGuest />} />
             </Route>
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/admin/*" element={<Navigate to="/unauthorized" replace />} />
