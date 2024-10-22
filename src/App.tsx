@@ -83,6 +83,10 @@ const Home = lazy(() => import("./pages/Home"));
 const LoginPage = lazy(() => import("./pages/Login/Login"));
 const AllCoursesGuest = lazy(() => import("./pages/AllCourses"));
 const App: React.FC = () => {
+  const newUserRole: RoleEnum = RoleEnum.Admin; 
+
+// Store the new role in localStorage:
+  localStorage.setItem('userRole', newUserRole);
   const userRole = localStorage.getItem('userRole') as RoleEnum | null;
 
   const getRoutes = (role: RoleEnum | null): JSX.Element => {
