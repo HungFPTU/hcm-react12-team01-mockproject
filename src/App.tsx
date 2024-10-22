@@ -90,7 +90,7 @@ const App: React.FC = () => {
   const userRole = localStorage.getItem('userRole') as RoleEnum | null;
 
   const getRoutes = (role: RoleEnum | null): JSX.Element => {
-    switch (role) {
+    switch (userRole) {
       case RoleEnum.Admin:
         return (
           <>
