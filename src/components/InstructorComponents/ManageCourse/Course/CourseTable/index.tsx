@@ -9,14 +9,14 @@ const CourseTable = () => {
   const [coursesData] = useState<Course[]>(Courses.courses as unknown as Course[]);
   const [searchTerm] = useState<string>("");
 
-  const filteredCourses = coursesData.filter((course) => 
-    course.id.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredCourses = coursesData.filter((course) =>
+    course.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleViewDetails = (courseId: string) => {
     // Navigate to the user detail page
-    navigate(`/${courseId}`);
+    navigate(`/instructor/${courseId}`);
   };
 
   const onChangeStatus = (id: string, status: CourseStatusEnum) => {
@@ -84,7 +84,7 @@ const CourseTable = () => {
           View Detail
         </Button>
       )
-    },  
+    },
   ];
   return (
     <>

@@ -15,7 +15,7 @@ const CheckoutPage = () => {
         <p>No items selected for checkout.</p>
         <button
           className="bg-blue-500 text-white py-2 px-4 rounded-md"
-          onClick={() => navigate("/cart")}
+          onClick={() => navigate("/student/cart")}
         >
           Go back to Cart
         </button>

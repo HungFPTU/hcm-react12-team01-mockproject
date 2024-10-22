@@ -70,22 +70,28 @@ const SettingPage = lazy(
   () => import("./pages/Student/setting"),
 );
 const SubscriptionPage = lazy(
-  () => import("./pages/Admin/PendingCourses"),
+  () => import("./pages/Student/view-subscription"),
 );
-const CheckoutPage = lazy(
-  () => import("./pages/Student/order/checkout"),
-);
+// const CheckoutPage = lazy(
+//   () => import("./pages/Student/order/checkout"),
+// );
 const Unauthorized = lazy(
   () => import('./pages/unauthorize')
 );
 const Home = lazy(() => import("./pages/Home"));
 const LoginPage = lazy(() => import("./pages/Login/Login"));
 const AllCoursesGuest = lazy(() => import("./pages/AllCourses"));
+const CartPage = lazy(() => import("./pages/Student/cart"));
+
+
+
+// ../components/InstructorComponents/ManageCourse/Course/ViewDetailCourse
 const App: React.FC = () => {
-//   const newUserRole: RoleEnum = RoleEnum.Admin; 
-//   localStorage.setItem('userRole', newUserRole);
+  //   const newUserRole: RoleEnum = RoleEnum.Admin; 
+  //   localStorage.setItem('userRole', newUserRole);
   //test
   const userRole: RoleEnum = localStorage.getItem('userRole') as RoleEnum || RoleEnum.Guest;
+
 
   const getRoutes = (role: RoleEnum | null): JSX.Element => {
     switch (role) {
@@ -109,6 +115,7 @@ const App: React.FC = () => {
             </Route>
           </>
         );
+
       case RoleEnum.Instructor:
         return (
           <>
@@ -124,6 +131,9 @@ const App: React.FC = () => {
               <Route path="subscriptions" element={<InstructorSub />} />
               <Route path="payouts" element={<PayoutInstructorPage />} />
               <Route path="purchase-log" element={<PurchaseLog />} />
+              <Route path=":courseId" element={<ViewDetailCourse />} />
+              <Route path=":sessionId" element={<ViewDetailSession />} />
+              <Route path=":lessonId" element={<ViewDetailLesson />} />
             </Route>
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/login" element={<LoginPage />} />
@@ -133,6 +143,8 @@ const App: React.FC = () => {
             </Route>
             <Route path="/admin/*" element={<Navigate to="/login" replace />} />
             <Route path="/student/*" element={<Navigate to="/login" replace />} />
+            <Route path="/cart" element={<CartPage />} />
+
           </>
         );
       case RoleEnum.Student:
@@ -143,7 +155,7 @@ const App: React.FC = () => {
               <Route path="order" element={<OrderPage />} />
               <Route path="setting" element={<SettingPage />} />
               <Route path="subscription" element={<SubscriptionPage />} />
-              <Route path="order/checkout" element={<CheckoutPage />} />
+              {/* <Route path="order/checkout" element={<CheckoutPage />} /> */}
             </Route>
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/login" element={<LoginPage />} />
@@ -153,6 +165,8 @@ const App: React.FC = () => {
             </Route>
             <Route path="/admin/*" element={<Navigate to="/unauthorized" replace />} />
             <Route path="/instructor/*" element={<Navigate to="/unauthorized" replace />} />
+            <Route path="/cart" element={<CartPage />} />
+
           </>
         );
       case RoleEnum.Guest:

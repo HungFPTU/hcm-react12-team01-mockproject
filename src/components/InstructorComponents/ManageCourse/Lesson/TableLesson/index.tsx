@@ -20,17 +20,17 @@ const TableLesson = () => {
       ...lesson,
       courseName: courses.find(course => course.id === lesson.course_id)?.name || 'Không xác định',
     }));
-    
+
     setLessonsData(lessonsWithCourseName);
   }, []);
 
   const filteredLessons = lessonsData.filter((lesson) =>
     lesson.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lesson.name.toLowerCase().includes(searchTerm.toLowerCase())  
+    lesson.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleViewDetails = (lessonId: string) => {
-    navigate(`/${lessonId}`);
+    navigate(`/instructor/${lessonId}`);
   };
 
   const columns = [
