@@ -72,9 +72,9 @@ const SettingPage = lazy(
 const SubscriptionPage = lazy(
   () => import("./pages/Student/view-subscription"),
 );
-const CheckoutPage = lazy(
-  () => import("./pages/Student/order/checkout"),
-);
+// const CheckoutPage = lazy(
+//   () => import("./pages/Student/order/checkout"),
+// );
 const Unauthorized = lazy(
   () => import('./pages/unauthorize')
 );
