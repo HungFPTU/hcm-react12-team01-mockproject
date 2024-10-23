@@ -84,6 +84,15 @@ const UserManagement: React.FC = () => {
     );
   };
 
+  // Handle role filter
+  const handleFilter = (value: string) => {
+    const filtered = users.filter((user) => {
+      if (value === "all") return true; // Show all if selected "all"
+      return user.role === value;
+    });
+    setFilteredUsers(filtered);
+  };
+
   // Handle search functionality
   const handleSearch = (value: string) => {
     const filtered = users.filter(
@@ -214,6 +223,16 @@ const UserManagement: React.FC = () => {
               onSearch={handleSearch}
               style={{ width: 300 }}
             />
+            <Select
+              defaultValue="all"
+              onChange={handleFilter}
+              style={{ width: 150, marginLeft: 15 }}
+            >
+              <Option value="all">All Roles</Option>
+              <Option value="Student">Student</Option>
+              <Option value="Instructor">Instructor</Option>
+              <Option value="Admin">Admin</Option>
+            </Select>
           </div>
           <Table
             columns={commonColumns}
@@ -226,26 +245,7 @@ const UserManagement: React.FC = () => {
             }}
           />
         </TabPane>
-        <TabPane tab="Blocked accounts" key="blocked">
-          <div style={{ marginBottom: "20px" }}>
-            <Search
-              enterButton
-              placeholder="Search by name or email"
-              onSearch={handleSearch}
-              style={{ width: 300 }}
-            />
-          </div>
-          <Table
-            columns={commonColumns}
-            dataSource={filteredUsers}
-            pagination={{
-              defaultPageSize: 5,
-              showSizeChanger: true,
-              pageSizeOptions: ["4", "8"],
-              position: ["bottomRight"],
-            }}
-          />
-        </TabPane>
+
         <TabPane tab="Unverified accounts" key="unverified">
           <div style={{ marginBottom: "20px" }}>
             <Search
