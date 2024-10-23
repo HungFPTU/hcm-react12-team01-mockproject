@@ -6,7 +6,8 @@ import * as Yup from 'yup';
 import { signInWithEmailAndPassword } from '../../firebase-config';
 import { FirebaseError } from 'firebase/app';
 import { useNavigate } from 'react-router-dom'; 
-import axios from 'axios';
+import { AuthService } from '../../services/authService/AuthService';
+// import loginApi from '../../services/authService/AuthService';
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Invalid email!').required('Please input your email!'),
@@ -24,29 +25,13 @@ const LoginEmailPassword = () => {
 
   const handleAPISignIn = async (email: string, password: string) => {
     try {
-      const response = await axios.post('https://rest-api-with-nodejs-express-mongodb-eosin.vercel.app/api/auth', {
-        email,
-        password,
-      });
-
-      const data = response.data;
-
-      if (data.success) {
-        localStorage.setItem('token', data.data.token);
-        message.success("Login successful!");
-        return true;
-      } else {
-        message.error("Login failed. Please check your email and password!");
-        return false; 
-      }
+      const res = await AuthService.login({ email, password})
+      console.log(res)
+      localStorage.setItem('token', res.data.data.token);
+      return true;
     } catch (error) {
-      console.error("API login failed:", error);
-      if (axios.isAxiosError(error)) {
-        message.error("An error occurred while logging in via API: " + error.message);
-      } else {
-        message.error("An unexpected error occurred.");
-      }
-      return false; 
+      console.log(error)
+      return false;
     }
   };
 
@@ -59,7 +44,7 @@ const LoginEmailPassword = () => {
     
     if (apiSignInSuccess) {
   
-      navigate('/admin');  
+      navigate('/');  
     } else {
    
       try {
