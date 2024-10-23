@@ -31,7 +31,7 @@ const SidebarComponents = () => {
           {
             key: "/admin",
             icon: <AppstoreOutlined />,
-            label: "Daskboard",
+            label: "Dashboard",
           },
           {
             key: "/admin/user-management",
@@ -61,17 +61,17 @@ const SidebarComponents = () => {
           {
             key: "/admin/pending-courses",
             icon: <ShoppingCartOutlined />,
-            label: "PendingCourses",
+            label: "Pending Courses",
           },
           {
             key: "/admin/courses-log",
             icon: <LikeOutlined />,
-            label: "CoursesLog",
+            label: "Courses Log",
           },
           {
             key: "/admin/purchase-log",
             icon: <SettingOutlined />,
-            label: "PurchaseLog",
+            label: "Purchase Log",
           },
         ]}
       />

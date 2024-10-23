@@ -16,7 +16,7 @@ const PayoutTabs: React.FC<PayoutTabsProps> = ({
 }) => {
   return (
     <Tabs defaultActiveKey="1">
-      <TabPane tab="Request_Paid" key="1">
+      <TabPane tab="Request Paid" key="1">
         <SearchInput onSearch={handleSearch} />
         <PayoutTable filteredPayouts={filteredPayouts} />
       </TabPane>
