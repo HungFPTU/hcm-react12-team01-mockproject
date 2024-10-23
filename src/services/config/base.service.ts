@@ -1,5 +1,5 @@
 import { toggleLoading } from '../../app/loadingSlice';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
 import { ApiRequestModel } from '../../model/ApiRequestModel';
 import { toast } from 'react-toastify';
 import { getItemInLocalStorage, removeItemInLocalStorage } from '../../utils/localStorage';
@@ -112,14 +112,19 @@ export interface PromiseState<T = unknown> extends AxiosResponse<T> {
 axiosInstance.interceptors.request.use(
     (config: AxiosRequestConfig) => {
         const user: any = getItemInLocalStorage(LOCAL_STORAGE.ACCOUNT_ADMIN);
-        if (config.headers === undefined) config.headers = {};
-        if (user) config.headers['Authorization'] = `Bearer ${user.access_token}`;
-        return config;
+        if (!config.headers) {
+            config.headers = {}; // Ensure headers is defined
+        }
+        if (user) {
+            config.headers['Authorization'] = `Bearer ${user.access_token}`;
+        }
+        return config as InternalAxiosRequestConfig; // Cast to correct type
     },
     (err) => {
         return handleErrorByToast(err);
     }
 );
+
 
 axiosInstance.interceptors.response.use(
     (config) => {
