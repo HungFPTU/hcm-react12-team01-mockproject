@@ -27,7 +27,7 @@ const InstructorSub = lazy(
     () => import("../../pages/InstructorPage/InstructorSub")
 );
 const PayoutInstructorPage = lazy(() => import("../../pages/InstructorPage/PayoutInstructorPage"));
-const PurchaseLog = lazy(() => import("../../pages/admin/purchaselog"));
+const PurchaseLog = lazy(() => import("../../pages/Admin/purchaselog"));
 const SettingPage = lazy(() => import("../../pages/Student/setting"));
 const instructorRoute: RouteObject[] = [
     {
