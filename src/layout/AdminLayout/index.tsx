@@ -1,14 +1,17 @@
 import { Layout } from "antd";
-import { useState } from "react";
-import { Outlet } from 'react-router-dom'; // Import Outlet
-import SidebarComponents from "../../components/AdminComponents/SidebarCoponent";
+import {  useState } from "react";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
+import SidebarComponents from "../../components/AdminComponents/SidebarCoponent";
+import { Outlet } from "react-router-dom";
+
+
 
 const { Content, Sider } = Layout;
 
 export const AdminLayout = (): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
+
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -20,6 +23,7 @@ export const AdminLayout = (): JSX.Element => {
           onCollapse={(value) => setCollapsed(value)}
           style={{ position: "fixed", left: 0, top: 66, bottom: 0 }}
         >
+          {/* Truyền setLoading function vào SidebarComponents */}
           <SidebarComponents />
         </Sider>
 
@@ -38,6 +42,7 @@ export const AdminLayout = (): JSX.Element => {
           >
             <Outlet /> {/* Render the nested route content */}
           </Content>
+
         </Layout>
       </Layout>
       <Footer />

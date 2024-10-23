@@ -9,6 +9,8 @@ import instructorRoute from "./routes/subs/instrucstorRoutes";
 import studentRoutes from "./routes/subs/studentRoutes";
 //==============================
 
+
+
 const App = () => {
   // const protectedRoutes = useProtectedRoutes();
   const router = createBrowserRouter([
@@ -24,6 +26,7 @@ const App = () => {
       <Suspense>
             <RouterProvider router={router} />
       </Suspense>
+      
     </>
   );
 };

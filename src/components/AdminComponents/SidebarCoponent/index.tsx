@@ -9,15 +9,24 @@ import {
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { useNavigate } from "react-router-dom";
-function SidebarComponents() {
+
+
+const SidebarComponents = () => {
   const navigate = useNavigate();
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+
+    navigate(key); // Navigate to the selected route
+
+  };
+
   return (
     <>
       <Menu
         theme="dark"
         mode="inline"
         defaultSelectedKeys={["1"]}
-        onClick={({ key }) => navigate(key)}
+        onClick={handleMenuClick}
         items={[
           {
             key: "/admin",
@@ -68,6 +77,6 @@ function SidebarComponents() {
       />
     </>
   );
-}
+};
 
 export default SidebarComponents;

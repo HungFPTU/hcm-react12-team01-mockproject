@@ -96,7 +96,11 @@ function PurchaseLogTable() {
       title: "Course Name",
       dataIndex: "courseName",
       key: "courseName",
+      render: (text) => {
+        return text.length > 20 ? text.slice(0, 20) + "..." : text;
+      },
     },
+
     {
       title: "Purchase Number",
       dataIndex: "purchaseNumber",
