@@ -4,19 +4,19 @@ import { Course, CourseStatusEnum } from '../../../../../model/Course';
 import { useNavigate } from 'react-router-dom';
 import Courses from '../../../../../data/Courses.json';
 
-
 const CourseTable = () => {
   const navigate = useNavigate();
   const [coursesData] = useState<Course[]>(Courses.courses as unknown as Course[]);
   const [searchTerm] = useState<string>("");
 
   const filteredCourses = coursesData.filter((course) =>
-  course.id.toLowerCase().includes(searchTerm.toLowerCase())|| 
-  course.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    course.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    course.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleViewDetails = (courseId: string) => {
     // Navigate to the user detail page
-    navigate(`/${courseId}`);
+    navigate(`/instructor/${courseId}`);
   };
 
   const onChangeStatus = (id: string, status: CourseStatusEnum) => {
@@ -84,22 +84,23 @@ const CourseTable = () => {
           View Detail
         </Button>
       )
-    },  
+    },
   ];
-
   return (
-    <Table<Course>
-      columns={columns}
-      dataSource={filteredCourses}
-      rowKey="id"
-      className="w-full shadow-md rounded-lg overflow-hidden"
-      pagination={{
-        pageSize: 10,
-        showSizeChanger: true,
-        showQuickJumper: true,
-        showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} khóa học`,
-      }}
-    />
+    <>
+      <Table<Course>
+        columns={columns}
+        dataSource={filteredCourses}
+        rowKey="id"
+        className="w-full shadow-md rounded-lg overflow-hidden"
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} khóa học`,
+        }}
+      />
+    </>
   );
 };
 
