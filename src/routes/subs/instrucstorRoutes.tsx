@@ -45,7 +45,10 @@ const instructorRoute: RouteObject[] = [
             { path: "subscriptions", element: <InstructorSub/>},
             { path: "payouts", element: <PayoutInstructorPage/>},
             { path: "purchase-log", element: <PurchaseLog/>},
-            { path: "setting", element:<SettingPage/>}
+            { path: "setting", element:<SettingPage/>},
+            { path:":courseId", element:<ViewDetailCourse /> },
+            { path:":sessionId", element:<ViewDetailSession /> },
+            { path:":lessonId", element:<ViewDetailLesson /> }
         ],
     },
     ]
