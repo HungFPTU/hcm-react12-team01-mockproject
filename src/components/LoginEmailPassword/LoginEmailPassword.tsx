@@ -6,10 +6,11 @@ import * as Yup from 'yup';
 import { signInWithEmailAndPassword } from '../../firebase-config';
 import { FirebaseError } from 'firebase/app';
 import { useNavigate } from 'react-router-dom'; 
+import axios from 'axios';
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Invalid email!').required('Please input your email!'),
-  password: Yup.string().required('Please input your password!').min(8, 'Password must be at least 8 characters!'),
+  password: Yup.string().required('Please input your password!').min(6, 'Password must be at least 6 characters!'),
 });
 
 interface FormValues {
@@ -21,32 +22,69 @@ const LoginEmailPassword = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();  
 
+  const handleAPISignIn = async (email: string, password: string) => {
+    try {
+      const response = await axios.post('https://rest-api-with-nodejs-express-mongodb-eosin.vercel.app/api/auth', {
+        email,
+        password,
+      });
+
+      const data = response.data;
+
+      if (data.success) {
+        localStorage.setItem('token', data.data.token);
+        message.success("Login successful!");
+        return true;
+      } else {
+        message.error("Login failed. Please check your email and password!");
+        return false; 
+      }
+    } catch (error) {
+      console.error("API login failed:", error);
+      if (axios.isAxiosError(error)) {
+        message.error("An error occurred while logging in via API: " + error.message);
+      } else {
+        message.error("An unexpected error occurred.");
+      }
+      return false; 
+    }
+  };
+
   const handleEmailSignIn = useCallback(async (values: FormValues) => {
     const { email, password } = values;
     setLoading(true);
 
-    try {
-      const userCredential = await signInWithEmailAndPassword(email, password);
-      const user = userCredential.user;
+   
+    const apiSignInSuccess = await handleAPISignIn(email, password);
+    
+    if (apiSignInSuccess) {
+  
+      navigate('/admin');  
+    } else {
+   
+      try {
+        const userCredential = await signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
 
-      if (!user.emailVerified) {
-        message.error('Your email is not verified. Please check your email for verification.');
-        return;
-      }
+        if (!user.emailVerified) {
+          message.error('Your email is not verified. Please check your email for verification.');
+          return;
+        }
 
-      if (user) {
-        const idToken = await user.getIdToken();
-        sessionStorage.setItem('Token', idToken);
-        message.success("Login successful!");
-        navigate('/');  
+        if (user) {
+          const idToken = await user.getIdToken();
+          sessionStorage.setItem('Token', idToken);
+          message.success("Login successful!");
+          navigate('/');  
+        }
+      } catch (error) {
+        const firebaseError = error as FirebaseError;
+        console.error("Login failed:", firebaseError);
+        message.error("Login failed. Please check your email and password.");
       }
-    } catch (error) {
-      const firebaseError = error as FirebaseError;
-      console.error("Login failed:", firebaseError);
-      message.error("Login failed. Please check your email and password.");
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   }, [navigate]);
 
   return (
@@ -70,7 +108,7 @@ const LoginEmailPassword = () => {
             <ErrorMessage name="email" component="div" className="text-red-500 text-sm absolute -bottom-5" />
           </div>
 
-          <div className="relative my-4">
+          <div className="relative my-5">
             <Field
               as={Input.Password}
               name="password"
@@ -90,7 +128,7 @@ const LoginEmailPassword = () => {
           <div className='w-full flex flex-col my-4'>
             <Button 
               type="primary" 
-              className='w-full my-2 font-semibold bg-[#2563EB]' 
+              className='w-full my-2 font-semibold bg-[#a928c3]' 
               htmlType="submit"
               loading={loading}
             >
