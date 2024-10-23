@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { CourseStatusEnum } from './../../../../../model/Course'; // Đường dẫn tới enum của bạn
+import { PurchaseStatusEnum } from '../../../../model/Purchase'; // Đường dẫn tới enum của bạn
 
-const CourseStatusSelect = ({ onChange }: { onChange: (status: CourseStatusEnum) => void }) => {
-  const [selectedStatus, setSelectedStatus] = useState<CourseStatusEnum>(CourseStatusEnum.New);
+const PurchaseStatusSelect = ({ onChange }: { onChange: (status: PurchaseStatusEnum) => void }) => {
+  const [selectedStatus, setSelectedStatus] = useState<PurchaseStatusEnum>(PurchaseStatusEnum.New);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const status = event.target.value as CourseStatusEnum;
+    const status = event.target.value as PurchaseStatusEnum;
     setSelectedStatus(status);
     onChange(status);
   };
@@ -19,7 +19,7 @@ const CourseStatusSelect = ({ onChange }: { onChange: (status: CourseStatusEnum)
         onFocus={(e) => e.currentTarget.style.borderColor = 'blue'} 
         onBlur={(e) => e.currentTarget.style.borderColor = '#a1a1a1'}
       >
-        {Object.values(CourseStatusEnum).map((status) => (
+        {Object.values(PurchaseStatusEnum).map((status) => (
           <option key={status} value={status}>
             {status}
           </option>
@@ -29,4 +29,4 @@ const CourseStatusSelect = ({ onChange }: { onChange: (status: CourseStatusEnum)
   );
 };
 
-export default CourseStatusSelect;
+export default PurchaseStatusSelect;
