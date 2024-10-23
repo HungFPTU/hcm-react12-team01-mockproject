@@ -33,11 +33,11 @@ const LoginEmailPassword = () => {
 
       if (data.success) {
         localStorage.setItem('token', data.data.token);
-        message.success("Login successful via API!");
-        return true; // Đăng nhập thành công qua API
+        message.success("Login successful!");
+        return true;
       } else {
-        message.error("Login failed via API. Please check your email and password.");
-        return false; // Đăng nhập không thành công qua API
+        message.error("Login failed. Please check your email and password!");
+        return false; 
       }
     } catch (error) {
       console.error("API login failed:", error);
@@ -46,7 +46,7 @@ const LoginEmailPassword = () => {
       } else {
         message.error("An unexpected error occurred.");
       }
-      return false; // Đăng nhập không thành công do lỗi
+      return false; 
     }
   };
 
@@ -54,14 +54,14 @@ const LoginEmailPassword = () => {
     const { email, password } = values;
     setLoading(true);
 
-    // Call the API sign-in function
+   
     const apiSignInSuccess = await handleAPISignIn(email, password);
     
     if (apiSignInSuccess) {
-      // Nếu đăng nhập API thành công, không cần gọi Firebase nữa
+  
       navigate('/admin');  
     } else {
-      // Nếu không thành công, tiếp tục với Firebase sign-in
+   
       try {
         const userCredential = await signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
