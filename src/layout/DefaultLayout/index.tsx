@@ -6,7 +6,7 @@ const Header = React.lazy(() => import("../../components/Header"));
 
 export const DefaultLayout = (): JSX.Element => {
   return (
-    <div>
+    <div className="bg-gradient-to-br from-[#e673d4] to-[#ff8a55]">
       <Header />
       <div className="content flex justify-center"><Outlet /></div>
       <Footer />

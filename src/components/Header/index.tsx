@@ -11,6 +11,9 @@ export default function Home() {
     console.log(value);
   };
 
+  const BackHome = () => {
+    navigate("/");
+  }
   return (
     <Layout>
       <Header
@@ -32,7 +35,7 @@ export default function Home() {
         className="flex flex-col md:flex-row justify-between items-center"
       >
         {/* Left */}
-        <div className="left flex items-center space-x-4 ml-2 md:ml-5">
+        <div className="left flex items-center space-x-4 ml-2 md:ml-5" onClick={BackHome}>
           <img
             src={assets.logo}
             className="logo h-8 w-auto md:h-12 cursor-pointer"
@@ -58,7 +61,7 @@ export default function Home() {
         </div>
 
         {/* Right */}
-        <div className="right flex items-center justify-end flex-shrink-0 ml-auto mt-2 md:mt-0">
+        <div className="right flex items-center justify-end flex-shrink-0  mt-2 md:mt-0">
           <Button onClick={() => navigate("/login")} type="text" className="register mr-3 md:mr-7 bg-transparent font-semibold cursor-pointer">
             Register
           </Button>
