@@ -28,7 +28,7 @@ const Login = () => {
      
           <div className="flex-grow">
             <LoginEmailPassword />
-           <LoginGoogle />
+            <LoginGoogle />
           </div>
 
           <div className="w-full flex flex-col justify-between h-full mt-4">
