@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
-import LoginGoogle from '../../components/LoginGoogle/LoginGoogle';
-import LoginEmailPassword from '../../components/LoginEmailPassword/LoginEmailPassword';
+import LoginGoogle from '../../components/loginGoogle/LoginGoogle';
+import LoginEmailPassword from '../../components/loginEmailPassword/LoginEmailPassword';
 import YOUR_IMAGE from '../../assets/Login&Register.jpg';
 import LOGO from '../../assets/LogoCourseApp.png';
 import { useNavigate } from 'react-router-dom';  

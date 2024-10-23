@@ -1,5 +1,5 @@
 import { RouteObject } from "react-router-dom";
-import { DefaultLayout, homeRoute, coureseDetail, allCourses} from "../../const/constCommon"
+import { DefaultLayout, homeRoute, coureseDetail, allCourses} from "../../const/ConstCommon"
 
 const commonRoutes: RouteObject[] = [
     {

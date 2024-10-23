@@ -1,9 +1,9 @@
 // RequestManagement.tsx
 import React, { useState } from "react";
 import { Table } from "antd";
-import AvatarRenderer from "../../../components/AdminComponents/RequestManagement/AvatarRenderer";
-import ActionsRenderer from "../../../components/AdminComponents/RequestManagement/ActionsRenderer";
-import SearchBar from "../../../components/AdminComponents/RequestManagement/SearchBar";
+import AvatarRenderer from "../../../components/AdminComponents/requestManagement/AvatarRenderer";
+import ActionsRenderer from "../../../components/AdminComponents/requestManagement/ActionsRenderer";
+import SearchBar from "../../../components/AdminComponents/requestManagement/SearchBar";
 
 // Sample data for the request management
 const initialRequests = [

@@ -3,13 +3,13 @@ import React ,{useState} from "react";
 import asset from "../../assets/assets";
 import { useNavigate } from "react-router-dom";
 
-import Business from "../../components/Demo/Business";
-import Healthcare from "../../components/Demo/Healthcare";
-import Music from "../../components/Demo/music";
-import Painting from "../../components/Demo/design";
-import Photo from "../../components/Demo/photo";
-import Software from "../../components/Demo/software";
-import Teaching from "../../components/Demo/teaching";
+import Business from "../../components/demo/Business";
+import Healthcare from "../../components/demo/Healthcare";
+import Music from "../../components/demo/music";
+import Painting from "../../components/demo/design";
+import Photo from "../../components/demo/photo";
+import Software from "../../components/demo/software";
+import Teaching from "../../components/demo/teaching";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow } from 'swiper/modules';

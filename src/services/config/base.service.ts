@@ -4,8 +4,8 @@ import { ApiRequestModel } from '../../model/ApiRequestModel';
 import { toast } from 'react-toastify';
 import { getItemInLocalStorage, removeItemInLocalStorage } from '../../utils/localStorage';
 import { store } from "../../app/store";
-import { DOMAIN_ADMIN, LOCAL_STORAGE } from '../../const/consts';
-import { ROUTER_URL } from '../../const/router.const';
+import { DOMAIN_ADMIN, LOCAL_STORAGE } from '../../const/Consts';
+import { ROUTER_URL } from '../../const/Router.const';
 
 export const axiosInstance = axios.create({
     baseURL: DOMAIN_ADMIN,

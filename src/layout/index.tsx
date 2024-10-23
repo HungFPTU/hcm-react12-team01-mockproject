@@ -1,4 +1,4 @@
-export { default as DefaultLayout } from "./DefaultLayout";
-export { default as AdminLayout } from "./AdminLayout";
-export { default as InstructorLayout } from "./InstructorLayout";
-export { default as StudentLayout } from "./StudentLayout";
+export { default as DefaultLayout } from "./defaultLayout";
+export { default as AdminLayout } from "./adminLayout";
+export { default as InstructorLayout } from "./instructorLayout";
+export { default as StudentLayout } from "./studentLayout";

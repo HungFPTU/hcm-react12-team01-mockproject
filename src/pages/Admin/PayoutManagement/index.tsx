@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PayoutTabs from "../../../components/AdminComponents/PayoutManagement/PayoutTabs";
+import PayoutTabs from "../../../components/AdminComponents/payoutManagement/PayoutTabs";
 
 // Sample payout data for each tab
 const initialPayouts = [

@@ -1,8 +1,8 @@
 import { Layout } from "antd";
 import {  useState } from "react";
-import Footer from "../../components/Footer";
-import Header from "../../components/Header";
-import SidebarComponents from "../../components/AdminComponents/SidebarCoponent";
+import Footer from "../../components/footer";
+import Header from "../../components/header";
+import SidebarComponents from "../../components/AdminComponents/sidebarComponent";
 import { Outlet } from "react-router-dom";
 
 

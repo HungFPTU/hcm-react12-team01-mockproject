@@ -3,9 +3,9 @@ import { Layout } from "antd";
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 
-const Footer = React.lazy(() => import("../../components/Footer"));
+const Footer = React.lazy(() => import("../../components/footer"));
 const HeaderStudent = React.lazy(() => import('../../components/StudentComponents/headerStudent'));
-const StudentSidebar = React.lazy(() => import("../../components/StudentComponents/StudentSidebar"));
+const StudentSidebar = React.lazy(() => import("../../components/StudentComponents/studentSidebar"));
 
 
 export const StudentLayout = (): JSX.Element => {

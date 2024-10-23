@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
-import { InstructorLayout } from "../../layout/InstructorLayout";
+import { InstructorLayout } from "../../layout/instructorLayout";
 
 
 const InstructorDashboard = lazy(() => import("../../pages/InstructorPage/InstructorDashboard"));
