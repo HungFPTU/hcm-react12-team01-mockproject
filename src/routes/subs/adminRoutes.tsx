@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 import { AdminLayout } from "../../layout";
-const Dashboard = lazy(() => import("../../pages/admin/Daskboard"));
+const Dashboard = lazy(() => import("../../pages/admin/Dashboard"));
 const AllCourses = lazy (
     () => import("../../pages/admin/allcourses")
 )
