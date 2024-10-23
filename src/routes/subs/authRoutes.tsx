@@ -2,7 +2,7 @@ import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 
 //import lazy
-const LoginPage = lazy(() => import("../../pages/Login/Login"));
+const LoginPage = lazy(() => import("../../pages/login/Login"));
 // const RegisterPage = lazy(() => import("../../pages/register/RegisterPage"));
 //==============================================================
 
