@@ -1,13 +1,17 @@
+import { LoginUser } from "../../model/LoginUser";
+import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
-import { LoginUser, Token } from "../../model/LoginUser";
-// import { ApiResponse } from "../../model/ApiResponse";
+
+export interface AuthResponse {
+  token: string;
+}
+
 export const AuthService = {
-  login(params: LoginUser){
-        return BaseService.post<Token>({
-            url: 'api/auth',
-            payload: params,
-            isLoading: true,
-        }
-    )
+  login(params: LoginUser) {
+    return BaseService.post<ApiResponse<AuthResponse>>({
+      url: 'api/auth',
+      payload: params,
+      isLoading: true,
+    });
   }
 };

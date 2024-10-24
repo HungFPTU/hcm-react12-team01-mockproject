@@ -5,7 +5,7 @@ import { Input, Button, Checkbox, message } from 'antd';
 import * as Yup from 'yup';
 import { signInWithEmailAndPassword } from '../../firebase-config';
 import { FirebaseError } from 'firebase/app';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import { AuthService } from '../../services/authService/AuthService';
 // import loginApi from '../../services/authService/AuthService';
 
@@ -21,11 +21,11 @@ interface FormValues {
 
 const LoginEmailPassword = () => {
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
 
   const handleAPISignIn = async (email: string, password: string) => {
     try {
-      const res = await AuthService.login({ email, password})
+      const res = await AuthService.login({ email, password })
       console.log(res)
       localStorage.setItem('token', res.data.data.token);
       return true;
@@ -39,14 +39,14 @@ const LoginEmailPassword = () => {
     const { email, password } = values;
     setLoading(true);
 
-   
+
     const apiSignInSuccess = await handleAPISignIn(email, password);
-    
+
     if (apiSignInSuccess) {
-  
-      navigate('/');  
+
+      navigate('/');
     } else {
-   
+
       try {
         const userCredential = await signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
@@ -60,7 +60,7 @@ const LoginEmailPassword = () => {
           const idToken = await user.getIdToken();
           sessionStorage.setItem('Token', idToken);
           message.success("Login successful!");
-          navigate('/');  
+          navigate('/');
         }
       } catch (error) {
         const firebaseError = error as FirebaseError;
@@ -111,9 +111,9 @@ const LoginEmailPassword = () => {
           </div>
 
           <div className='w-full flex flex-col my-4'>
-            <Button 
-              type="primary" 
-              className='w-full my-2 font-semibold bg-[#a928c3]' 
+            <Button
+              type="primary"
+              className='w-full my-2 font-semibold bg-[#a928c3]'
               htmlType="submit"
               loading={loading}
             >
@@ -123,7 +123,7 @@ const LoginEmailPassword = () => {
 
           <div className='w-full flex items-center justify-center relative py-3'>
             <div className='w-full h-[1px] bg-black/40'></div>
-            <p className='text-lg absolute text-black/80 bg-white'>or</p> 
+            <p className='text-lg absolute text-black/80 bg-white'>or</p>
           </div>
         </Form>
       )}
