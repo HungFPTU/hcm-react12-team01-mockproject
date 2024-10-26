@@ -1,5 +1,5 @@
 import { toggleLoading } from '../../app/loadingSlice';
-import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { ApiRequestModel } from '../../model/ApiRequestModel';
 import { toast } from 'react-toastify';
 import { getItemInLocalStorage, removeItemInLocalStorage } from '../../utils/localStorage';
@@ -73,7 +73,7 @@ export const BaseService = {
     ) {
         const formData = new FormData();
         if (isMultiple) {
-            for (let i = 0 ; i < file.length ; i++) {
+            for (let i = 0; i < file.length; i++) {
                 formData.append("files[]", file[i]);
             }
         } else {
@@ -124,7 +124,6 @@ axiosInstance.interceptors.request.use(
         return handleErrorByToast(err);
     }
 );
-
 
 axiosInstance.interceptors.response.use(
     (config) => {
