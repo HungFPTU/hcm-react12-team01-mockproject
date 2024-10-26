@@ -17,7 +17,7 @@ interface Course {
 const courses: Course[] = [
   {
     id: 1,
-    title: "Java Tutorials For Busy People",
+    title: "Java Tutorials For Busy Hi",
     image: assets.business,
     price: 350000,
     rating: 4,
