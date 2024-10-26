@@ -37,7 +37,7 @@ const courses: Course[] = [
   },
   {
     id: 3,
-    title: "React for Beginners",
+    title: "React Beginners",
     image: assets.business1,
     price: 450000,
     rating: 5,
