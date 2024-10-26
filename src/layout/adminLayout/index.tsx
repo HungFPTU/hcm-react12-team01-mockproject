@@ -2,7 +2,7 @@ import { Layout } from "antd";
 import {  useState } from "react";
 import Footer from "../../components/footer";
 import Header from "../../components/header";
-import SidebarComponents from "../../components/AdminComponents/sidebarComponent";
+import SidebarComponents from "../../components/adminComponents/sidebarComponent";
 import { Outlet } from "react-router-dom";
 
 

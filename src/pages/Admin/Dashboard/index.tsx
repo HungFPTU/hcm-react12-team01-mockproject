@@ -8,8 +8,8 @@ import {
   MessageOutlined,
   AppstoreOutlined,
 } from "@ant-design/icons";
-import StatisticCard from "../../../components/AdminComponents/dashboard/StatisticCard"; // Đường dẫn đến file StatisticCard
-import TransactionTable from "../../../components/AdminComponents/dashboard/TransactionTable"; // Đường dẫn đến file TransactionTable
+import StatisticCard from "../../../components/adminComponents/dashboard/StatisticCard"; // Đường dẫn đến file StatisticCard
+import TransactionTable from "../../../components/adminComponents/dashboard/TransactionTable"; // Đường dẫn đến file TransactionTable
 
 const Dashboard: React.FC = () => {
   return (
