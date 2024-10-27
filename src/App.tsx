@@ -4,37 +4,37 @@ import { AdminLayout, DefaultLayout, InstructorLayout, StudentLayout } from './l
 import { RoleEnum } from './model/RouteConfig';
 
 const Dashboard = lazy(
-  () => import("./pages/admin/Daskboard"),
+  () => import("./pages/Admin/Daskboard"),
 );
 const AllCourses = lazy(
-  () => import("./pages/admin/allcourses"),
+  () => import("./pages/Admin/allcourses"),
 );
 const CoursesLog = lazy(
-  () => import("./pages/admin/courselog"),
+  () => import("./pages/Admin/courselog"),
 );
 const PendingCourses = lazy(
-  () => import("./pages/admin/PendingCourses"),
+  () => import("./pages/Admin/PendingCourses"),
 );
 const PurchaseLog = lazy(
-  () => import("./pages/admin/purchaselog"),
+  () => import("./pages/Admin/purchaselog"),
 );
 const CategoryManagement = lazy(
-  () => import("./pages/admin/CategoryManagement"),
+  () => import("./pages/Admin/CategoryManagement"),
 );
 const RequestManagement = lazy(
-  () => import("./pages/admin/RequestManagement"),
+  () => import("./pages/Admin/RequestManagement"),
 );
 const UserManagement = lazy(
-  () => import("./pages/admin/UserManagement"),
+  () => import("./pages/Admin/UserManagement"),
 );
 const PayoutManagement = lazy(
-  () => import("./pages/admin/PayoutManagement"),
+  () => import("./pages/Admin/PayoutManagement"),
 );
 const InstructorDashboard = lazy(
-  () => import("./pages/instructor/InstructorDashboard"),
+  () => import("./pages/InstructorPage/InstructorDashboard"),
 );
 const ManageCourse = lazy(
-  () => import("./pages/instructor/ManageCourse"),
+  () => import("./pages/InstructorPage/ManageCourse"),
 );
 const ViewDetailCourse = lazy(
   () => import("./components/InstructorComponents/ManageCourse/Course/ViewDetailCourse"),
@@ -49,39 +49,39 @@ const SalesHistory = lazy(
   () => import("./components/InstructorComponents/SalesHistory"),
 );
 const InstructorCourseLog = lazy(
-  () => import("./pages/instructor/InstructorCourseLog"),
+  () => import("./pages/InstructorPage/InstructorCourseLog"),
 );
 const Review = lazy(
   () => import("./components/InstructorComponents/Review"),
 );
 const InstructorSub = lazy(
-  () => import("./pages/instructor/InstructorSub"),
+  () => import("./pages/InstructorPage/InstructorSub"),
 );
 const PayoutInstructorPage = lazy(
-  () => import("./pages/instructor/PayoutInstructorPage"),
+  () => import("./pages/InstructorPage/PayoutInstructorPage"),
 );
 const StudentDashboard = lazy(
-  () => import("./pages/student/dashboard"),
+  () => import("./pages/Student/dashboard"),
 );
 const OrderPage = lazy(
-  () => import("./pages/student/order"),
+  () => import("./pages/Student/order"),
 );
 const SettingPage = lazy(
-  () => import("./pages/student/setting"),
+  () => import("./pages/Student/setting"),
 );
 const SubscriptionPage = lazy(
-  () => import("./pages/admin/PendingCourses"),
+  () => import("./pages/Admin/PendingCourses"),
 );
 const CheckoutPage = lazy(
-  () => import("./pages/student/order/checkout"),
+  () => import("./pages/Student/order/checkout"),
 );
 const Unauthorized = lazy(
   () => import('./pages/unauthorize')
 );
-const CourseDetail = lazy(() => import('./pages/coursedetail/CourseDetail'));
-const Home = lazy(() => import("./pages/home"));
-const LoginPage = lazy(() => import("./pages/login/Login"));
-const AllCoursesGuest = lazy(() => import("./pages/allcourses"));
+const CourseDetail = lazy(() => import('./pages/CourseDetail/CourseDetail'));
+const Home = lazy(() => import("./pages/Home"));
+const LoginPage = lazy(() => import("./pages/Login/Login"));
+const AllCoursesGuest = lazy(() => import("./pages/AllCourses"));
 const App: React.FC = () => {
 //   const newUserRole: RoleEnum = RoleEnum.Admin; 
 //   localStorage.setItem('userRole', newUserRole);

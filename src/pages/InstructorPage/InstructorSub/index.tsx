@@ -1,4 +1,4 @@
-import SubscriptionPage from "../../student/view-subscription";
+import SubscriptionPage from "../../Student/view-subscription";
 import React from "react";
 
 // import SubscribedPage from "./subscribed";
