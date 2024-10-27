@@ -1,35 +1,35 @@
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 import { AdminLayout } from "../../layout";
-const Dashboard = lazy(() => import("../../pages/admin/Dashboard"));
+const Dashboard = lazy(() => import("../../pages/Admin/Dashboard"));
 const AllCourses = lazy (
-    () => import("../../pages/admin/allcourses")
+    () => import("../../pages/Admin/allcourses")
 )
 const CoursesLog = lazy (
-    () => import("../../pages/admin/courselog")
+    () => import("../../pages/Admin/courselog")
 )
 const PendingCourses = lazy (
-    () => import("../../pages/admin/PendingCourses")
+    () => import("../../pages/Admin/PendingCourses")
 )
 const PurchaseLog = lazy (
-    () => import("../../pages/admin/purchaselog")
+    () => import("../../pages/Admin/purchaselog")
 )
 const CategoryManagement = lazy (
-    () => import("../../pages/admin/CategoryManagement")
+    () => import("../../pages/Admin/CategoryManagement")
 )
 const RequestManagement = lazy (
-    () => import("../../pages/admin/RequestManagement")
+    () => import("../../pages/Admin/RequestManagement")
 )
 const UserManagement = lazy (
-    () => import("../../pages/admin/UserManagement")
+    () => import("../../pages/Admin/UserManagement")
 )
 const PayoutManagement = lazy (
-    () => import ("../../pages/admin/PayoutManagement")
+    () => import ("../../pages/Admin/PayoutManagement")
 )
 
-const adminRoutes: RouteObject[] = [
+const AdminRoutes: RouteObject[] = [
 {
-    path: "/admin",
+    path: "/Admin",
     element: <AdminLayout/>,
     children: [
         { index: true , element:<Dashboard/>},
@@ -44,4 +44,4 @@ const adminRoutes: RouteObject[] = [
     ],
 },
 ]
-export default adminRoutes;
+export default AdminRoutes;
