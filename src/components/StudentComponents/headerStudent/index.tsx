@@ -15,11 +15,11 @@ export default function HeaderStudent() {
   };
 
   const handleCartClick = () => {
-    navigate("/cart");
+    navigate("/student/cart");
   };
 
   const userMenuItems = [
-    { key: "1", label: "Profile", onClick: () => navigate("/profile") },
+    { key: "1", label: "Profile", onClick: () => navigate("/student/profile") },
     { key: "2", label: "Logout", onClick: () => navigate("/logout") },
   ];
 
