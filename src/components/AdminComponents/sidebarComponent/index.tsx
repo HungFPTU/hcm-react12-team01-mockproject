@@ -9,20 +9,29 @@ import {
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { useNavigate } from "react-router-dom";
-function SidebarComponents() {
+
+
+const SidebarComponents = () => {
   const navigate = useNavigate();
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+
+    navigate(key); // Navigate to the selected route
+
+  };
+
   return (
     <>
       <Menu
         theme="dark"
         mode="inline"
         defaultSelectedKeys={["1"]}
-        onClick={({ key }) => navigate(key)}
+        onClick={handleMenuClick}
         items={[
           {
             key: "/admin",
             icon: <AppstoreOutlined />,
-            label: "Daskboard",
+            label: "Dashboard",
           },
           {
             key: "/admin/user-management",
@@ -52,22 +61,22 @@ function SidebarComponents() {
           {
             key: "/admin/pending-courses",
             icon: <ShoppingCartOutlined />,
-            label: "PendingCourses",
+            label: "Pending Courses",
           },
           {
             key: "/admin/courses-log",
             icon: <LikeOutlined />,
-            label: "CoursesLog",
+            label: "Courses Log",
           },
           {
             key: "/admin/purchase-log",
             icon: <SettingOutlined />,
-            label: "PurchaseLog",
+            label: "Purchase Log",
           },
         ]}
       />
     </>
   );
-}
+};
 
 export default SidebarComponents;
