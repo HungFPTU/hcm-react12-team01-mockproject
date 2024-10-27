@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import OrderTabs from "../../../components/StudentComponents/order/tabs";
 import CompletedOrderPage from "./completed";
 import WaitingPage from "./waiting";
 
-const OrderPage: React.FC = () => {
+const OrderPage = () => {
   const [activeTab, setActiveTab] = useState<string>("1");
 
   const handleTabChange = (key: string) => {

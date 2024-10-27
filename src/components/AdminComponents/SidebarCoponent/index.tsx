@@ -20,47 +20,47 @@ function SidebarComponents() {
         onClick={({ key }) => navigate(key)}
         items={[
           {
-            key: "/daskboard-admin",
+            key: "/admin",
             icon: <AppstoreOutlined />,
             label: "Daskboard",
           },
           {
-            key: "/display-account",
+            key: "/admin/user-management",
             icon: <UserOutlined />,
             label: "User Management",
           },
           {
-            key: "/request-management",
+            key: "/admin/request-management",
             icon: <UserOutlined />,
             label: "Request Management",
           },
           {
-            key: "/category-management",
+            key: "/admin/category-management",
             icon: <TagsOutlined />,
             label: "Category Management",
           },
           {
-            key: "/payout-management",
+            key: "/admin/payout-management",
             icon: <FileTextOutlined />,
             label: "Payout Management",
           },
-          {          
-            key: "/admin",
+          {
+            key: "/admin/all-courses",
             icon: <AppstoreOutlined />,
             label: "All Courses",
           },
           {
-            key: "/pending-courses",
+            key: "/admin/pending-courses",
             icon: <ShoppingCartOutlined />,
             label: "PendingCourses",
           },
           {
-            key: "/courses-log",
+            key: "/admin/courses-log",
             icon: <LikeOutlined />,
             label: "CoursesLog",
           },
           {
-            key: "/pruchase-courses",
+            key: "/admin/purchase-log",
             icon: <SettingOutlined />,
             label: "PurchaseLog",
           },

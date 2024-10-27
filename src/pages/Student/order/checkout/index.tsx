@@ -3,7 +3,7 @@ import OrderItem from "../../../../components/StudentComponents/order/item";
 import { Order } from "../../../../components/StudentComponents/order/mockData";
 import OrderSummary from "../../../../components/StudentComponents/order/summary";
 
-const CheckoutPage: React.FC = () => {
+const CheckoutPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ const CheckoutPage: React.FC = () => {
         <p>No items selected for checkout.</p>
         <button
           className="bg-blue-500 text-white py-2 px-4 rounded-md"
-          onClick={() => navigate("/cart")}
+          onClick={() => navigate("/student/cart")}
         >
           Go back to Cart
         </button>

@@ -5,7 +5,7 @@ const { Footer } = Layout;
 
 export default function Foter() {
   return (
-    <Layout>
+    
       <Footer
         style={{
           textAlign: 'center',
@@ -16,6 +16,8 @@ export default function Foter() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          borderRadius: "30px 30px 0px 0px",
+          width: "100%",
         }}
       >
         <div  style={{ fontSize: '50px', fontWeight: 'bold', marginBottom: '20px' }}>
@@ -62,6 +64,5 @@ export default function Foter() {
           </div>
         </div>
       </Footer>
-    </Layout>
   );
 }

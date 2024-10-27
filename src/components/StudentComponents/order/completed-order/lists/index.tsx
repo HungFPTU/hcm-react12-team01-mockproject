@@ -1,5 +1,4 @@
 import { Table } from "antd";
-import React from "react";
 
 export interface CompletedOrder {
   id: number;
@@ -12,9 +11,11 @@ export interface CompletedOrder {
   discount: string;
 }
 
-const CompletedList: React.FC<{ completedOrders: CompletedOrder[] }> = ({
-  completedOrders,
-}) => {
+interface CompletedListProps {
+  completedOrders: CompletedOrder[];
+}
+
+const CompletedList = ({ completedOrders }: CompletedListProps) => {
   const columns = [
     {
       title: "Course Name",

@@ -1,6 +1,5 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { Card, Checkbox } from "antd";
-import React from "react";
 
 interface Order {
   id: number;
@@ -19,13 +18,13 @@ interface OrderItemProps {
   variant?: "waiting" | "checkout"; // Phân biệt giao diện
 }
 
-const OrderItem: React.FC<OrderItemProps> = ({
+const OrderItem = ({
   order,
   isSelected = false,
   onSelectOrder,
   onDeleteOrder,
-  variant = "waiting", // Mặc định là waiting
-}) => {
+  variant = "waiting",
+}: OrderItemProps) => {
   return (
     <Card
       className="shadow-md hover:shadow-lg transition-all mb-4"

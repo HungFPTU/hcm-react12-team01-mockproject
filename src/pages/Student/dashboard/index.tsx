@@ -4,9 +4,8 @@ import {
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { Card } from "antd";
-import React from "react";
 
-const StudentDashboard: React.FC = () => {
+const StudentDashboard = () => {
   return (
     <div className="p-8 mt-5 bg-gray-100">
       <h2 className="text-2xl font-bold mb-6 flex items-center">

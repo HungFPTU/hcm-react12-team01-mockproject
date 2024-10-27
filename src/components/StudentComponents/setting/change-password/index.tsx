@@ -1,8 +1,7 @@
 import { Button, Form, Input } from "antd";
-import React from "react";
 import { AnyObject } from "yup";
 
-const ChangePassword: React.FC = () => {
+const ChangePassword = () => {
   const [form] = Form.useForm();
 
   const handleSubmit = (values: AnyObject) => {
