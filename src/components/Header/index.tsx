@@ -1,76 +1,94 @@
-import { Layout, Input, Space, Button,Avatar } from "antd";
-
-import assets from "../../assets/assets";
+import React, { useState, useEffect } from "react";
+import { Layout, Menu, Dropdown, Button, Avatar, Badge } from "antd";
+import { ShoppingCartOutlined, UserOutlined, MenuOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import assets from "../../assets/assets";
+import { AuthService } from "../../services/authService/AuthService";
+
 const { Header } = Layout;
-const { Search } = Input;
-import { AntDesignOutlined } from '@ant-design/icons';
+
+const items = [
+  { label: 'HOME', key: 'home' },
+  { 
+    label: 'COURSE', 
+    key: 'courses', 
+    children: [
+      { type: 'group', label: 'Item 1', children: [{ label: 'Option 1', key: 'setting:1' }, { label: 'Option 2', key: 'setting:2' }] },
+      { type: 'group', label: 'Item 2', children: [{ label: 'Option 3', key: 'setting:3' }, { label: 'Option 4', key: 'setting:4' }] },
+    ] 
+  },
+  { label: 'ABOUT', key: 'about' },
+  { label: <a href="https://ant.design" target="_blank" rel="noopener noreferrer">Link</a>, key: 'link' },
+];
+
 export default function Home() {
   const navigate = useNavigate();
-  const onSearch = (value: string) => {
-    console.log(value);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleLogOut = async () => {
+    if (token) {
+      try {
+        await AuthService.logout(token);
+        localStorage.removeItem('token');
+        navigate('/login');
+      } catch (error) {
+        console.error("Error logging out:", error);
+      }
+    }
   };
 
-  const BackHome = () => {
-    navigate("/");
-  }
+  const userMenuItems = [
+    { key: "1", label: "Profile", onClick: () => navigate("/profile") },
+    { key: "2", label: "Logout", onClick: handleLogOut },
+    { key: "3", label: "DashBoard", onClick: () => navigate("/dashboard") }
+  ];
+
   return (
     <Layout>
-      <Header
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 20,
-          width: "100%",
-          height: "66px",
-          display: "flex",
-          alignItems: "center",
-          padding: "0 28px",
-          borderBottom: "1px solid #e8ebed",
-          backgroundColor: "#fff",
-          fontSize: "1.4rem",
-        }}
-        className="flex flex-col md:flex-row justify-between items-center"
-      >
-        {/* Left */}
-        <div className="left flex items-center space-x-4 ml-2 md:ml-5" onClick={BackHome}>
-          <img
-            src={assets.logo}
-            className="logo h-8 w-auto md:h-12 cursor-pointer"
-            alt="Logo"
-          />
-          <p className="subTitle text-lg md:text-2xl font-bold text-black ml-2">FLearning</p>
-        </div>
+      <Header style={{ position: "fixed", top: 0, width: "100%", backgroundColor: "#fff", zIndex: 10 }}>
+        <div className="flex justify-between items-center px-4 md:px-8">
+          <div className="left flex items-center cursor-pointer" onClick={() => navigate("/")}>
+            <img src={assets.logo} className="h-8 w-auto md:h-10" alt="Logo" />
+            <p className="text-lg md:text-2xl font-bold text-black ml-2">FLearning</p>
+          </div>
 
-        {/* Search */}
-        <div className="search flex-grow flex justify-center mx-2 mt-7 md:mx-4">
-          <Space direction="vertical">
-            <Search
-              placeholder="Search"
-              enterButton="Search"
-              size="large"
-              onSearch={onSearch}
-              style={{
-                width: "100%",
-              }}
-              className="w-full md:w-[700px]"
+          {isMobile ? (
+            <Dropdown overlay={<Menu items={items} />} trigger={["click"]}>
+              <Button icon={<MenuOutlined />} />
+            </Dropdown>
+          ) : (
+            <Menu
+              mode="horizontal"
+              items={items}
+              className="flex-grow flex justify-center"
+              style={{ borderBottom: "none" }}
             />
-          </Space>
-        </div>
-        <Avatar
-            size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
-            icon={<AntDesignOutlined />}
-          />
-        {/* Right */}
-        <div className="right flex items-center justify-end flex-shrink-0  mt-2 md:mt-0">
-          <Button onClick={() => navigate("/login")} type="text" className="register mr-3 md:mr-7 bg-transparent font-semibold cursor-pointer">
-            Register
-          </Button>
-          <Button onClick={() => navigate("/login")} className="login flex-shrink-0 px-4 py-2 md:px-5 md:py-2.5 rounded-full text-white bg-gradient-to-br from-[#d01bc7] to-[#ff5117] text-sm md:text-lg font-semibold cursor-pointer transition-opacity duration-200">
-            Login
-          </Button>
+          )}
+
+          <div className="flex items-center space-x-2 md:space-x-4">
+            {token ? (
+              <>
+                <Badge showZero>
+                  <Button icon={<ShoppingCartOutlined  style={{ fontSize: '24px' }}/>} type="text" onClick={() => navigate("/student/cart")} />
+                </Badge>
+                <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+                  <Avatar size={40} icon={<UserOutlined />} />
+                </Dropdown>
+              </>
+            ) : (
+              <>
+                <Button onClick={() => navigate("/login")} type="text" className="font-semibold text-gray-700">Register</Button>
+                <Button onClick={() => navigate("/login")} className="px-4 py-1 rounded-full bg-gradient-to-br from-[#d01bc7] to-[#ff5117] text-white">Login</Button>
+              </>
+            )}
+          </div>
         </div>
       </Header>
     </Layout>
