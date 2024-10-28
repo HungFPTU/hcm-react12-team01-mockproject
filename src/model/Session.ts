@@ -1,10 +1,10 @@
 export type Session = {
-  // key: string;
+  key: string;
   id: string;
   name: string;
   course_id: string;
-  // courseName: string;
-  // lesson: string;
+  courseName: string;
+  lesson: string;
   user_id: string;
   description: string;
   position_order: number;

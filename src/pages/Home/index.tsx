@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Tabs,Button, Rate, Tooltip, Col, Row, Pagination } from "antd";
+import { Card, Tabs,Button, Tooltip, Col, Row, Pagination } from "antd";
 import React ,{useState} from "react";
 import asset from "../../assets/assets";
 import { useNavigate } from "react-router-dom";
@@ -99,7 +99,7 @@ useEffect(() => {
           setCourses([response.data]);
         }
       })
-      .catch(error => {
+      .catch(() => {
         toast.error("Error fetching course details");
       });
   }
