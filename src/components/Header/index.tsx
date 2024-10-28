@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { Layout, Menu, Dropdown, Button, Avatar, Badge } from "antd";
 import { ShoppingCartOutlined, UserOutlined, MenuOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
