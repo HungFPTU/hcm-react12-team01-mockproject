@@ -6,7 +6,7 @@ import { getItemInLocalStorage, removeItemInLocalStorage } from '../../utils/loc
 import { store } from "../../app/store";
 import { DOMAIN_ADMIN, LOCAL_STORAGE } from '../../const/const';
 import { ROUTER_URL } from '../../const/router.const';
-import { ApiResponse } from '../../model/response/ApiResponse';
+import { ApiResponse } from '../../model/ApiResponse';
 export const axiosInstance = axios.create({
     baseURL: DOMAIN_ADMIN,
     headers: {
