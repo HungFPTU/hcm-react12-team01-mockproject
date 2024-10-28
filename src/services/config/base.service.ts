@@ -6,6 +6,7 @@ import { getItemInLocalStorage, removeItemInLocalStorage } from '../../utils/loc
 import { store } from "../../app/store";
 import { DOMAIN_ADMIN, LOCAL_STORAGE } from '../../const/const';
 import { ROUTER_URL } from '../../const/router.const';
+
 export const axiosInstance = axios.create({
     baseURL: DOMAIN_ADMIN,
     headers: {
@@ -15,9 +16,9 @@ export const axiosInstance = axios.create({
     timeoutErrorMessage: `Connection is timeout exceeded`
 });
 
-// export const getState = (store: any) => {
-//     return store.getState();
-// }
+export const getState = (store: any) => {
+    return store.getState();
+}
 
 export const BaseService = {
     get<T = any>({ url, isLoading = true, payload, headers }: Partial<ApiRequestModel>): Promise<PromiseState<T>> {
