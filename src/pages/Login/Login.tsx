@@ -1,9 +1,8 @@
-// src/pages/Login.jsx
-import LoginGoogle from "../../components/LoginGoogle/LoginGoogle";
-import LoginEmailPassword from "../../components/LoginEmailPassword/LoginEmailPassword";
-import YOUR_IMAGE from "../../assets/Login&Register.jpg";
-import LOGO from "../../assets/LogoCourseApp.png";
-import { useNavigate } from "react-router-dom";
+import LoginGoogle from '../../components/LoginGoogle/LoginGoogle';
+import LoginEmailPassword from '../../components/LoginEmailPassword/LoginEmailPassword';
+import YOUR_IMAGE from '../../assets/Login&Register.jpg';
+import LOGO from '../../assets/logo.png';
+import { useNavigate } from 'react-router-dom';  
 
 const Login = () => {
   const navigate = useNavigate();
@@ -29,8 +28,11 @@ const Login = () => {
             <p className="text-base mb-2">Please! Login with your account</p>
           </div>
 
-          <LoginEmailPassword />
-          <LoginGoogle />
+     
+          <div className="flex-grow">
+            <LoginEmailPassword />
+            <LoginGoogle />
+          </div>
 
           <div className="w-full flex items-center justify-center">
             <p className="text-sm font-normal text-black mt-8">
