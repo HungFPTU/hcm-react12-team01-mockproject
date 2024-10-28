@@ -6,7 +6,7 @@ import { getItemInLocalStorage, removeItemInLocalStorage } from '../../utils/loc
 import { store } from "../../app/store";
 import { DOMAIN_ADMIN, LOCAL_STORAGE } from '../../const/const';
 import { ROUTER_URL } from '../../const/router.const';
-
+import { ApiResponse } from '../../model/response/ApiResponse';
 export const axiosInstance = axios.create({
     baseURL: DOMAIN_ADMIN,
     headers: {
@@ -21,7 +21,7 @@ export const axiosInstance = axios.create({
 // }
 
 export const BaseService = {
-    get<T = any>({ url, isLoading = true, payload, headers }: Partial<ApiRequestModel>): Promise<PromiseState<T>> {
+    get<T = any>({ url, isLoading = true, payload, headers }: Partial<ApiRequestModel>): Promise<ApiResponse<T>> {
         const params = { ...payload }
         for (const key in params) {
             if ((params as any)[key] === '' && (params as any)[key] !== 0) {
@@ -29,27 +29,27 @@ export const BaseService = {
             }
         }
         checkLoading(isLoading);
-        return axiosInstance.get<T, PromiseState<T>>(
+        return axiosInstance.get<T, ApiResponse<T>>(
             `${url}`, {
             params: params,
             headers: headers || {}
         })
     },
-    post<T = any>({ url, isLoading = true, payload, headers }: Partial<ApiRequestModel>): Promise<PromiseState<T>> {
+    post<T = any>({ url, isLoading = true, payload, headers }: Partial<ApiRequestModel>): Promise<ApiResponse<T>> {
         checkLoading(isLoading);
         return axiosInstance.post<T, PromiseState<T>>(
             `${url}`, payload, {
             headers: headers || {}
         })
     },
-    put<T = any>({ url, isLoading = true, payload, headers }: Partial<ApiRequestModel>): Promise<PromiseState<T>> {
+    put<T = any>({ url, isLoading = true, payload, headers }: Partial<ApiRequestModel>): Promise<ApiResponse<T>> {
         checkLoading(isLoading);
         return axiosInstance.put(
             `${url}`, payload, {
             headers: headers || {}
         })
     },
-    remove<T = any>({ url, isLoading = true, payload, headers }: Partial<ApiRequestModel>): Promise<PromiseState<T>> {
+    remove<T = any>({ url, isLoading = true, payload, headers }: Partial<ApiRequestModel>): Promise<ApiResponse<T>> {
         checkLoading(isLoading);
         return axiosInstance.delete(
             `${url}`, {
@@ -57,9 +57,9 @@ export const BaseService = {
             headers: headers || {}
         })
     },
-    getById<T = any>({ url, isLoading = true, payload, headers }: Partial<ApiRequestModel>): Promise<PromiseState<T>> {
+    getById<T = any>({ url, isLoading = true, payload, headers }: Partial<ApiRequestModel>): Promise<ApiResponse<T>> {
         checkLoading(isLoading);
-        return axiosInstance.get<T, PromiseState<T>>(
+        return axiosInstance.get<T, ApiResponse<T>>(
             `${url}`, {
             params: payload,
             headers: headers || {}

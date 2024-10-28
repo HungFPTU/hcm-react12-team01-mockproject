@@ -1,5 +1,5 @@
 import { LoginUser } from "../../model/LoginUser";
-import { ApiResponse } from "../../model/ApiResponse";
+import { ApiResponse } from "../../model/response/ApiResponse";
 import { BaseService } from "../config/base.service";
 
 export interface AuthResponse {
@@ -14,4 +14,5 @@ export const AuthService = {
       isLoading: true,
     });
   }
+  
 };

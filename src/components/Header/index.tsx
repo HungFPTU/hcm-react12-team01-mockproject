@@ -1,10 +1,10 @@
-import { Layout, Input, Space, Button } from "antd";
+import { Layout, Input, Space, Button,Avatar } from "antd";
+
 import assets from "../../assets/assets";
 import { useNavigate } from "react-router-dom";
-
 const { Header } = Layout;
 const { Search } = Input;
-
+import { AntDesignOutlined } from '@ant-design/icons';
 export default function Home() {
   const navigate = useNavigate();
   const onSearch = (value: string) => {
@@ -59,7 +59,10 @@ export default function Home() {
             />
           </Space>
         </div>
-
+        <Avatar
+            size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
+            icon={<AntDesignOutlined />}
+          />
         {/* Right */}
         <div className="right flex items-center justify-end flex-shrink-0  mt-2 md:mt-0">
           <Button onClick={() => navigate("/login")} type="text" className="register mr-3 md:mr-7 bg-transparent font-semibold cursor-pointer">
