@@ -5,11 +5,13 @@ import { Input, Button, Checkbox, message } from 'antd';
 import * as Yup from 'yup';
 import { signInWithEmailAndPassword } from '../../firebase-config';
 import { FirebaseError } from 'firebase/app';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
+import { AuthService } from '../../services/authService/AuthService';
+// import loginApi from '../../services/authService/AuthService';
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Invalid email!').required('Please input your email!'),
-  password: Yup.string().required('Please input your password!').min(8, 'Password must be at least 8 characters!'),
+  password: Yup.string().required('Please input your password!').min(6, 'Password must be at least 6 characters!'),
 });
 
 interface FormValues {
@@ -19,34 +21,55 @@ interface FormValues {
 
 const LoginEmailPassword = () => {
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
+
+  const handleAPISignIn = async (email: string, password: string) => {
+    try {
+      const res = await AuthService.login({ email, password })
+      console.log(res)
+      localStorage.setItem('token', res.data.data.token);
+      return true;
+    } catch (error) {
+      console.log(error)
+      return false;
+    }
+  };
 
   const handleEmailSignIn = useCallback(async (values: FormValues) => {
     const { email, password } = values;
     setLoading(true);
 
-    try {
-      const userCredential = await signInWithEmailAndPassword(email, password);
-      const user = userCredential.user;
 
-      if (!user.emailVerified) {
-        message.error('Your email is not verified. Please check your email for verification.');
-        return;
-      }
+    const apiSignInSuccess = await handleAPISignIn(email, password);
 
-      if (user) {
-        const idToken = await user.getIdToken();
-        sessionStorage.setItem('Token', idToken);
-        message.success("Login successful!");
-        navigate('/');  
+    if (apiSignInSuccess) {
+
+      navigate('/');
+    } else {
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        if (!user.emailVerified) {
+          message.error('Your email is not verified. Please check your email for verification.');
+          return;
+        }
+
+        if (user) {
+          const idToken = await user.getIdToken();
+          sessionStorage.setItem('Token', idToken);
+          message.success("Login successful!");
+          navigate('/');
+        }
+      } catch (error) {
+        const firebaseError = error as FirebaseError;
+        console.error("Login failed:", firebaseError);
+        message.error("Login failed. Please check your email and password.");
       }
-    } catch (error) {
-      const firebaseError = error as FirebaseError;
-      console.error("Login failed:", firebaseError);
-      message.error("Login failed. Please check your email and password.");
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   }, [navigate]);
 
   return (
@@ -70,7 +93,7 @@ const LoginEmailPassword = () => {
             <ErrorMessage name="email" component="div" className="text-red-500 text-sm absolute -bottom-5" />
           </div>
 
-          <div className="relative my-4">
+          <div className="relative my-5">
             <Field
               as={Input.Password}
               name="password"
@@ -88,9 +111,9 @@ const LoginEmailPassword = () => {
           </div>
 
           <div className='w-full flex flex-col my-4'>
-            <Button 
-              type="primary" 
-              className='w-full my-2 font-semibold bg-[#2563EB]' 
+            <Button
+              type="primary"
+              className='w-full my-2 font-semibold bg-[#a928c3]'
               htmlType="submit"
               loading={loading}
             >
@@ -100,7 +123,7 @@ const LoginEmailPassword = () => {
 
           <div className='w-full flex items-center justify-center relative py-3'>
             <div className='w-full h-[1px] bg-black/40'></div>
-            <p className='text-lg absolute text-black/80 bg-white'>or</p> 
+            <p className='text-lg absolute text-black/80 bg-white'>or</p>
           </div>
         </Form>
       )}
