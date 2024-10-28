@@ -3,24 +3,41 @@ import { Avatar, Badge, Button, Dropdown, Input, Layout, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import assets from "../../../assets/assets";
 import "./index.css";
-
+import { AuthService } from "../../../services/authService/AuthService";
 const { Header } = Layout;
 const { Search } = Input;
 
 export default function HeaderStudent() {
   const navigate = useNavigate();
+  const token = localStorage.getItem('token')
+  const handleLogOut = async () => {
 
+    try {
+      if (token) {
+        console.log(">>>>>>>", token)
+        const res = await AuthService.logout(token);
+        console.log('Logout successful:', res.data);
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
+
+    } catch (error) {
+      console.log("Error");
+
+      console.log("Error", error);
+    }
+  };
   const onSearch = (value: string) => {
     console.log(value);
   };
 
   const handleCartClick = () => {
-    navigate("/cart");
+    navigate("/student/cart");
   };
 
   const userMenuItems = [
     { key: "1", label: "Profile", onClick: () => navigate("/profile") },
-    { key: "2", label: "Logout", onClick: () => navigate("/logout") },
+    { key: "2", label: "Logout", onClick: () => handleLogOut() },
   ];
 
   return (
