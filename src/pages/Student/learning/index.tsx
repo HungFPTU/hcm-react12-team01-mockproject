@@ -11,10 +11,9 @@ const LearningPage = () => {
     const handleGoToDetail = (id: number) => {
         navigate(`/student/course/${id}`); // Navigate to course detail page
     };
-
     return (
-        <div className="h-screen flex flex-col">
-            <div className="flex-1 overflow-auto p-8">
+        <div className="min-h-screen flex flex-col">
+            <div className="flex-1 overflow-auto p-8 bg-gray-50">
                 {courses.length > 0 ? (
                     <CourseList
                         courses={courses}
@@ -22,12 +21,13 @@ const LearningPage = () => {
                     />
                 ) : (
                     <div className="flex items-center justify-center h-full">
-                        <Empty description="No courses available"/>
+                        <Empty description="No courses available" />
                     </div>
                 )}
             </div>
         </div>
     );
+
 };
 
 export default LearningPage;

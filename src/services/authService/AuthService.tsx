@@ -1,6 +1,7 @@
 import { LoginUser } from "../../model/LoginUser";
 import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
+import { User } from "../../model/User.ts";
 
 // export interface AuthResponse<T> {
 //   success : boolean
@@ -28,6 +29,12 @@ export const AuthService = {
     return BaseService.put<ApiResponse<null>>({
       url: "/api/auth/forgot-password",
       payload: { email },
+      isLoading: true,
+    });
+  },
+  getCurrentUser() {
+    return BaseService.get<ApiResponse<User>>({
+      url: "/api/auth",
       isLoading: true,
     });
   },

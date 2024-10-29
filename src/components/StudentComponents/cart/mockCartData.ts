@@ -1,4 +1,14 @@
-export const cartCourses = [
+export interface MockCartData {
+    id: number;
+    title: string;
+    author: string;
+    price: number;
+    discount: number;
+    finalPrice: number;
+    image: string;
+}
+
+export const cartCourses: MockCartData[] = [
     {
         id: 1,
         title: "Financial Analysis and Financial Modeling using MS Excel",

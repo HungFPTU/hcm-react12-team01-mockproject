@@ -1,24 +1,23 @@
-import CourseItem from "../item"; // Import the new CourseItem component
-import { Course } from "../mockData"; // Import Course type or mock data as needed
+import CourseItem from "../item";
+import { Course } from "../mockData";
 
 interface CourseListProps {
-  courses: Course[]; // List of courses
-  onGoToDetail: (id: number) => void; // Callback for course detail navigation
+    courses: Course[];
+    onGoToDetail: (id: number) => void;
 }
 
-const CourseList = ({ courses, onGoToDetail }: CourseListProps) => {
-  return (
-      <div className="grid grid-cols-1 gap-6">
-        {courses.map((course) => (
-            <CourseItem
-                key={course.id}
-                course={course}
-                onGoToDetail={onGoToDetail}
-                variant="waiting"
-            />
-        ))}
-      </div>
-  );
+function CourseList({ courses, onGoToDetail }:CourseListProps) {
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+            {courses.map((course) => (
+                <CourseItem
+                    key={course.id}
+                    course={course}
+                    onGoToDetail={onGoToDetail}
+                />
+            ))}
+        </div>
+    );
 };
 
 export default CourseList;

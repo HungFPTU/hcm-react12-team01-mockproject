@@ -1,4 +1,5 @@
 import { Table } from "antd";
+import { ColumnsType } from "antd/es/table";
 
 export interface CompletedOrder {
   id: number;
@@ -16,11 +17,16 @@ interface CompletedListProps {
 }
 
 const CompletedList = ({ completedOrders }: CompletedListProps) => {
-  const columns = [
+  const columns: ColumnsType<CompletedOrder> = [
     {
       title: "Course Name",
       dataIndex: "courseName",
       key: "courseName",
+      render: (text: string) => (
+          <div className="truncate max-w-xs" title={text}>
+            {text}
+          </div>
+      ),
     },
     {
       title: "Purchase Number",
@@ -36,11 +42,13 @@ const CompletedList = ({ completedOrders }: CompletedListProps) => {
       title: "Student Name",
       dataIndex: "studentName",
       key: "studentName",
+      width: 200, // Adjust width to fit longer names
     },
     {
       title: "Instructor Name",
       dataIndex: "instructorName",
       key: "instructorName",
+      width: 200, // Adjust width to fit longer names
     },
     {
       title: "Price Paid",
@@ -55,12 +63,12 @@ const CompletedList = ({ completedOrders }: CompletedListProps) => {
   ];
 
   return (
-    <Table
-      columns={columns}
-      dataSource={completedOrders}
-      rowKey="id"
-      pagination={false}
-    />
+      <Table
+          columns={columns}
+          dataSource={completedOrders}
+          rowKey="id"
+          pagination={false}
+      />
   );
 };
 

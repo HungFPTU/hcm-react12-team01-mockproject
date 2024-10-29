@@ -1,16 +1,9 @@
 import { Checkbox, Empty } from "antd";
 import CartItem from "../item";
+import {MockCartData} from "../mockCartData.ts";
 
 interface CartListProps {
-  items: {
-    id: number;
-    title: string;
-    author: string;
-    price: number;
-    discount: number;
-    finalPrice: number;
-    image: string;
-  }[];
+  items: MockCartData[];
   selectedItems: number[];
   onSelectItem: (id: number) => void;
   onSelectAll: () => void;
