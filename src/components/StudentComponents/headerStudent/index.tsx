@@ -32,7 +32,7 @@ export default function HeaderStudent() {
   };
 
   const handleCartClick = () => {
-    navigate("/cart");
+    navigate("/student/cart");
   };
 
   const userMenuItems = [
