@@ -1,24 +1,19 @@
-// ProtectedRoute.tsx
+import React from "react";
 import { Navigate } from "react-router-dom";
-import { UserRole } from "../../model/User";
 import { ROUTER_URL } from "../../const/router.const";
-interface ProtectedRouteProps {
-  component: JSX.Element;
-  userRole: UserRole | null;
-  allowedRoles: UserRole[];
+interface GuardProtectedRouteProps {
+  component: React.ReactNode;
+  userRole: string;
+  allowedRoles: string[];
   onAccessDenied: () => void;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ component, userRole, allowedRoles }) => {
-  if (window.location.pathname === ROUTER_URL.COMMON.HOME && (userRole === UserRole.student || userRole === UserRole.instructor)) {
-    return component;
+const GuardProtectedRoute = ({ component, userRole, allowedRoles, onAccessDenied }: GuardProtectedRouteProps) => {
+  if (!allowedRoles.includes(userRole)) {
+    onAccessDenied();
+    return <Navigate to={ROUTER_URL.UNAUTHORIZED} replace />;
   }
-
-  if (!allowedRoles.includes(userRole!)) {
-    return <Navigate to="/" />;
-  }
-  
-  return component;
+  return <div>{component}</div>;
 };
 
-export default ProtectedRoute;
+export default GuardProtectedRoute;
