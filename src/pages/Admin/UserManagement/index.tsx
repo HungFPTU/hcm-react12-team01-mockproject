@@ -127,6 +127,25 @@ const UserManagement: React.FC = () => {
     message.success("Tạo người dùng thành công!");
   };
 
+  // Function to delete user
+  const deleteUser = (id: string) => {
+    UserService.deleteUser(id) // Assuming UserService has a deleteUser method
+      .then((response) => {
+        if (response.data.success) {
+          setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+          setFilteredUsers((prevFilteredUsers) =>
+            prevFilteredUsers.filter((user) => user._id !== id)
+          );
+          message.success("Xóa người dùng thành công!");
+        } else {
+          message.error("Xóa người dùng thất bại.");
+        }
+      })
+      .catch(() => {
+        message.error("Lỗi khi xóa người dùng.");
+      });
+  };
+
   // Columns for the table
   const commonColumns = [
     {
@@ -173,14 +192,19 @@ const UserManagement: React.FC = () => {
     {
       title: "Actions",
       key: "actions",
-      render: (_: any, __: User) => (
+      render: (_: any, record: User) => (
         <>
           <Button
             icon={<EditOutlined />}
             type="primary"
             style={{ marginRight: 8 }}
           />
-          <Button icon={<DeleteOutlined />} type="primary" danger />
+          <Button
+            icon={<DeleteOutlined />}
+            type="primary"
+            danger
+            onClick={() => deleteUser(record._id)} // Call delete function
+          />
         </>
       ),
     },
