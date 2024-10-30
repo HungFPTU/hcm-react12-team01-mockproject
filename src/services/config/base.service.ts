@@ -116,7 +116,7 @@ axiosInstance.interceptors.request.use(
             config.headers = {}; // Ensure headers is defined
         }
         if (token) {
-            config.headers['Authorization'] = `Bearer ${token}}`;
+            config.headers['Authorization'] = `Bearer ${token}`;
         }
         return config as InternalAxiosRequestConfig; // Cast to correct type
     },
