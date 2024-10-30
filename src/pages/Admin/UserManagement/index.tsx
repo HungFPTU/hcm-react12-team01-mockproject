@@ -27,7 +27,7 @@ const { TabPane } = Tabs;
 const { Option } = Select;
 const { confirm } = Modal; // Import confirm từ Modal
 
-// Define User type r
+// Define User type aloalo
 interface User {
   _id: string;
   avatar_url: string;
