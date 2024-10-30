@@ -10,13 +10,10 @@ export const AuthService = {
       isLoading: true,
     });
   },
-  logout(params: string) {
+  logout() {
     return BaseService.get<ApiResponse<any>>({
       url: "/api/auth/logout",
       isLoading: true,
-      headers: {
-        Authorization: `Bearer ${params}`,
-      },
     });
   },
   verifyToken(token: string) {
