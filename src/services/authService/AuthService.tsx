@@ -2,11 +2,6 @@ import { LoginUser } from "../../model/LoginUser";
 import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
 
-// export interface AuthResponse<T> {
-//   success : boolean
-//   data: T;
-// }
-
 export const AuthService = {
   login(params: LoginUser) {
     return BaseService.post<ApiResponse<{ token: string }>>({
@@ -23,5 +18,12 @@ export const AuthService = {
         'Authorization': `Bearer ${params}`
       },
     });
-  }
+  },
+  verifyToken(token: string) {
+    return BaseService.post<ApiResponse<any>>({
+      url: '/api/auth/verify-token',
+      payload: {token},
+      isLoading: true,
+    });
+  },
 };
