@@ -1,4 +1,3 @@
-// src/components/LoginEmailPassword.jsx
 import { useCallback, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Input, Button, Checkbox, message } from "antd";
@@ -7,7 +6,7 @@ import { signInWithEmailAndPassword } from "../../firebase-config";
 import { FirebaseError } from "firebase/app";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthService } from "../../services/authService/AuthService";
-// import loginApi from '../../services/authService/AuthService';
+import { useAuth } from "../../context/AuthContent"; // Import useAuth for context
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -24,48 +23,54 @@ interface FormValues {
 }
 
 const LoginEmailPassword = () => {
+  const {handleLogin } = useAuth(); // Destructure setRole and setUserInfo
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleAPISignIn = async (email: string, password: string) => {
     try {
       const res = await AuthService.login({ email, password });
-      console.log(res);
-      localStorage.setItem("token", res.data.data.token);
+      const { token } = res.data.data;
+  
+      // Store token in localStorage only, to ensure consistency
+      localStorage.setItem("token", token);
+  
+      await handleLogin(token);
+  
+      // Indicate successful login
       return true;
     } catch (error) {
-      console.log(error);
+      console.error("API Login failed:", error);
       return false;
     }
   };
-
+  
   const handleEmailSignIn = useCallback(
     async (values: FormValues) => {
       const { email, password } = values;
       setLoading(true);
-
+  
+      // Attempt login through API
       const apiSignInSuccess = await handleAPISignIn(email, password);
-
+  
       if (apiSignInSuccess) {
-        navigate("/");
+        message.success("Login successful!");
+        navigate("/"); // Navigate only on success
       } else {
         try {
-          const userCredential = await signInWithEmailAndPassword(
-            email,
-            password
-          );
+          // Fallback to Firebase authentication if API login fails
+          const userCredential = await signInWithEmailAndPassword(email, password);
           const user = userCredential.user;
-
+  
           if (!user.emailVerified) {
-            message.error(
-              "Your email is not verified. Please check your email for verification."
-            );
+            message.error("Your email is not verified. Please check your email for verification.");
+            setLoading(false);
             return;
           }
-
+  
           if (user) {
             const idToken = await user.getIdToken();
-            sessionStorage.setItem("Token", idToken);
+            localStorage.setItem("token", idToken); // Store token in localStorage to match context
             message.success("Login successful!");
             navigate("/");
           }
@@ -75,12 +80,12 @@ const LoginEmailPassword = () => {
           message.error("Login failed. Please check your email and password.");
         }
       }
-
+  
       setLoading(false);
     },
     [navigate]
   );
-
+  
   return (
     <Formik
       initialValues={{ email: "", password: "" }}
