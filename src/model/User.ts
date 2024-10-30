@@ -11,7 +11,7 @@ export enum UserRole {
     password: string;
     name: string;
     google_id: string | null;
-    role: UserRole;
+    role: string;
     status: boolean;
     description: string;
     phone_number: string;

@@ -1,49 +1,71 @@
-import { RouteObject } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../../context/AuthContent";
-import ProtectedRoute from "./protectedRoute";
+import { RouteObject,Navigate } from "react-router-dom";
+import { useState,useEffect, Suspense } from "react";
+
+import Loading from "../../components/Loading";
 import adminRoutes from "../subs/adminRoutes";
 import instructorRoutes from "../subs/instrucstorRoutes";
 import studentRoutes from "../subs/studentRoutes";
 import { UserRole } from "../../model/User";
 
 const useProtectedRoutes = (): RouteObject[] => {
-  const { role } = useContext(AuthContext) as { role: UserRole | null };
+  const [role, setRole] = useState<UserRole | null>(null);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("role");
+    console.log("storedRole", storedRole); // Kiểm tra giá trị storedRole
+    if (storedRole) {
+      setRole(storedRole as UserRole);
+      console.log("Role set to:", storedRole); // Kiểm tra sau khi setRole
+    }
+  }, []);
 
   let roleBasedRoutes: RouteObject[] = [];
 
-  const wrapWithProtectedRoute = (
-    route: RouteObject,
-    allowedRoles: UserRole[]
-  ): RouteObject => ({
-    ...route,
-    element: (
-      <ProtectedRoute
-        component={route.element as unknown as React.ComponentType<object>}
-        userRole={role!} // Non-null assertion, since role is checked in switch case
-        allowedRoles={allowedRoles}
-      />
-    ),
-  });
+  if (role == null) {
+    return[
+      {
+        path:"*",
+        element:<Navigate to="/"/>,
+      }
+    ]
+  }
+
+  const wrapWithProtectedRoute = (routes: RouteObject[], allowedRole: UserRole): RouteObject[] => {
+    return routes.map((route) => {
+      if ("index" in route && route.index) {
+        return {
+          ...route,
+          element: <Suspense fallback={<Loading />}>{role === allowedRole ? route.element : <Navigate to="/" replace />}</Suspense>
+        };
+      }
+      return {
+        ...route,
+        element: (<Suspense fallback={<Loading />}>{role === allowedRole && route.element ? (route.element as JSX.Element) : <Navigate to="/" replace />}</Suspense>) as JSX.Element,
+        children: Array.isArray(route.children) ? wrapWithProtectedRoute(route.children, allowedRole) : undefined
+      };
+    });
+  };
 
   switch (role) {
     case UserRole.admin:
-      roleBasedRoutes = adminRoutes.map((route) =>
-        wrapWithProtectedRoute(route, [UserRole.admin])
-      );
+      console.log("admin routes:", adminRoutes);
+      roleBasedRoutes = wrapWithProtectedRoute(adminRoutes, UserRole.admin) as RouteObject[];
       break;
     case UserRole.instructor:
-      roleBasedRoutes = instructorRoutes.map((route) =>
-        wrapWithProtectedRoute(route, [UserRole.instructor])
-      );
+      console.log("instructor routes:", instructorRoutes);
+      roleBasedRoutes = wrapWithProtectedRoute(instructorRoutes, UserRole.instructor) as RouteObject[];
       break;
     case UserRole.student:
-      roleBasedRoutes = studentRoutes.map((route) =>
-        wrapWithProtectedRoute(route, [UserRole.student])
-      );
+      console.log("Student routes:", studentRoutes);
+      roleBasedRoutes = wrapWithProtectedRoute(studentRoutes, UserRole.student) as RouteObject[];
       break;
     default:
-      roleBasedRoutes = [];
+      roleBasedRoutes = [
+        {
+          path: "*",
+          element: <Navigate to="/" />
+        }
+      ];
   }
 
   return roleBasedRoutes;
