@@ -1,7 +1,11 @@
-import { Card, Tabs,Button, Rate, Tooltip, Col, Row, Pagination } from "antd";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { Card, Tabs,Button, Tooltip, Col, Row, Pagination } from "antd";
 import React ,{useState} from "react";
 import asset from "../../assets/assets";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 
 import Business from "../../components/Demo/Business";
 import Healthcare from "../../components/Demo/Healthcare";
@@ -11,6 +15,9 @@ import Photo from "../../components/Demo/photo";
 import Software from "../../components/Demo/software";
 import Teaching from "../../components/Demo/teaching";
 
+import { BaseService } from "../../services/config/base.service";
+import {Course} from "../../model/Course"
+
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow } from 'swiper/modules';
 import "swiper/css";
@@ -19,76 +26,7 @@ import "swiper/css/navigation";
 
 const { TabPane } = Tabs;
 
-interface Course {
-  id: number;
-  title: string;
-  image: string;
-  price: number;
-  rating: number;
-  discount?: number;
-  session_count: number;
-  lession_count: number;
-  fulltime: number;
-  category_id: string;
-}
 
-const courses: Course[] = [
-  {id: 1,
-title: "Java Tutorials For Busy People",
-image: asset.java,
-price: 350000,
-rating: 4,
-session_count: 15,
-lession_count: 30,
-fulltime: 90,
-category_id: '1'
-},
-{
-id: 2,
-title: "React for Beginners",
-image: asset.react,
-price: 450000,
-rating: 5,
-session_count: 10,
-lession_count: 20,
-fulltime: 60,
-category_id: "2",
-},
-{
-id: 3,
-title: "TypeScript Essentials",
-image: asset.typescript,
-price: 200000,
-rating: 4,
-discount: 199000,
-session_count: 12,
-lession_count: 25,
-fulltime: 120,
-category_id: "3",
-},
-{
-id: 4,
-title: "Python for Data Science",
-image: asset.python,
-price: 250000,
-rating: 5,
-session_count: 20,
-lession_count: 35,
-fulltime: 180,
-category_id: "4",
-},
-{
-  id: 5,
-title: "Python for Data Science",
-image: asset.python,
-price: 250000,
-rating: 5,
-session_count: 20,
-lession_count: 35,
-fulltime: 180,
-category_id: "4",
-}
-];
 interface User {
   id: number;
   name: string;
@@ -150,12 +88,29 @@ const AllCourse = () => {
   navigate("/all");
 }
 
+const { id } = useParams<{ id: string }>();
+const [courses, setCourses] = useState<Course[]>([]);
+
+useEffect(() => {
+  if (id) {
+    BaseService.getById<Course>({ url: `/api/course/${id}`, isLoading: true })
+      .then(response => {
+        if (response) {
+          setCourses([response.data]);
+        }
+      })
+      .catch(() => {
+        toast.error("Error fetching course details");
+      });
+  }
+}, [id]);
+
 const formatPrice = (price: number) => price.toLocaleString("vi-VN") + "₫";
-const formatTime = (minutes: number) => {
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-  return hours > 0 ? `${hours}h${remainingMinutes > 0 ? remainingMinutes + "p" : ""}` : `${remainingMinutes}p`;
-};
+// const formatTime = (minutes: number) => {
+//   const hours = Math.floor(minutes / 60);
+//   const remainingMinutes = minutes % 60;
+//   return hours > 0 ? `${hours}h${remainingMinutes > 0 ? remainingMinutes + "p" : ""}` : `${remainingMinutes}p`;
+// };
 const [currentPage, setCurrentPage] = useState(1);
 const pageSize = 4;
 const totalCourses = courses.length;
@@ -214,8 +169,8 @@ const paginatedCourses = courses.slice((currentPage - 1) * pageSize, currentPage
                 className="rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
                 cover={
                   <img
-                    alt={course.title}
-                    src={course.image}
+                    alt="Picture"
+                    src={course.image_url}
                     className="rounded-t-lg w-full h-[200px] object-cover"
                   />
                 }
@@ -228,23 +183,23 @@ const paginatedCourses = courses.slice((currentPage - 1) * pageSize, currentPage
               >
                 <div className="flex justify-between items-center mb-2">
                   <div className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 text-xs">
-                    {course.session_count} sessions
+                    {/* {course.session_count} sessions */}
                   </div>
                   <div className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 text-xs">
-                    {course.lession_count} lessons
+                    {/* {course.lession_count} lessons */}
                   </div>
                   <div className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 text-xs">
-                    {formatTime(course.fulltime)}
+                    {/* {formatTime(course.fulltime)} */}
                   </div>
                 </div>
 
-                <Tooltip title={course.title} placement="top">
+                <Tooltip title={course.name} placement="top">
                   <h2 className="text-lg font-semibold mb-2 truncate" style={{ maxWidth: "250px" }}>
-                    {course.title}
+                    {course.name}
                   </h2>
                 </Tooltip>
 
-                <Rate disabled defaultValue={course.rating} className="mb-3" />
+                {/* <Rate disabled defaultValue={course.rating} className="mb-3" /> */}
 
                 <div className="flex justify-between items-center mt-2">
                   {course.discount ? (

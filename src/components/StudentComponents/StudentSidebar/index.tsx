@@ -1,8 +1,8 @@
 import {
+  BookOutlined,
   DashboardOutlined,
   ProfileOutlined,
   SettingOutlined,
-  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -23,9 +23,9 @@ const StudentSidebar = () => {
           label: "Dashboard",
         },
         {
-          key: "/student/order",
-          icon: <ShoppingCartOutlined />,
-          label: "Order",
+          key: "/student/my-learning",
+          icon: <BookOutlined />,
+          label: "My Learning",
         },
         {
           key: "/student/subscription",
