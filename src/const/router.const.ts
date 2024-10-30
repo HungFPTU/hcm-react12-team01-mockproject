@@ -3,6 +3,7 @@ export const ROUTER_URL = {
   LOGIN: '/login',
   REGISTER: '/register',
   FORGOTPASSWORD: "/forgotpassword",
+  VERIFY_EMAIL: "/verify-email/:token",
   ADMIN:{
     DASHBOARD: "/admin",
     ALLCOURSES: "/admin/all-courses",
