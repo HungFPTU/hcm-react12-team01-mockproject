@@ -9,22 +9,13 @@ const { Search } = Input;
 
 export default function HeaderStudent() {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token')
   const handleLogOut = async () => {
-
     try {
-      if (token) {
-        console.log(">>>>>>>", token)
-        const res = await AuthService.logout(token);
-        console.log('Logout successful:', res.data);
-        localStorage.removeItem('token');
-        navigate('/login');
-      }
-
+      await AuthService.logout();
+      localStorage.removeItem("token");
+      navigate("/login");
     } catch (error) {
-      console.log("Error");
-
-      console.log("Error", error);
+      console.error("Error logging out:", error);
     }
   };
   const onSearch = (value: string) => {
