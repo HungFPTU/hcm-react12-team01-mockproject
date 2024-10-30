@@ -29,4 +29,13 @@ export const UserService = {
       isLoading: true,
     });
   },
+  deleteUser(id: string) {
+    return BaseService.remove<ApiResponse<any>>({
+      url: `/api/users/${id}`,
+      headers: {
+        Authorization: token ? `Bearer ${String(token)}` : "",
+      },
+      isLoading: true,
+    });
+  },
 };
