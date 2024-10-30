@@ -25,6 +25,7 @@ import { UserService } from "../../../services/UserService/UserService";
 const { Search } = Input;
 const { TabPane } = Tabs;
 const { Option } = Select;
+const { confirm } = Modal; // Import confirm từ Modal
 
 // Define User type
 interface User {
@@ -127,9 +128,23 @@ const UserManagement: React.FC = () => {
     message.success("Tạo người dùng thành công!");
   };
 
-  // Function to delete user
+  // Function to delete user with confirmation
+  const confirmDeleteUser = (id: string) => {
+    confirm({
+      title: "Bạn có chắc chắn muốn xóa người dùng này không?",
+      content: "Thao tác này không thể hoàn tác.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        // Thực hiện xóa khi người dùng chọn Yes
+        deleteUser(id);
+      },
+    });
+  };
+
   const deleteUser = (id: string) => {
-    UserService.deleteUser(id) // Assuming UserService has a deleteUser method
+    UserService.deleteUser(id)
       .then((response) => {
         if (response.data.success) {
           setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
@@ -203,7 +218,7 @@ const UserManagement: React.FC = () => {
             icon={<DeleteOutlined />}
             type="primary"
             danger
-            onClick={() => deleteUser(record._id)} // Call delete function
+            onClick={() => confirmDeleteUser(record._id)} // Gọi confirmDeleteUser
           />
         </>
       ),
