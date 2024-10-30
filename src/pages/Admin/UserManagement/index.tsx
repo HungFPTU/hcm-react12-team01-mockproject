@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   Avatar,
@@ -8,58 +8,45 @@ import {
   Dropdown,
   Menu,
   Tabs,
-  Tag,
   Modal,
   Form,
   Select,
   message,
 } from "antd";
 import {
-  EditOutlined,
   DeleteOutlined,
   PlusOutlined,
   DownOutlined,
+  UserOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
+import { UserService } from "../../../services/UserService/UserService";
 
 const { Search } = Input;
 const { TabPane } = Tabs;
 const { Option } = Select;
+const { confirm } = Modal; // Import confirm từ Modal
 
-// Sample data for each tab
-const allUsers = [
-  {
-    key: "1", // key là chuỗi
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    name: "Lê Minh Trung",
-    email: "ythao4565@gmail.com",
-    role: "Student",
-    status: true,
-  },
-  {
-    key: "2", // key là chuỗi
-    avatar: "",
-    name: "Nguyen Dan Huy",
-    email: "danhuy253@gmail.com",
-    role: "Student",
-    status: true,
-  },
-  {
-    key: "3", // key là chuỗi
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    name: "Group2",
-    email: "team2fsoft@gmail.com",
-    role: "Instructor",
-    status: true,
-  },
-];
+// Define User type aloalo
+interface User {
+  _id: string;
+  avatar_url: string;
+  name: string;
+  email: string;
+  role: string;
+  status: boolean;
+}
 
 // Dropdown menu for role change
-const roleMenu = (record: any, setUsers: any) => (
+const roleMenu = (
+  record: User,
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>
+) => (
   <Menu
     onClick={({ key }) => {
-      setUsers((prevUsers: any) =>
-        prevUsers.map((user: any) =>
-          user.key === record.key ? { ...user, role: key } : user
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === record._id ? { ...user, role: key } : user
         )
       );
     }}
@@ -71,15 +58,31 @@ const roleMenu = (record: any, setUsers: any) => (
 );
 
 const UserManagement: React.FC = () => {
-  const [users, setUsers] = useState(allUsers); // Xoá activeTab vì không cần
-  const [filteredUsers, setFilteredUsers] = useState(users);
-  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // Fetch users from API on mount
+  useEffect(() => {
+    UserService.getUsers()
+      .then((response) => {
+        if (response.data.success) {
+          setUsers(response.data.data.pageData);
+          setFilteredUsers(response.data.data.pageData);
+        } else {
+          message.error("Failed to load user data.");
+        }
+      })
+      .catch(() => {
+        message.error("Error fetching user data.");
+      });
+  }, []);
 
   // Handle status toggle
-  const toggleStatus = (record: any) => {
+  const toggleStatus = (record: User) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
-        user.key === record.key ? { ...user, status: !user.status } : user
+        user._id === record._id ? { ...user, status: !user.status } : user
       )
     );
   };
@@ -106,14 +109,14 @@ const UserManagement: React.FC = () => {
 
   // Handle form submit
   const handleFormSubmit = (values: any) => {
-    const { name, email, role } = values; // Xoá password và phone nếu không dùng
+    const { name, email, role } = values;
     if (!name.match(/^[a-zA-Z0-9 ]+$/)) {
       message.error("Tên không được chứa ký tự đặc biệt!");
       return;
     }
-    const newUser = {
-      key: (users.length + 1).toString(), // Đảm bảo key là chuỗi
-      avatar: "",
+    const newUser: User = {
+      _id: Date.now().toString(),
+      avatar_url: "",
       name,
       email,
       role,
@@ -125,14 +128,51 @@ const UserManagement: React.FC = () => {
     message.success("Tạo người dùng thành công!");
   };
 
+  // Function to delete user with confirmation
+  const confirmDeleteUser = (id: string) => {
+    confirm({
+      title: "Bạn có chắc chắn muốn xóa người dùng này không?",
+      content: "Thao tác này không thể hoàn tác.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        // Thực hiện xóa khi người dùng chọn Yes
+        deleteUser(id);
+      },
+    });
+  };
+
+  const deleteUser = (id: string) => {
+    UserService.deleteUser(id)
+      .then((response) => {
+        if (response.data.success) {
+          setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+          setFilteredUsers((prevFilteredUsers) =>
+            prevFilteredUsers.filter((user) => user._id !== id)
+          );
+          message.success("Xóa người dùng thành công!");
+        } else {
+          message.error("Xóa người dùng thất bại.");
+        }
+      })
+      .catch(() => {
+        message.error("Lỗi khi xóa người dùng.");
+      });
+  };
+
   // Columns for the table
   const commonColumns = [
     {
       title: "Avatar",
-      dataIndex: "avatar",
-      key: "avatar",
-      render: (avatar: string) =>
-        avatar ? <Avatar src={avatar} /> : <Avatar icon={<EditOutlined />} />,
+      dataIndex: "avatar_url",
+      key: "avatar_url",
+      render: (avatar_url: string) =>
+        avatar_url ? (
+          <Avatar size="large" src={avatar_url} />
+        ) : (
+          <Avatar icon={<UserOutlined />} />
+        ),
     },
     {
       title: "Name",
@@ -148,7 +188,7 @@ const UserManagement: React.FC = () => {
       title: "Role",
       dataIndex: "role",
       key: "role",
-      render: (role: string, record: any) => (
+      render: (role: string, record: User) => (
         <Dropdown overlay={roleMenu(record, setUsers)}>
           <Button>
             {role} <DownOutlined />
@@ -160,37 +200,27 @@ const UserManagement: React.FC = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status: boolean, record: any) => (
+      render: (status: boolean, record: User) => (
         <Switch checked={status} onChange={() => toggleStatus(record)} />
       ),
     },
     {
       title: "Actions",
       key: "actions",
-      render: (_: any, __: any) => (
+      render: (_: any, record: User) => (
         <>
           <Button
             icon={<EditOutlined />}
             type="primary"
             style={{ marginRight: 8 }}
           />
-          <Button icon={<DeleteOutlined />} type="primary" danger />
+          <Button
+            icon={<DeleteOutlined />}
+            type="primary"
+            danger
+            onClick={() => confirmDeleteUser(record._id)} // Gọi confirmDeleteUser
+          />
         </>
-      ),
-    },
-  ];
-
-  // Add Verified column for unverified accounts
-  const unverifiedColumns = [
-    ...commonColumns,
-    {
-      title: "Verified",
-      dataIndex: "verified",
-      key: "verified",
-      render: (verified: boolean) => (
-        <Tag color={verified ? "green" : "red"}>
-          {verified ? "Verified" : "Not Verified"}
-        </Tag>
       ),
     },
   ];
@@ -224,46 +254,7 @@ const UserManagement: React.FC = () => {
               pageSizeOptions: ["4", "8"],
               position: ["bottomRight"],
             }}
-          />
-        </TabPane>
-        <TabPane tab="Blocked accounts" key="blocked">
-          <div style={{ marginBottom: "20px" }}>
-            <Search
-              enterButton
-              placeholder="Search by name or email"
-              onSearch={handleSearch}
-              style={{ width: 300 }}
-            />
-          </div>
-          <Table
-            columns={commonColumns}
-            dataSource={filteredUsers}
-            pagination={{
-              defaultPageSize: 5,
-              showSizeChanger: true,
-              pageSizeOptions: ["4", "8"],
-              position: ["bottomRight"],
-            }}
-          />
-        </TabPane>
-        <TabPane tab="Unverified accounts" key="unverified">
-          <div style={{ marginBottom: "20px" }}>
-            <Search
-              enterButton
-              placeholder="Search by name or email"
-              onSearch={handleSearch}
-              style={{ width: 300 }}
-            />
-          </div>
-          <Table
-            columns={unverifiedColumns}
-            dataSource={filteredUsers}
-            pagination={{
-              defaultPageSize: 5,
-              showSizeChanger: true,
-              pageSizeOptions: ["4", "8"],
-              position: ["bottomRight"],
-            }}
+            rowKey="_id"
           />
         </TabPane>
       </Tabs>
@@ -300,13 +291,6 @@ const UserManagement: React.FC = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            label="Password"
-            name="password"
-            rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
-          >
-            <Input.Password />
-          </Form.Item>
-          <Form.Item
             label="Role"
             name="role"
             rules={[{ required: true, message: "Vui lòng chọn vai trò!" }]}
@@ -316,18 +300,6 @@ const UserManagement: React.FC = () => {
               <Option value="Instructor">Instructor</Option>
               <Option value="Student">Student</Option>
             </Select>
-          </Form.Item>
-          <Form.Item
-            label="Phone Number"
-            name="phone"
-            rules={[
-              {
-                pattern: /^0\d{9}$/,
-                message: "Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số!",
-              },
-            ]}
-          >
-            <Input />
           </Form.Item>
 
           <Form.Item>

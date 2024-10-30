@@ -5,7 +5,6 @@ import { API } from "../../const/path.api";
 import { User } from "../../model/User";
 import { ReponseSuccess } from "../../app/reponse";
 
-
 export const AuthService = {
   login(params: { email: string; password: string }) {
     return BaseService.post<ApiResponse<{ token: string }>>({
@@ -34,10 +33,12 @@ export const AuthService = {
       isLoading: true,
     });
   },
+
   getUserRole(params: { token: string }) {
     return BaseService.get<ApiResponse<User>>({
       url: API.AUTH.LOGIN,
       payload: params
     });
   }
+
 };
