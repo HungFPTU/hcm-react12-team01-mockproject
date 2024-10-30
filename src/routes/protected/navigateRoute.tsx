@@ -6,6 +6,7 @@ interface ProtectedRouteProps {
   component: JSX.Element;
   userRole: UserRole | null;
   allowedRoles: UserRole[];
+  onAccessDenied: () => void;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ component, userRole, allowedRoles }) => {

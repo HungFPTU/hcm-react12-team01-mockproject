@@ -21,11 +21,11 @@ const App = () => {
 
   const getDefaultPath = (role: UserRole) => {
     switch (role) {
-      case "admin":
+      case UserRole.admin:
         return ROUTER_URL.ADMIN.DASHBOARD;
-      case "instructor":
+      case UserRole.instructor:
         return ROUTER_URL.INSTRUCTOR.INSTRUCTORDASHBOARD;
-      case "student":
+      case UserRole.student:
         return ROUTER_URL.STUDENT.STUDENTDASHBOARD;
       default:
         return ROUTER_URL.COMMON.HOME;
@@ -58,7 +58,7 @@ const App = () => {
             <ProtectedRoute
               component={<AdminLayout />}
               userRole={currentRole}
-              allowedRoles={["admin"]}
+              allowedRoles={[UserRole.admin]}
               onAccessDenied={handleAccessDenied}
             />
           }
@@ -75,7 +75,7 @@ const App = () => {
             <ProtectedRoute
               component={<InstructorLayout />}
               userRole={currentRole}
-              allowedRoles={["instructor"]}
+              allowedRoles={[UserRole.instructor]}
               onAccessDenied={handleAccessDenied}
             />
           }
@@ -92,7 +92,7 @@ const App = () => {
             <ProtectedRoute
               component={<StudentLayout />}
               userRole={currentRole}
-              allowedRoles={["student"]}
+              allowedRoles={[UserRole.student]}
               onAccessDenied={handleAccessDenied}
             />
           }
