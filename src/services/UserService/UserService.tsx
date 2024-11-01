@@ -38,4 +38,37 @@ export const UserService = {
       isLoading: true,
     });
   },
+  getUsersWatingManager() {
+    return BaseService.post<ApiResponse<any>>({
+      url: "/api/users/search",
+      payload: {
+        searchCondition: {
+          keyword: "",
+          role: "instructor",
+          status: true,
+          is_verified: "false",
+          is_delete: false,
+        },
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      },
+      headers: {
+        Authorization: token ? `Bearer ${String(token)}` : "",
+      },
+
+      isLoading: true,
+    });
+  },
+  reviewProfileInstructor(userId: string, status: string) {
+    return BaseService.put<ApiResponse<any>>({
+      url: `/api/users/review-profile-instructor`,
+      payload: {
+        user_id: userId,
+        status: status,
+      },
+      isLoading: true,
+    });
+  },
 };
