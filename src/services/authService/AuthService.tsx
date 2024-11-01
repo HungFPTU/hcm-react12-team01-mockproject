@@ -5,6 +5,12 @@ import { API } from "../../const/path.api";
 import { User } from "../../model/User";
 import { ReponseSuccess } from "../../app/reponse";
 
+export interface RegisterUser{
+  name: string;
+  email: string;
+  password: string;
+}
+
 export const AuthService = {
   login(params: { email: string; password: string }) {
     return BaseService.post<ApiResponse<{ token: string }>>({
@@ -39,6 +45,13 @@ export const AuthService = {
       url: API.AUTH.LOGIN,
       payload: params
     });
-  }
+  },
 
+  register(params: RegisterUser) {
+    return BaseService.post<ApiResponse<User>>({
+      url: API.AUTH.REGISTER,
+      payload: params,
+      isLoading: true,
+    });
+  }
 };
