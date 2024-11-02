@@ -6,7 +6,6 @@ import {
   Button,
   Input,
   Dropdown,
-  Menu,
   Tabs,
   Modal,
   Form,
@@ -23,11 +22,9 @@ import {
 import { UserService } from "../../../services/UserService/UserService";
 
 const { Search } = Input;
-const { TabPane } = Tabs;
 const { Option } = Select;
-const { confirm } = Modal; // Import confirm từ Modal
+const { confirm } = Modal;
 
-// Define User type aloalo
 interface User {
   _id: string;
   avatar_url: string;
@@ -37,38 +34,18 @@ interface User {
   status: boolean;
 }
 
-// Dropdown menu for role change
-const roleMenu = (
-  record: User,
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>
-) => (
-  <Menu
-    onClick={({ key }) => {
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user._id === record._id ? { ...user, role: key } : user
-        )
-      );
-    }}
-  >
-    <Menu.Item key="Student">Student</Menu.Item>
-    <Menu.Item key="Instructor">Instructor</Menu.Item>
-    <Menu.Item key="Admin">Admin</Menu.Item>
-  </Menu>
-);
-
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // Fetch users from API on mount
   useEffect(() => {
     UserService.getUsers()
       .then((response) => {
         if (response.data.success) {
-          setUsers(response.data.data.pageData);
-          setFilteredUsers(response.data.data.pageData);
+          const fetchedUsers = response.data.data.pageData;
+          setUsers(fetchedUsers);
+          setFilteredUsers(fetchedUsers);
         } else {
           message.error("Failed to load user data.");
         }
@@ -78,16 +55,57 @@ const UserManagement: React.FC = () => {
       });
   }, []);
 
-  // Handle status toggle
   const toggleStatus = (record: User) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user._id === record._id ? { ...user, status: !user.status } : user
-      )
-    );
+    const newStatus = !record.status;
+    UserService.changeStatus(record._id, newStatus)
+      .then((response) => {
+        if (response.data.success) {
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user._id === record._id ? { ...user, status: newStatus } : user
+            )
+          );
+          setFilteredUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user._id === record._id ? { ...user, status: newStatus } : user
+            )
+          );
+          message.success("Cập nhật trạng thái thành công!");
+        } else {
+          message.error("Cập nhật trạng thái thất bại.");
+        }
+      })
+      .catch(() => {
+        message.error("Lỗi khi cập nhật trạng thái.");
+      });
   };
 
-  // Handle search functionality
+  const changeUserRole = (userId: string, newRole: string) => {
+    UserService.changeRole(userId, newRole)
+      .then((response) => {
+        console.log("API Response:", response);
+        if (response && response.data && response.data.success) {
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user._id === userId ? { ...user, role: newRole } : user
+            )
+          );
+          setFilteredUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user._id === userId ? { ...user, role: newRole } : user
+            )
+          );
+          message.success("Cập nhật vai trò thành công!");
+        } else {
+          message.error("Cập nhật vai trò thất bại.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error changing role:", error);
+        message.error("Lỗi khi cập nhật vai trò.");
+      });
+  };
+
   const handleSearch = (value: string) => {
     const filtered = users.filter(
       (user) =>
@@ -97,17 +115,14 @@ const UserManagement: React.FC = () => {
     setFilteredUsers(filtered);
   };
 
-  // Handle add user button click
   const handleAddUser = () => {
-    setIsModalVisible(true); // Show modal
+    setIsModalVisible(true);
   };
 
-  // Handle modal cancel
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
-  // Handle form submit
   const handleFormSubmit = (values: any) => {
     const { name, email, role } = values;
     if (!name.match(/^[a-zA-Z0-9 ]+$/)) {
@@ -128,7 +143,6 @@ const UserManagement: React.FC = () => {
     message.success("Tạo người dùng thành công!");
   };
 
-  // Function to delete user with confirmation
   const confirmDeleteUser = (id: string) => {
     confirm({
       title: "Bạn có chắc chắn muốn xóa người dùng này không?",
@@ -137,7 +151,6 @@ const UserManagement: React.FC = () => {
       okType: "danger",
       cancelText: "No",
       onOk() {
-        // Thực hiện xóa khi người dùng chọn Yes
         deleteUser(id);
       },
     });
@@ -161,7 +174,12 @@ const UserManagement: React.FC = () => {
       });
   };
 
-  // Columns for the table
+  const roleMenuItems = [
+    { label: "Student", key: "student" },
+    { label: "Instructor", key: "instructor" },
+    { label: "Admin", key: "admin" },
+  ];
+
   const commonColumns = [
     {
       title: "Avatar",
@@ -189,13 +207,23 @@ const UserManagement: React.FC = () => {
       dataIndex: "role",
       key: "role",
       render: (role: string, record: User) => (
-        <Dropdown overlay={roleMenu(record, setUsers)}>
+        <Dropdown
+          menu={{
+            items: roleMenuItems,
+            onClick: ({ key }) => {
+              console.log("Changing role to:", key); // Log role mới
+              changeUserRole(record._id, key);
+            },
+          }}
+          trigger={["click"]}
+        >
           <Button>
             {role} <DownOutlined />
           </Button>
         </Dropdown>
       ),
     },
+
     {
       title: "Status",
       dataIndex: "status",
@@ -218,7 +246,7 @@ const UserManagement: React.FC = () => {
             icon={<DeleteOutlined />}
             type="primary"
             danger
-            onClick={() => confirmDeleteUser(record._id)} // Gọi confirmDeleteUser
+            onClick={() => confirmDeleteUser(record._id)}
           />
         </>
       ),
@@ -227,42 +255,49 @@ const UserManagement: React.FC = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <Tabs defaultActiveKey="all" style={{ marginBottom: 20 }}>
-        <TabPane tab="All accounts" key="all">
-          <div style={{ marginBottom: "20px" }}>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              style={{ float: "right", backgroundColor: "green" }}
-              onClick={handleAddUser}
-            >
-              Add User
-            </Button>
-            <Search
-              enterButton
-              placeholder="Search by name or email"
-              onSearch={handleSearch}
-              style={{ width: 300 }}
-            />
-          </div>
-          <Table
-            columns={commonColumns}
-            dataSource={filteredUsers}
-            pagination={{
-              defaultPageSize: 5,
-              showSizeChanger: true,
-              pageSizeOptions: ["4", "8"],
-              position: ["bottomRight"],
-            }}
-            rowKey="_id"
-          />
-        </TabPane>
-      </Tabs>
+      <Tabs
+        defaultActiveKey="all"
+        style={{ marginBottom: 20 }}
+        items={[
+          {
+            key: "all",
+            label: "All accounts",
+            children: (
+              <div style={{ marginBottom: "20px" }}>
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  style={{ float: "right", backgroundColor: "green" }}
+                  onClick={handleAddUser}
+                >
+                  Add User
+                </Button>
+                <Search
+                  enterButton
+                  placeholder="Search by name or email"
+                  onSearch={handleSearch}
+                  style={{ width: 300 }}
+                />
+              </div>
+            ),
+          },
+        ]}
+      />
+      <Table
+        columns={commonColumns}
+        dataSource={filteredUsers}
+        pagination={{
+          defaultPageSize: 5,
+          showSizeChanger: true,
+          pageSizeOptions: ["4", "8"],
+          position: ["bottomRight"],
+        }}
+        rowKey="_id"
+      />
 
-      {/* Modal for Adding User */}
       <Modal
         title="Create New Account"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
       >
