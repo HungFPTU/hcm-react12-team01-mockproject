@@ -116,36 +116,38 @@ axiosInstance.interceptors.request.use(
             config.headers = {}; // Ensure headers is defined
         }
         if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+            config.headers['Authorization'] = `Bearer ${token}`; // Corrected header
         }
-        return config as InternalAxiosRequestConfig; // Cast to correct type
+        return config as InternalAxiosRequestConfig;
     },
     (err) => {
         return handleErrorByToast(err);
     }
 );
 
-
 axiosInstance.interceptors.response.use(
     (config) => {
         store.dispatch(toggleLoading(false));
-        return Promise.resolve((config));
+        return Promise.resolve(config);
     },
     (err) => {
         const { response } = err;
         if (response && response.status === 401) {
             setTimeout(() => {
-                removeItemInLocalStorage(LOCAL_STORAGE.ACCOUNT_ADMIN)
+                removeItemInLocalStorage(LOCAL_STORAGE.ACCOUNT_ADMIN);
                 window.location.href = ROUTER_URL.LOGIN;
             }, 2000);
         }
         return handleErrorByToast(err);
     }
-)
+);
 
 const handleErrorByToast = (error: any) => {
-    const message = error.response?.data?.message ? error.response?.data?.message : error.message;
+    const message = error.response?.data?.message || error.message;
     toast.error(message);
     store.dispatch(toggleLoading(false));
     return null;
-}
+
+};
+
+

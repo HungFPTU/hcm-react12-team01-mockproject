@@ -1,13 +1,22 @@
-import { LoginUser } from "../../model/LoginUser";
+// import { LoginUser } from "../../model/LoginUser";
 import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
+import { API } from "../../const/path.api";
+import { User } from "../../model/User";
+import { ReponseSuccess } from "../../app/reponse";
+
+export interface RegisterUser{
+  name: string;
+  email: string;
+  password: string;
+}
 
 export const AuthService = {
-  login(params: LoginUser) {
+  login(params: { email: string; password: string }) {
     return BaseService.post<ApiResponse<{ token: string }>>({
-      url: "/api/auth",
+      url: API.AUTH.LOGIN,
       payload: params,
-      isLoading: true,
+      isLoading: true
     });
   },
   logout() {
@@ -24,11 +33,25 @@ export const AuthService = {
     });
   },
   forgotPassword(email: string) {
-    return BaseService.put<ApiResponse<null>>({
+    return BaseService.put<ReponseSuccess<string>>({
       url: "/api/auth/forgot-password",
       payload: { email },
       isLoading: true,
     });
   },
-  
+
+  getUserRole(params: { token: string }) {
+    return BaseService.get<ApiResponse<User>>({
+      url: API.AUTH.LOGIN,
+      payload: params
+    });
+  },
+
+  register(params: RegisterUser) {
+    return BaseService.post<ApiResponse<User>>({
+      url: API.AUTH.REGISTER,
+      payload: params,
+      isLoading: true,
+    });
+  }
 };
