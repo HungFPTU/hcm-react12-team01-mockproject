@@ -33,3 +33,22 @@ export enum UserRole {
     is_deleted: boolean;
   }
   
+
+  export interface UpdateUser {
+    email?: string;
+    name?: string;
+    description?: string;
+    phone_number?: string;
+    avatar_url?: string | null;
+    video_url?: string | null;
+    bank_name?: string | null;
+    bank_account_no?: string | null;
+    bank_account_name?: string | null;
+    dob?: Date;
+  }
+  export interface ChangePasswordUser {
+    user_id: string; // ID của người dùng
+    old_password: string; // Mật khẩu cũ
+    new_password: string; // Mật khẩu mới
+  }
+  

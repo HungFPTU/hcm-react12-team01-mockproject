@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const userData = response.data.data;
       setUserInfo(userData);
       setRole(userData.role as UserRole);
+      localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("role", userData.role);
     } catch (error) {
       console.error("Failed to get user info:", error);
@@ -63,6 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(null);
     setRole(null);
     setUserInfo(null);
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     window.location.href = "/login";
