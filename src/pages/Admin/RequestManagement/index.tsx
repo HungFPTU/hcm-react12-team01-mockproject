@@ -1,58 +1,51 @@
-// RequestManagement.tsx
-import React, { useState } from "react";
-import { Table } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, message } from "antd";
 import AvatarRenderer from "./AvatarRenderer";
-import ActionsRenderer from "./ActionsRenderer";
+
 import SearchBar from "./SearchBar";
+import { UserService } from "../../../services/UserService/UserService";
+import ActionsRenderer from "./ActionsRenderer";
 
-// Sample data for the request management
-const initialRequests = [
-  {
-    key: "1",
-    avatar: "https://via.placeholder.com/40",
-    name: "aaa",
-    email: "baohg1204@gmail.com",
-    phone: "1",
-    description: "<p>sdfsdfsdafsdafasdfsdf</p>",
-  },
-  {
-    key: "2",
-    avatar: "https://via.placeholder.com/40",
-    name: "aaa",
-    email: "aa@gmail.com",
-    phone: "123",
-    description: "<p>Example Description</p>",
-  },
-  {
-    key: "3",
-    avatar: "",
-    name: "Nguyễn Ngọc Bảo K16_HCM",
-    email: "baonnse161010@fpt.edu.vn",
-    phone: "0764752268",
-    description: "agagaahah",
-  },
-  {
-    key: "4",
-    avatar: "",
-    name: "Luu Ka Ka (K17 HCM)",
-    email: "kalkse171652@fpt.edu.vn",
-    phone: "0938659975",
-    description: "I want to reply to member",
-  },
-];
-
-// Function to handle description parsing
-const parseHTML = (htmlString: string) => {
-  const parser = new DOMParser();
-  const parsed = parser.parseFromString(htmlString, "text/html");
-  return parsed.body.textContent || "";
-};
+interface Request {
+  key: string;
+  avatar: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  description: string;
+}
 
 const RequestManagement: React.FC = () => {
-  const [requests] = useState(initialRequests);
-  const [filteredRequests, setFilteredRequests] = useState(requests);
+  const [requests, setRequests] = useState<Request[]>([]);
+  const [filteredRequests, setFilteredRequests] = useState<Request[]>([]);
 
-  // Handle search functionality
+  useEffect(() => {
+    UserService.getUsersWatingManager()
+      .then((response) => {
+        if (response.data.success) {
+          const fetchedRequests = response.data.data.pageData.map(
+            (user: any) => ({
+              key: user._id,
+              avatar: user.avatar_url || "",
+              name: user.name,
+              email: user.email,
+              phone: user.phone || "",
+              role: user.role,
+              description: user.description || "",
+            })
+          );
+          setRequests(fetchedRequests);
+          setFilteredRequests(fetchedRequests);
+        } else {
+          message.error("Failed to load request data.");
+        }
+      })
+      .catch(() => {
+        message.error("Error fetching request data.");
+      });
+  }, []);
+
   const handleSearch = (value: string) => {
     const filtered = requests.filter(
       (request) =>
@@ -62,18 +55,46 @@ const RequestManagement: React.FC = () => {
     setFilteredRequests(filtered);
   };
 
-  // Handle Approve/Reject actions
   const handleApprove = (key: string) => {
-    // Logic for approving the request
-    alert(`Request with key ${key} approved`);
+    UserService.reviewProfileInstructor(key, "approve")
+      .then((response) => {
+        if (response.data.success) {
+          message.success(`Request with key ${key} approved.`);
+          setRequests((prevRequests) =>
+            prevRequests.filter((request) => request.key !== key)
+          );
+          setFilteredRequests((prevFilteredRequests) =>
+            prevFilteredRequests.filter((request) => request.key !== key)
+          );
+        } else {
+          message.error("Failed to approve request.");
+        }
+      })
+      .catch(() => {
+        message.error("Error approving request.");
+      });
   };
 
   const handleReject = (key: string) => {
-    // Logic for rejecting the request
-    alert(`Request with key ${key} rejected`);
+    UserService.reviewProfileInstructor(key, "reject")
+      .then((response) => {
+        if (response.data.success) {
+          message.success(`Request with key ${key} rejected.`);
+          setRequests((prevRequests) =>
+            prevRequests.filter((request) => request.key !== key)
+          );
+          setFilteredRequests((prevFilteredRequests) =>
+            prevFilteredRequests.filter((request) => request.key !== key)
+          );
+        } else {
+          message.error("Failed to reject request.");
+        }
+      })
+      .catch(() => {
+        message.error("Error rejecting request.");
+      });
   };
 
-  // Columns for the table
   const columns = [
     {
       title: "Avatar",
@@ -91,25 +112,26 @@ const RequestManagement: React.FC = () => {
       dataIndex: "email",
       key: "email",
     },
+
     {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      render: (description: string) => <span>{parseHTML(description)}</span>,
+      render: (description: string) => <span>{description}</span>,
     },
     {
       title: "Action",
       key: "action",
       render: (_: any, record: any) => (
         <ActionsRenderer
-          key={record.key}
-          onApprove={handleApprove}
-          onReject={handleReject}
+          requestKey={record.key}
+          onApprove={() => handleApprove(record.key)}
+          onReject={() => handleReject(record.key)}
         />
       ),
     },
@@ -127,6 +149,7 @@ const RequestManagement: React.FC = () => {
           pageSizeOptions: ["4", "8"],
           position: ["bottomRight"],
         }}
+        rowKey="key"
       />
     </div>
   );
