@@ -4,45 +4,34 @@ import { Formik, Form, Field } from 'formik';
 import { Button, message, Radio, RadioChangeEvent } from 'antd';
 import * as Yup from 'yup';
 import RegisterStudent from '../../components/RegisterStudent/RegisterStudent';
-import RegisterInstructor from '../../components/RegisterIntructor/RegisterIntructor';
+import RegisterInstructor from '../../components/RegisterInstructor/RegisterInstructor';
 import YOUR_IMAGE from '../../assets/Login&Register.jpg';
 import LOGO from '../../assets/logo.png';
-import { auth } from '../../firebase-config';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
-import { UploadFile } from 'antd/es/upload/interface';
+import { AuthService } from '../../services/authService/AuthService';
 
 interface FormValues {
-    fullName: string;
+    name: string;
     email: string;
     password: string;
     confirmPassword: string;
     role: 'student' | 'instructor';
-    phoneNumber: string;
-    description: string;
-    avatar?: UploadFile;
-    video?: UploadFile;
-    certificate?: UploadFile;
+    phone_number?: string;
+    description?: string; 
+    avatar_url?: string;
+    video_url?: string;
+    bank_name: string;
+    bank_account_no: string;
+    bank_account_name: string;
 }
 
 const validationSchema = Yup.object({
-    fullName: Yup.string()
-        .required('Please input your full name!')
-        .min(2, 'Name must be at least 2 characters!'),
-    email: Yup.string()
-        .email('Invalid email!')
-        .required('Please input your email!'),
-    password: Yup.string()
-        .required('Please input your password!')
-        .min(8, 'Password must be at least 8 characters!'),
+    name: Yup.string().required('Please input your full name!').min(2, 'Name must be at least 2 characters!'),
+    email: Yup.string().email('Invalid email!').required('Please input your email!'),
+    password: Yup.string().required('Please input your password!').min(6, 'Password must be at least 6 characters!'),
     confirmPassword: Yup.string()
         .oneOf([Yup.ref('password')], 'Confirm password does not match!')
         .required('Please confirm your password!'),
-    phoneNumber: Yup.string().required('Please input your phone number!'),
-    description: Yup.string().required('Please provide a description!'),
-    avatar: Yup.mixed().required('Please upload your avatar!'),
-    video: Yup.mixed().required('Please upload your video!'),
-    certificate: Yup.mixed().required('Please upload your certificate!'),
 });
 
 const Register = () => {
@@ -50,32 +39,53 @@ const Register = () => {
     const [loading, setLoading] = useState(false);
 
     const initialValues: FormValues = {
-        fullName: '',
+        name: '',
         email: '',
         password: '',
         confirmPassword: '',
         role: 'student',
-        phoneNumber: '',
+        phone_number: '',
         description: '',
-        avatar: undefined,
-        video: undefined,
-        certificate: undefined,
+        avatar_url: '',
+        video_url: '',
+        bank_name: 'VCB',
+        bank_account_no: '123456789',
+        bank_account_name: 'InstructorName',
     };
 
     const handleRegister = useCallback(async (values: FormValues) => {
-        const { fullName, email, password, role } = values;
+        const { name, email, password, role, phone_number, description, avatar_url, video_url, bank_name, bank_account_no, bank_account_name } = values;
         setLoading(true);
+        
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            await sendEmailVerification(user);
-            console.log('Đăng ký tài khoản với:', { fullName, email, role });
+            // Tạo payload cho API đăng ký
+            const registerPayload = {
+                name,
+                email,
+                password,
+                role,
+                ...(role === 'instructor' && {
+                    phone_number,
+                    description,
+                    avatar_url,
+                    video_url,
+                    bank_name,
+                    bank_account_no,
+                    bank_account_name
+                }),
+            };
+    
+            console.log('registerPayload', registerPayload);
+            // Gọi API để đăng ký
+            await AuthService.register(registerPayload);
+            
             message.success({
                 content: 'Register successful! Please check your email to verify your account.',
                 duration: 6,
             });
             navigate('/login');
         } catch (error) {
+            console.error('Error during registration:', error);
             const firebaseError = error as FirebaseError;
             if (firebaseError.code === 'auth/email-already-in-use') {
                 message.error({
@@ -95,11 +105,6 @@ const Register = () => {
         }
     }, [navigate]);
 
-    const handleUpload = (file: UploadFile) => {
-        console.log('File uploaded:', file);
-        return false;
-    };
-
     return (
         <div className="flex items-center justify-center w-full h-screen bg-gradient-to-r from-[#330933] to-white-600 relative">
             <div className='flex w-full max-w-[1200px] shadow-2xl'>
@@ -118,7 +123,7 @@ const Register = () => {
                         validationSchema={validationSchema}
                         onSubmit={handleRegister}
                     >
-                        {({ handleChange, handleBlur, values, setFieldValue }) => (
+                        {({ handleChange, handleBlur, values }) => (
                             <Form className="w-full flex flex-col " noValidate>
                                 <div className="flex items-center mb-2">
                                     <p className='mr-2'>Please! Register with your account:</p>
@@ -145,9 +150,15 @@ const Register = () => {
                                     <RegisterInstructor
                                         handleChange={handleChange}
                                         handleBlur={handleBlur}
-                                        values={values}
-                                        setFieldValue={setFieldValue}
-                                        handleUpload={handleUpload}
+                                        values={{ 
+                                            phone_number: values.phone_number || '', 
+                                            description: values.description || '', 
+                                            avatar_url: values.avatar_url || '', 
+                                            video_url: values.video_url || '' ,
+                                            bank_name: values.bank_name,
+                                            bank_account_no: values.bank_account_no,
+                                            bank_account_name: values.bank_account_name 
+                                        }}
                                     />
                                 )}
 
@@ -158,7 +169,7 @@ const Register = () => {
                                         htmlType="submit"
                                         loading={loading}
                                     >
-                                        {loading ? 'Registering...' : 'Register'}
+                                        Register
                                     </Button>
                                 </div>
                             </Form>
