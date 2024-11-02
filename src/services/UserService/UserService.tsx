@@ -38,6 +38,30 @@ export const UserService = {
       isLoading: true,
     });
   },
+  
+  getUsersWatingManager() {
+    return BaseService.post<ApiResponse<any>>({
+      url: "/api/users/search",
+      payload: {
+        searchCondition: {
+          keyword: "",
+          role: "instructor",
+          status: true,
+          is_verified: "false",
+          is_delete: false,
+        },
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      },
+      headers: {
+        Authorization: token ? `Bearer ${String(token)}` : "",
+      },
+
+      isLoading: true,
+    });
+  },
 
   changeStatus(userId: string, status: boolean) {
     return BaseService.put<ApiResponse<any>>({
@@ -48,6 +72,17 @@ export const UserService = {
       },
       headers: {
         Authorization: token ? `Bearer ${String(token)}` : "",
+      },
+
+      isLoading: true,
+    });
+  },
+ reviewProfileInstructor(userId: string, status: string) {
+    return BaseService.put<ApiResponse<any>>({
+      url: `/api/users/review-profile-instructor`,
+      payload: {
+        user_id: userId,
+        status: status,
       },
       isLoading: true,
     });
@@ -79,5 +114,6 @@ export const UserService = {
         console.error("Error changing role:", error); // Log lỗi chi tiết
         throw error; // Ném lỗi lên trên để xử lý thêm nếu cần
       });
+
   },
 };
