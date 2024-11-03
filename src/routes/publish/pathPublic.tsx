@@ -11,6 +11,7 @@ const LoginPage = lazy(() => import("../../pages/Login/Login"));
 const ForgotPasswordPage = lazy(() => import("../../pages/ForgotPassword"));
 const Register = lazy(() => import("../../pages/Register/Register"));
 const VerifyEmail = lazy(() => import("../../pages/Verifycaion"));
+const ResendVerification = lazy(() => import("../../pages/ResendToken"));
 
 export const pathPublic: Record<string, RouteObject[]> = {
     [ROUTER_URL.COMMON.HOME]: [
@@ -48,6 +49,10 @@ export const pathPublic: Record<string, RouteObject[]> = {
         {
           path: ROUTER_URL.FORGOTPASSWORD,
           element: <ForgotPasswordPage />
-        }
+        },
+        {
+          path: ROUTER_URL.RESEND_TOKEN,
+          element: <ResendVerification />
+        },
       ]
 }

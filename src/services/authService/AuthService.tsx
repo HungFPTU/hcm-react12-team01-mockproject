@@ -21,20 +21,20 @@ export const AuthService = {
   },
   logout() {
     return BaseService.get<ApiResponse<any>>({
-      url: "/api/auth/logout",
+      url: API.AUTH.LOGOUT,
       isLoading: true,
     });
   },
   verifyToken(token: string) {
     return BaseService.post<ApiResponse<any>>({
-      url: "/api/auth/verify-token",
+      url: API.AUTH.VERIFY_TOKEN,
       payload: { token },
       isLoading: true,
     });
   },
   forgotPassword(email: string) {
     return BaseService.put<ReponseSuccess<string>>({
-      url: "/api/auth/forgot-password",
+      url: API.AUTH.FORGOT_PASSWORD,
       payload: { email },
       isLoading: true,
     });
@@ -53,5 +53,13 @@ export const AuthService = {
       payload: params,
       isLoading: true,
     });
-  }
+  },
+
+  resendToken(params: { email: string }) {
+    return BaseService.post<ApiResponse<string>>({
+      url: API.AUTH.RESEND_TOKEN,
+      payload: params,
+      isLoading: true
+    });
+  },
 };

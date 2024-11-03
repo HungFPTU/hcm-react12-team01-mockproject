@@ -17,14 +17,26 @@ const VerifyEmail: React.FC = () => {
           navigate("/login");
         } catch (error) {
           console.log(error);
-          toast.error("Failed!");
-          navigate("/login");
+          // Kiểm tra nội dung phản hồi từ API
+          if (error instanceof Error && "response" in error) {
+            const errorMessage = (error as any).response.data.message; // Giả sử có một trường message trong phản hồi
+            if (errorMessage === "token is not valid") { // Kiểm tra thông điệp lỗi
+              toast.error("Token is not valid. Please request a new verification link.");
+              navigate("/resend-verification"); // Điều hướng đến trang resend token
+            } else {
+              toast.error("Failed to verify email!");
+              navigate("/login");
+            }
+          } else {
+            toast.error("Failed to verify email!");
+            navigate("/login");
+          }
         }
       }
     };
 
     verifyToken();
-  }, []);
+  }, [navigate]);
 
   return (
     <div>
