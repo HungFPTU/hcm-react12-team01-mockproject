@@ -6,15 +6,15 @@ const token = localStorage.getItem("token");
 console.log("Token:", token); // Log token để kiểm tra
 
 export const UserService = {
-  getUsers() {
+  getUsers(status: boolean = true, isVerified: boolean = true) {
     return BaseService.post<ApiResponse<any>>({
       url: "/api/users/search",
       payload: {
         searchCondition: {
           keyword: "",
           role: "all",
-          status: true,
-          is_verified: "",
+          status: status, // Sử dụng status từ đối số
+          is_verified: isVerified, // Sử dụng isVerified từ đối số
           is_delete: false,
         },
         pageInfo: {
@@ -38,7 +38,7 @@ export const UserService = {
       isLoading: true,
     });
   },
-  
+
   getUsersWatingManager() {
     return BaseService.post<ApiResponse<any>>({
       url: "/api/users/search",
@@ -77,7 +77,7 @@ export const UserService = {
       isLoading: true,
     });
   },
- reviewProfileInstructor(userId: string, status: string) {
+  reviewProfileInstructor(userId: string, status: string) {
     return BaseService.put<ApiResponse<any>>({
       url: `/api/users/review-profile-instructor`,
       payload: {
@@ -114,6 +114,38 @@ export const UserService = {
         console.error("Error changing role:", error); // Log lỗi chi tiết
         throw error; // Ném lỗi lên trên để xử lý thêm nếu cần
       });
-
+  },
+  createUser(
+    name: string,
+    email: string,
+    password: string,
+    role: string,
+    status: boolean,
+    description?: string,
+    avatar_url?: string,
+    video_url?: string,
+    phone_number?: string,
+    bank_name?: string,
+    bank_account_no?: string,
+    bank_account_name?: string
+  ) {
+    return BaseService.post<ApiResponse<any>>({
+      url: `/api/users/create`,
+      payload: {
+        name: name,
+        email: email,
+        password: password,
+        role: role,
+        status: status,
+        description: description,
+        avatar_url: avatar_url,
+        video_url: video_url,
+        phone_number: phone_number,
+        bank_name: bank_name,
+        bank_account_no: bank_account_no,
+        bank_account_name: bank_account_name,
+      },
+      isLoading: true,
+    });
   },
 };
