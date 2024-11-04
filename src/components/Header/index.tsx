@@ -62,6 +62,7 @@ export default function Home() {
       await AuthService.logout();
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      localStorage.removeItem("role");
       navigate("/login");
     } catch (error) {
       console.error("Error logging out:", error);
