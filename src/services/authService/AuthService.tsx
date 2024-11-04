@@ -5,7 +5,7 @@ import { API } from "../../const/path.api";
 import { User } from "../../model/User";
 import { ReponseSuccess } from "../../app/reponse";
 
-export interface RegisterUser{
+export interface RegisterUser {
   name: string;
   email: string;
   password: string;
@@ -16,7 +16,7 @@ export const AuthService = {
     return BaseService.post<ApiResponse<{ token: string }>>({
       url: API.AUTH.LOGIN,
       payload: params,
-      isLoading: true
+      isLoading: true,
     });
   },
   logout() {
@@ -43,7 +43,7 @@ export const AuthService = {
   getUserRole(params: { token: string }) {
     return BaseService.get<ApiResponse<User>>({
       url: API.AUTH.LOGIN,
-      payload: params
+      payload: params,
     });
   },
 
