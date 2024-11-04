@@ -4,6 +4,7 @@ export const ROUTER_URL = {
   REGISTER: '/register',
   FORGOTPASSWORD: "/forgotpassword",
   VERIFY_EMAIL: "/verify-email/:token",
+  RESEND_TOKEN: "/resend-verification",
   ADMIN:{
     DASHBOARD: "/admin",
     ALLCOURSES: "/admin/all-courses",
