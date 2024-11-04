@@ -16,7 +16,7 @@ const VerifyEmail: React.FC = () => {
           navigate("/login");
         } catch (error) {
           console.log(error);
-          navigate("/login");
+          navigate("/");
         }
       }
     };
