@@ -6,15 +6,15 @@ const token = localStorage.getItem("token");
 console.log("Token:", token); // Log token để kiểm tra
 
 export const UserService = {
-  getUsers() {
+  getUsers(status: boolean = true, isVerified: boolean = true) {
     return BaseService.post<ApiResponse<any>>({
       url: "/api/users/search",
       payload: {
         searchCondition: {
           keyword: "",
           role: "all",
-          status: true,
-          is_verified: "",
+          status: status, // Sử dụng status từ đối số
+          is_verified: isVerified, // Sử dụng isVerified từ đối số
           is_delete: false,
         },
         pageInfo: {
