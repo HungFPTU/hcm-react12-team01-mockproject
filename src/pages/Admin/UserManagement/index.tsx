@@ -257,6 +257,7 @@ const UserManagement: React.FC = () => {
             key: "status",
             render: (record: User) => (
               <Button
+                disabled
                 onClick={() => toggleStatus(record)}
                 style={{
                   backgroundColor: "green",
