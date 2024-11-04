@@ -32,15 +32,17 @@ interface User {
   email: string;
   role: string;
   status: boolean;
+  is_verified: boolean;
 }
 
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
 
-  useEffect(() => {
-    UserService.getUsers()
+  const fetchUsers = (status: boolean, isVerified: boolean) => {
+    UserService.getUsers(status, isVerified)
       .then((response) => {
         if (response.data.success) {
           const fetchedUsers = response.data.data.pageData;
@@ -53,7 +55,17 @@ const UserManagement: React.FC = () => {
       .catch(() => {
         message.error("Error fetching user data.");
       });
-  }, []);
+  };
+
+  useEffect(() => {
+    if (activeTab === "all") {
+      fetchUsers(true, true);
+    } else if (activeTab === "blocked") {
+      fetchUsers(false, true);
+    } else if (activeTab === "unverified") {
+      fetchUsers(true, false);
+    }
+  }, [activeTab]);
 
   const toggleStatus = (record: User) => {
     const newStatus = !record.status;
@@ -136,6 +148,7 @@ const UserManagement: React.FC = () => {
       email,
       role,
       status: true,
+      is_verified: true,
     };
     setUsers([...users, newUser]);
     setFilteredUsers([...users, newUser]);
@@ -202,94 +215,135 @@ const UserManagement: React.FC = () => {
       dataIndex: "email",
       key: "email",
     },
-    {
-      title: "Role",
-      dataIndex: "role",
-      key: "role",
-      render: (role: string, record: User) => (
-        <Dropdown
-          menu={{
-            items: roleMenuItems,
-            onClick: ({ key }) => {
-              console.log("Changing role to:", key); // Log role mới
-              changeUserRole(record._id, key);
-            },
-          }}
-          trigger={["click"]}
-        >
-          <Button>
-            {role} <DownOutlined />
-          </Button>
-        </Dropdown>
-      ),
-    },
-
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status: boolean, record: User) => (
-        <Switch checked={status} onChange={() => toggleStatus(record)} />
-      ),
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_: any, record: User) => (
-        <>
-          <Button
-            icon={<EditOutlined />}
-            type="primary"
-            style={{ marginRight: 8 }}
-          />
-          <Button
-            icon={<DeleteOutlined />}
-            type="primary"
-            danger
-            onClick={() => confirmDeleteUser(record._id)}
-          />
-        </>
-      ),
-    },
+    ...(activeTab === "unverified"
+      ? [
+          {
+            title: "Role",
+            dataIndex: "role",
+            key: "role",
+            render: (role: string) => <span>{role}</span>,
+          },
+          {
+            title: "Status",
+            key: "status",
+            render: (record: User) => (
+              <Button
+                onClick={() => toggleStatus(record)}
+                style={{
+                  backgroundColor: "green",
+                  color: "#fff",
+                  fontSize: 13,
+                }}
+              >
+                Activate
+              </Button>
+            ),
+          },
+          {
+            title: "Verified",
+            dataIndex: "is_verified",
+            key: "verified",
+            render: () => (
+              <Button
+                disabled
+                style={{
+                  backgroundColor: "grey",
+                  color: "#fff",
+                  fontSize: 13,
+                }}
+              >
+                Not Verified
+              </Button>
+            ),
+          },
+        ]
+      : [
+          {
+            title: "Role",
+            dataIndex: "role",
+            key: "role",
+            render: (role: string, record: User) => (
+              <Dropdown
+                menu={{
+                  items: roleMenuItems,
+                  onClick: ({ key }) => {
+                    console.log("Changing role to:", key);
+                    changeUserRole(record._id, key);
+                  },
+                }}
+                trigger={["click"]}
+              >
+                <Button>
+                  {role} <DownOutlined />
+                </Button>
+              </Dropdown>
+            ),
+          },
+          {
+            title: "Status",
+            dataIndex: "status",
+            key: "status",
+            render: (status: boolean, record: User) => (
+              <Switch checked={status} onChange={() => toggleStatus(record)} />
+            ),
+          },
+          {
+            title: "Actions",
+            key: "actions",
+            render: (_: any, record: User) => (
+              <>
+                <Button
+                  icon={<EditOutlined />}
+                  type="primary"
+                  style={{ marginRight: 8 }}
+                />
+                <Button
+                  icon={<DeleteOutlined />}
+                  type="primary"
+                  danger
+                  onClick={() => confirmDeleteUser(record._id)}
+                />
+              </>
+            ),
+          },
+        ]),
   ];
 
   return (
     <div style={{ padding: "20px" }}>
       <Tabs
         defaultActiveKey="all"
+        onChange={(key) => setActiveTab(key)}
         style={{ marginBottom: 20 }}
         items={[
-          {
-            key: "all",
-            label: "All accounts",
-            children: (
-              <div style={{ marginBottom: "20px" }}>
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  style={{ float: "right", backgroundColor: "green" }}
-                  onClick={handleAddUser}
-                >
-                  Add User
-                </Button>
-                <Search
-                  enterButton
-                  placeholder="Search by name or email"
-                  onSearch={handleSearch}
-                  style={{ width: 300 }}
-                />
-              </div>
-            ),
-          },
+          { key: "all", label: "All accounts", children: <></> },
+          { key: "blocked", label: "Blocked accounts", children: <></> },
+          { key: "unverified", label: "Unverified accounts", children: <></> },
         ]}
       />
+      <div style={{ marginBottom: "20px" }}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          style={{ float: "right", backgroundColor: "green" }}
+          onClick={handleAddUser}
+        >
+          Add User
+        </Button>
+        <Search
+          enterButton
+          placeholder="Search by name or email"
+          onSearch={handleSearch}
+          style={{ width: 300 }}
+        />
+      </div>
       <Table
         columns={commonColumns}
         dataSource={filteredUsers}
         pagination={{
           defaultPageSize: 5,
           showSizeChanger: true,
-          pageSizeOptions: ["4", "8"],
+          pageSizeOptions: ["10", "100"],
           position: ["bottomRight"],
         }}
         rowKey="_id"

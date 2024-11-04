@@ -6,15 +6,15 @@ const token = localStorage.getItem("token");
 console.log("Token:", token); // Log token để kiểm tra
 
 export const UserService = {
-  getUsers() {
+  getUsers(status: boolean = true, isVerified: boolean = true) {
     return BaseService.post<ApiResponse<any>>({
       url: "/api/users/search",
       payload: {
         searchCondition: {
           keyword: "",
           role: "all",
-          status: true,
-          is_verified: "",
+          status: status, // Sử dụng status từ đối số
+          is_verified: isVerified, // Sử dụng isVerified từ đối số
           is_delete: false,
         },
         pageInfo: {
@@ -38,7 +38,7 @@ export const UserService = {
       isLoading: true,
     });
   },
-  
+
   getUsersWatingManager() {
     return BaseService.post<ApiResponse<any>>({
       url: "/api/users/search",
@@ -77,7 +77,7 @@ export const UserService = {
       isLoading: true,
     });
   },
- reviewProfileInstructor(userId: string, status: string) {
+  reviewProfileInstructor(userId: string, status: string) {
     return BaseService.put<ApiResponse<any>>({
       url: `/api/users/review-profile-instructor`,
       payload: {
@@ -114,6 +114,5 @@ export const UserService = {
         console.error("Error changing role:", error); // Log lỗi chi tiết
         throw error; // Ném lỗi lên trên để xử lý thêm nếu cần
       });
-
   },
 };
