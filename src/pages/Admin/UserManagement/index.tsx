@@ -40,6 +40,7 @@ const UserManagement: React.FC = () => {
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
+  const [form] = Form.useForm();
   const fetchUsers = (status: boolean, isVerified: boolean) => {
     UserService.getUsers(status, isVerified)
       .then((response) => {
@@ -162,20 +163,20 @@ const UserManagement: React.FC = () => {
       is_verified: true,
     };
 
- UserService.createUser(
-   name,
-   email,
-   password,
-   role,
-   true, // Truyền status là boolean thay vì chuỗi
-   description,
-   avatar_url,
-   video_url,
-   phone_number,
-   bank_name,
-   bank_account_no,
-   bank_account_name
- );
+    UserService.createUser(
+      name,
+      email,
+      password,
+      role,
+      true, // Truyền status là boolean thay vì chuỗi
+      description,
+      avatar_url,
+      video_url,
+      phone_number,
+      bank_name,
+      bank_account_no,
+      bank_account_name
+    );
 
     setUsers([...users, newUser]);
     setFilteredUsers([...users, newUser]);
