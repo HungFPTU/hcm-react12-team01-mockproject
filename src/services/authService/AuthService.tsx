@@ -22,7 +22,6 @@ export const AuthService = {
   logout() {
     return BaseService.get<ApiResponse<any>>({
       url: API.AUTH.LOGOUT,
-
       isLoading: true,
     });
   },
@@ -53,6 +52,14 @@ export const AuthService = {
       url: API.AUTH.REGISTER,
       payload: params,
       isLoading: true,
+    });
+  },
+
+  resendToken(params: { email: string }) {
+    return BaseService.post<ApiResponse<string>>({
+      url: API.AUTH.RESEND_TOKEN,
+      payload: params,
+      isLoading: true
     });
   },
 };
