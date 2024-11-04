@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -9,7 +10,6 @@ import {
   Tabs,
   Modal,
   Form,
-  Select,
   message,
 } from "antd";
 import {
@@ -20,16 +20,16 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import { UserService } from "../../../services/UserService/UserService";
+import AddUserModal from "./AddUserModal";
 
 const { Search } = Input;
-const { Option } = Select;
 const { confirm } = Modal;
 
 interface User {
   _id: string;
-  avatar_url: string;
   name: string;
   email: string;
+  password: string;
   role: string;
   status: boolean;
   is_verified: boolean;
@@ -40,7 +40,6 @@ const UserManagement: React.FC = () => {
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
-
   const fetchUsers = (status: boolean, isVerified: boolean) => {
     UserService.getUsers(status, isVerified)
       .then((response) => {
@@ -136,24 +135,53 @@ const UserManagement: React.FC = () => {
   };
 
   const handleFormSubmit = (values: any) => {
-    const { name, email, role } = values;
-    if (!name.match(/^[a-zA-Z0-9 ]+$/)) {
-      message.error("Tên không được chứa ký tự đặc biệt!");
-      return;
-    }
-    const newUser: User = {
-      _id: Date.now().toString(),
-      avatar_url: "",
+    const {
       name,
       email,
+      role,
+      password,
+      description,
+      avatar_url,
+      video_url,
+      phone_number,
+      bank_name,
+      bank_account_no,
+      bank_account_name,
+    } = values;
+    // if (!name.match(/^[a-zA-Z0-9 ]+$/)) {
+    //   message.error("Tên không được chứa ký tự đặc biệt!");
+    //   return;
+    // }
+    const newUser: User = {
+      _id: Date.now().toString(),
+      name,
+      email,
+      password,
       role,
       status: true,
       is_verified: true,
     };
+
+ UserService.createUser(
+   name,
+   email,
+   password,
+   role,
+   true, // Truyền status là boolean thay vì chuỗi
+   description,
+   avatar_url,
+   video_url,
+   phone_number,
+   bank_name,
+   bank_account_no,
+   bank_account_name
+ );
+
     setUsers([...users, newUser]);
     setFilteredUsers([...users, newUser]);
     setIsModalVisible(false);
     message.success("Tạo người dùng thành công!");
+    form.resetFields();
   };
 
   const confirmDeleteUser = (id: string) => {
@@ -349,55 +377,11 @@ const UserManagement: React.FC = () => {
         rowKey="_id"
       />
 
-      <Modal
-        title="Create New Account"
-        open={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        <Form layout="vertical" onFinish={handleFormSubmit}>
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[
-              { required: true, message: "Vui lòng nhập tên!" },
-              {
-                pattern: /^[a-zA-Z0-9 ]+$/,
-                message: "Tên không được chứa ký tự đặc biệt!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: "Vui lòng nhập email!" },
-              { type: "email", message: "Email không hợp lệ!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Role"
-            name="role"
-            rules={[{ required: true, message: "Vui lòng chọn vai trò!" }]}
-          >
-            <Select>
-              <Option value="Admin">Admin</Option>
-              <Option value="Instructor">Instructor</Option>
-              <Option value="Student">Student</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+      <AddUserModal
+        isModalVisible={isModalVisible}
+        handleCancel={handleCancel}
+        handleFormSubmit={handleFormSubmit}
+      />
     </div>
   );
 };
