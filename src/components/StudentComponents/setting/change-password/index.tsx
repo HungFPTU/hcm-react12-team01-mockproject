@@ -1,12 +1,29 @@
-import { Button, Form, Input } from "antd";
-import { AnyObject } from "yup";
+import { Button, Form, Input, notification } from "antd";
+import { ChangePasswordUser } from "../../../../model/User"; // Nhập interface ChangePasswordUser
+import { UserService } from "../../../../services/UserService/UserService";
 
 const ChangePassword = () => {
   const [form] = Form.useForm();
 
-  const handleSubmit = (values: AnyObject) => {
-    console.log("Password changed: ", values);
-    // Add logic to handle password change, like calling an API.
+  const handleSubmit = async (values: ChangePasswordUser) => {
+    const { old_password, new_password } = values; // Sử dụng old_password và new_password
+    const userId = JSON.parse(localStorage.getItem("user") || "{}")._id;
+
+    // Tạo dữ liệu cho việc thay đổi mật khẩu
+    const data: ChangePasswordUser = {
+      user_id: userId,
+      old_password: old_password, // Sử dụng old_password
+      new_password: new_password, // Sử dụng new_password
+    };
+
+    try {
+      await UserService.changePassword(data);
+      notification.success({ message: "Password changed successfully!" });
+      form.resetFields(); // Đặt lại các trường trong form
+    } catch (error) {
+      notification.error({ message: "Error changing password" });
+      console.error("Change password error:", error);
+    }
   };
 
   return (
@@ -14,7 +31,7 @@ const ChangePassword = () => {
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Form.Item
           label="Current Password"
-          name="currentPassword"
+          name="old_password" // Đổi thành old_password
           rules={[
             { required: true, message: "Please enter your current password" },
           ]}
@@ -24,7 +41,7 @@ const ChangePassword = () => {
 
         <Form.Item
           label="New Password"
-          name="newPassword"
+          name="new_password" // Đổi thành new_password
           rules={[
             { required: true, message: "Please enter your new password" },
           ]}
@@ -35,12 +52,12 @@ const ChangePassword = () => {
         <Form.Item
           label="Confirm New Password"
           name="confirmNewPassword"
-          dependencies={["newPassword"]}
+          dependencies={["new_password"]}
           rules={[
             { required: true, message: "Please confirm your new password" },
             ({ getFieldValue }) => ({
               validator(_, value) {
-                if (!value || getFieldValue("newPassword") === value) {
+                if (!value || getFieldValue("new_password") === value) {
                   return Promise.resolve();
                 }
                 return Promise.reject(

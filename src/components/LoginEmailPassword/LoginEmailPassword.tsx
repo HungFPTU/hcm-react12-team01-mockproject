@@ -26,19 +26,18 @@ interface FormValues {
 const LoginEmailPassword = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   const handleAPISignIn = async (email: string, password: string) => {
     try {
       const res = await AuthService.login({ email, password });
-      console.log(res);
+      console.log(res); 
       localStorage.setItem("token", res.data.data.token);
+  
       return true;
     } catch (error) {
       console.log(error);
       return false;
     }
   };
-
   const handleEmailSignIn = useCallback(
     async (values: FormValues) => {
       const { email, password } = values;
