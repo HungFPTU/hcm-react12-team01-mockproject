@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+//import { toast } from "react-toastify";
 import { AuthService } from "../../services/authService/AuthService";
 
 const VerifyEmail: React.FC = () => {
@@ -13,12 +13,10 @@ const VerifyEmail: React.FC = () => {
         try {
           const res = await AuthService.verifyToken(token);
           console.log(res);
-          toast.success("Email is verified!");
           navigate("/login");
         } catch (error) {
           console.log(error);
-          toast.error("Failed!");
-          navigate("/login");
+          navigate("/");
         }
       }
     };
