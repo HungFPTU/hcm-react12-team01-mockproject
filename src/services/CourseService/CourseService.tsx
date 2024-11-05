@@ -42,4 +42,40 @@ export const CourseService = {
         throw error; // Ném lỗi lên trên để xử lý thêm nếu cần
       });
   },
+
+  getCourses(
+    keyword: string = "",
+    categoryId: string = "",
+    status: string = "",
+    pageNum: number = 1,
+    pageSize: number = 10
+  ) {
+    return BaseService.post<ApiResponse<any>>({
+      url: "/api/course/search",
+      payload: {
+        searchCondition: {
+          keyword: keyword,
+          category_id: categoryId,
+          status: status,
+          is_deleted: false,
+        },
+        pageInfo: {
+          pageNum: pageNum,
+          pageSize: pageSize,
+        },
+      },
+      headers: {
+        Authorization: token ? `Bearer ${String(token)}` : "",
+      },
+      isLoading: true,
+    })
+      .then((response) => {
+        console.log("API Response:", response); // Log phản hồi từ API
+        return response;
+      })
+      .catch((error) => {
+        console.error("Error searching courses:", error); // Log lỗi chi tiết
+        throw error; // Ném lỗi lên trên để xử lý thêm nếu cần
+      });
+  },
 };
