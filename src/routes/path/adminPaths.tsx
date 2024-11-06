@@ -11,7 +11,7 @@ const CategoryManagement = lazy (() => import("../../pages/Admin/CategoryManagem
 const RequestManagement = lazy (() => import("../../pages/Admin/RequestManagement"));
 const UserManagement = lazy (() => import("../../pages/Admin/UserManagement"));
 const PayoutManagement = lazy (() => import ("../../pages/Admin/PayoutManagement"));
-
+const EditCategory = lazy (() => import("../../pages/Admin/CategoryManagement/EditCategory"));
 export const adminPaths: Record<string, RouteObject[]> = {
     [ROUTER_URL.ADMIN.DASHBOARD]: [
         {
@@ -57,6 +57,11 @@ export const adminPaths: Record<string, RouteObject[]> = {
             index: false,
             path: ROUTER_URL.ADMIN.PAYOUTMANAGEMENT ,
             element: <PayoutManagement/>,
+        },
+        {
+            index: false,
+            path: ROUTER_URL.ADMIN.EDIT_CATEGORY ,
+            element: <EditCategory/>,
         },
     ]
 };

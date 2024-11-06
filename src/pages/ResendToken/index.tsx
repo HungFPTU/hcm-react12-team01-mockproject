@@ -28,20 +28,35 @@ const ResendVerification = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Gửi lại Email Xác Thực</h2>
-      <input
-        type="email"
-        placeholder="Nhập email của bạn"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ padding: '10px', marginRight: '10px' }}
-      />
-      <button onClick={handleResend} disabled={loading}>
-        {loading ? 'Đang gửi...' : 'Gửi lại'}
-      </button>
-      {message && <p>{message}</p>}
+   
+    <div className='bg-gradient-to-r from-[#330933] to-[#f5f5f5] w-full min-h-screen flex justify-center items-center'>
+    <div className='bg-white rounded-lg shadow-lg p-8 border border-gray-200 max-w-md w-full'>
+      <h2 className='text-center text-2xl font-semibold text-[#330933] mb-6'>Gửi lại Email Xác Thực</h2>
+      <div className='flex items-center'>
+        <input
+          type="email"
+          placeholder="Nhập email của bạn"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className='flex-1 border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-rose-500 transition-all'
+        />
+        <button
+          className={`ml-3 px-5 py-3 text-white font-medium rounded-lg transition-all ${
+            loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-rose-500 hover:bg-rose-600'
+          }`}
+          onClick={handleResend}
+          disabled={loading}
+        >
+          {loading ? 'Loading...' : 'Gửi Email'}
+        </button>
+      </div>
+      {message && <p className='text-center text-rose-600 mt-4'>{message}</p>}
     </div>
+  </div>
+  
+
+
+
   );
 };
 

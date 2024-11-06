@@ -27,8 +27,6 @@ const Login = () => {
             <h3 className="text-xl font-semibold mb-2">Hello Friends</h3>
             <p className="text-base mb-2">Please! Login with your account</p>
           </div>
-
-     
           <div className="flex-grow">
             <LoginEmailPassword />
             <LoginGoogle />
