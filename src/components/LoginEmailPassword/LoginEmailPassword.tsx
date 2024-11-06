@@ -31,13 +31,11 @@ const LoginEmailPassword = () => {
     try {
       const res = await AuthService.login({ email, password });
       const { token } = res.data.data;
-  
-      // Store token in localStorage only, to ensure consistency
+
       localStorage.setItem("token", token);
   
       await handleLogin(token);
   
-      // Indicate successful login
       return true;
     } catch (error) {
       console.error("API Login failed:", error);
@@ -50,15 +48,13 @@ const LoginEmailPassword = () => {
       const { email, password } = values;
       setLoading(true);
   
-      // Attempt login through API
       const apiSignInSuccess = await handleAPISignIn(email, password);
   
       if (apiSignInSuccess) {
         message.success("Login successful!");
-        navigate("/"); // Navigate only on success
+        navigate("/"); 
       } else {
         try {
-          // Fallback to Firebase authentication if API login fails
           const userCredential = await signInWithEmailAndPassword(email, password);
           const user = userCredential.user;
   
@@ -70,7 +66,7 @@ const LoginEmailPassword = () => {
   
           if (user) {
             const idToken = await user.getIdToken();
-            localStorage.setItem("token", idToken); // Store token in localStorage to match context
+            localStorage.setItem("token", idToken); 
             message.success("Login successful!");
             navigate("/");
           }

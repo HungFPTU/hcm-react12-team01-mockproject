@@ -26,10 +26,12 @@ const UserManagement = lazy (
 const PayoutManagement = lazy (
     () => import ("../../pages/Admin/PayoutManagement")
 )
-
+const EditCategory = lazy (
+    () => import ("../../pages/Admin/CategoryManagement/EditCategory")
+)
 const AdminRoutes: RouteObject[] = [
 {
-    path: "/Admin",
+    path: "/admin",
     element: <AdminLayout/>,
     children: [
         { index: true , element:<Dashboard/>},
@@ -40,7 +42,8 @@ const AdminRoutes: RouteObject[] = [
         { path: "category-management", element: <CategoryManagement/>},
         { path: "request-management", element: <RequestManagement/>},
         { path: "user-management", element: <UserManagement/>},
-        { path: "payout-management", element: <PayoutManagement/>}
+        { path: "payout-management", element: <PayoutManagement/>},
+        { path: "category-management/:id", element: <EditCategory/>},
     ],
 },
 ]

@@ -2,6 +2,9 @@ export const API = {
     // BANK: {
     //   GET_BANK: "https://api.vietqr.io/v2/banks"
     // },
+    COMMON: {
+      PUBLIC_CATEGORY: "api/client/category/search",
+    },
     AUTH: {
       LOGIN: "api/auth",
       LOGOUT: "api/auth/logout",

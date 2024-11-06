@@ -1,78 +1,147 @@
-import React, { useState } from "react";
-import { Table } from "antd";
-import SearchBar from "./SearchBar";
-import ActionButtons from "./ActionButtons";
-import AddCategoryButton from "./AddCategoryButton";
+import React, { useState, useEffect, useCallback, lazy } from "react";
+import { Table, Modal, message, Empty } from "antd";
+import { GetCategoryRequest } from "../../../model/admin/request/Category.request";
+import { CategoryService } from "../../../services/category/category.service";
+import { Category } from "../../../model/admin/response/Category.response";
+import { useNavigate } from "react-router-dom";
 
-// Sample data for categories
-const initialCategories = [
-  {
-    key: "1",
-    categoryName: "Curriculum Development",
-    parentCategory: "Education",
-  },
-  {
-    key: "2",
-    categoryName: "Educational Technology",
-    parentCategory: "Education",
-  },
-  { key: "3", categoryName: "Teaching Methods", parentCategory: "Education" },
-  { key: "4", categoryName: "Music Production", parentCategory: "Music" },
-  { key: "5", categoryName: "Instrument Lessons", parentCategory: "Music" },
-  { key: "6", categoryName: "Music Theory", parentCategory: "Music" },
-  { key: "7", categoryName: "Painting", parentCategory: "Arts & Crafts" },
-];
+const SearchBar = lazy(() => import("./SearchBar"));
+const ActionButtons = lazy(() => import("./ActionButtons"));
+const AddCategoryButton = lazy(() => import("./AddCategoryButton"));
 
 const CategoryManagement: React.FC = () => {
-  const [categories, setCategories] = useState(initialCategories);
-  const [filteredCategories, setFilteredCategories] = useState(categories);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchType, setSearchType] = useState("Sub Category");
+  const [isDataEmpty, setIsDataEmpty] = useState(false); // Track if data is empty
+  const navigate = useNavigate();
+  // Function to fetch categories from API
+  const fetchCategories = async (params: GetCategoryRequest) => {
+    try {
+      const response = await CategoryService.getCategory(params);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    const fetchCategoriesData = async () => {
+      try {
+        const searchCondition = {
+          keyword: searchQuery,
+          is_parent: searchType === "Parent Category",
+          is_delete: false,
+        };
+
+        const response = await fetchCategories({
+          searchCondition,
+          pageInfo: {
+            pageNum: 1,
+            pageSize: 10,
+          },
+        });
+
+        if (response && response.success) {
+          const data = response.data.pageData;
+          setCategories(data);
+          setIsDataEmpty(data.length === 0); // Check if data is empty
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
+    fetchCategoriesData();
+  }, [searchQuery, searchType]);
 
   // Handle search functionality
-  const handleSearch = (value: string) => {
-    const filtered = categories.filter(
-      (category) =>
-        category.categoryName.toLowerCase().includes(value.toLowerCase()) ||
-        category.parentCategory.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredCategories(filtered);
+  const handleSearch = (query: string, type: string) => {
+    setSearchQuery(query);
+    setSearchType(type);
   };
 
   // Handle adding a new category
-  const handleAddCategory = () => {
-    alert("Add New Category");
+  const handleAddCategory = async () => {
+    try {
+      const response = await fetchCategories({
+        searchCondition: {
+          keyword: searchQuery,
+          is_parent: searchType === "Parent Category",
+          is_delete: false,
+        },
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      });
+  
+      if (response && response.success) {
+        setCategories(response.data.pageData);
+        setIsDataEmpty(response.data.pageData.length === 0);
+        message.success("Categories updated successfully.");
+      }
+    } catch (error) {
+      console.error("Failed to refresh categories:", error);
+    }
   };
+  
 
-  // Handle edit and delete actions
-  const handleEdit = (key: string) => {
-    alert(`Edit category with key ${key}`);
-  };
 
-  const handleDelete = (key: string) => {
-    const newCategories = categories.filter((category) => category.key !== key);
-    setCategories(newCategories);
-    setFilteredCategories(newCategories);
-  };
+  const handleDeleteCategory = useCallback(
+    (categoryId: string) => {
+      Modal.confirm({
+        title: "Are you sure you want to delete this category?",
+        onOk: async () => {
+          try {
+            const response = await CategoryService.deleteCategory(categoryId);
+            if (response.data.success) {
+              setCategories((prevCategories) =>
+                prevCategories.filter((category) => category._id !== categoryId)
+              );
+              message.success("Category deleted successfully.");
+            }
+          } catch (error) {
+            message.error(
+              error instanceof Error
+                ? error.message
+                : "An error occurred while deleting the category"
+            );
+            console.error("Failed to delete category:", error);
+          }
+        },
+      });
+    },
+    []
+  );
 
   // Columns for the table
   const columns = [
     {
       title: "Category Name",
-      dataIndex: "categoryName",
-      key: "categoryName",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "Parent Category",
-      dataIndex: "parentCategory",
-      key: "parentCategory",
+      dataIndex: "parent_category_id",
+      key: "parent_category_id",
+      render: (parent_category_id: string) => {
+        const parentCategory = categories.find(
+          (category) => category._id === parent_category_id
+        );
+        return parentCategory ? parentCategory.name : "N/A";
+      },
     },
     {
       title: "Actions",
       key: "actions",
-      render: (_: any, record: any) => (
+      render: (record: Category) => (
         <ActionButtons
-          recordKey={record.key}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+          recordKey={record._id}
+          onEdit={() => navigate(`/Admin/category-management/${record._id}`)}
+          onDelete={() => handleDeleteCategory(record._id)}
         />
       ),
     },
@@ -93,12 +162,20 @@ const CategoryManagement: React.FC = () => {
 
       <Table
         columns={columns}
-        dataSource={filteredCategories}
+        dataSource={categories}
+        rowKey="_id"
         pagination={{
           defaultPageSize: 5,
           showSizeChanger: true,
           pageSizeOptions: ["4", "8"],
           position: ["bottomRight"],
+        }}
+        locale={{
+          emptyText: isDataEmpty ? (
+            <Empty description="No categories found." />
+          ) : (
+            <Empty />
+          ),
         }}
       />
     </div>

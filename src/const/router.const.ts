@@ -10,7 +10,10 @@ export const ROUTER_URL = {
     ALLCOURSES: "/admin/all-courses",
     PENDINGCOURSES:"/admin/pending-courses",
     PURCHASELOG: "/admin/purchase-log",
+    //category
     CATEGORY: "/admin/category-management",
+    EDIT_CATEGORY: "/admin/category-management/:id",
+
     REQUESTMANAGEMENT: "/admin/request-management",
     USERMANAGEMENT: "/admin/user-management",
     PAYOUTMANAGEMENT: "/admin/payout-management",
