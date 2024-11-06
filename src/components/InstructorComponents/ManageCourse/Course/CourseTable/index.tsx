@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Switch } from "antd";
+import { Table, Button, Switch, message } from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
 import { useNavigate } from "react-router-dom";
 import { CourseService } from "../../../../../services/CourseService/course.service";
-import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
-import { EyeOutlined } from "@ant-design/icons";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
+import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
+import { EyeOutlined, SendOutlined } from "@ant-design/icons";
+
 const CourseTable = () => {
   const navigate = useNavigate();
   const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
@@ -17,58 +18,79 @@ const CourseTable = () => {
     try {
       const response = await CourseService.getCourse(params);
       return response.data;
-      
+
     } catch (error) {
-      console.error("Failed to fetch courses:", error);
+      console.error("Fail to fetch courses:", error)
     }
-  };
+  }
 
   useEffect(() => {
-    if (hasMounted.current) return;
+    if(hasMounted.current) return;
     hasMounted.current = true;
 
-      const fetchCoursesData = async () => {
+      const fetchCourseData = async () => {
         try {
-              const searchCondition = {
-                keyword: searchQuery,
-                category_id: "",
-                status: undefined,
-                is_delete: false,
-              };
-        
-              const response = await fetchCourse({
-                searchCondition,
-                pageInfo: {
-                  pageNum: 1,
-                  pageSize: 10,
-                },
-              });
-              if (response && response.success) {
-                const data = response.data.pageData;
-                setCoursesData(data);
-                setIsDataEmpty(data.length === 0); // Check if data is empty
-              }
-        }catch (error) {
-          console.error("Failed to fetch categories:", error);
+          const searchCondition = {
+            keyword: searchQuery,
+            category_id: "",
+            status: undefined,
+            is_delete: false,
+          };
+
+          const response = await fetchCourse({
+            searchCondition,
+            pageInfo: {
+              pageNum: 1,
+              pageSize: 10,
+            },
+          });
+          if (response && response.success){
+            const data = response.data.pageData;
+            setCoursesData(data);
+            setIsDataEmpty(data.length === 0);
+          }
+        } catch (error) {
+          console.error("Error fetching courses:", error);
         }
       }
 
-
-      fetchCoursesData();
-  }, [searchQuery]);
-
-  const filteredCourses = coursesData.filter((course) =>
-    course.name.toLowerCase().includes(searchQuery.toLowerCase())
+      fetchCourseData();
+    }, [searchQuery]);
+    
+    const filteredCourses = coursesData.filter((course) =>
+      course.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
+  
   const handleViewDetails = (courseId: string) => {
     navigate(`/instructor/manage-course/view-detail-course/${courseId}`);
   };
-
+  
   const onChangeStatus = (id: string, status: CourseStatusEnum) => {
     console.log(`Changing status for course ${id} to ${status}`);
-    // Implement status update logic here
+    // Xử lý logic thay đổi trạng thái ở đây
   };
+  
+  const handleSendClick = async (courseId: string) => {
+    try {
+      await CourseService.changeStatusCourse({
+        course_id: courseId,
+        new_status: CourseStatusEnum.WaitingApprove,
+        comment: "Thay đổi trạng thái khóa học"
+      });
+
+      setCoursesData(prevCourses => 
+        prevCourses.map(course => 
+          course._id === courseId
+            ? {...course, status: CourseStatusEnum.WaitingApprove}
+            : course
+        )
+      );
+      message.success("Course status updated to Watting Approve!");
+      } catch (error) {
+        message.error("Không thể cập nhật trạng thái khóa học!");
+        console.error("Lỗi thay đổi trạng thái:", error);
+      }
+    };
 
   const columns = [
     {
@@ -124,12 +146,21 @@ const CourseTable = () => {
       title: "Action",
       key: "actions",
       render: (_: unknown, record: GetCourseResponsePageData) => (
+        <div className="flex space-x-2">
         <Button
           onClick={() => handleViewDetails(record._id)}
           className="bg-blue-500 hover:bg-blue-600 text-white"
         >
           <EyeOutlined />
         </Button>
+
+        <Button 
+          className="bg-green-400 hover:bg-green-600 text-white"
+          onClick={() => handleSendClick(record._id)}
+        >
+          <SendOutlined />
+        </Button>
+        </div>
       ),
     },
   ];
@@ -152,3 +183,4 @@ const CourseTable = () => {
 };
 
 export default CourseTable;
+

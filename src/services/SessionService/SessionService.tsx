@@ -1,10 +1,6 @@
 import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
 
-// Lấy token từ localStorage
-const token = localStorage.getItem("token");
-console.log("Token:", token); // Log token để kiểm tra
-
 export const SessionService = {
   createSession(
     name: string,
@@ -19,9 +15,6 @@ export const SessionService = {
         course_id: courseId,
         description: description,
         position_order: positionOrder,
-      },
-      headers: {
-        Authorization: token ? `Bearer ${String(token)}` : "",
       },
       isLoading: true,
     })
