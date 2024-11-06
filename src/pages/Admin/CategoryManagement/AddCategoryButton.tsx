@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { Button, message, Form, Modal, Input, Select } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { CategoryService } from "../../../services/category/category.service";
@@ -12,6 +12,7 @@ const AddCategoryButton: React.FC<AddCategoryButtonProps> = ({ onAdd }) => {
   const [categories, setCategories] = useState<GetCategoryResponse | null>(null);
   const [isOpen, setOpen] = useState(false);
   const [form] = Form.useForm();
+  const hasMounted = useRef(false);
 
   const fetchCategories = async () => {
     try {
@@ -27,6 +28,8 @@ const AddCategoryButton: React.FC<AddCategoryButtonProps> = ({ onAdd }) => {
   };
 
   useEffect(() => {
+    if (hasMounted.current) return; // Trả về nếu đã mount
+    hasMounted.current = true;
     fetchCategories();
   }, []);
 
@@ -93,7 +96,7 @@ const AddCategoryButton: React.FC<AddCategoryButtonProps> = ({ onAdd }) => {
           <Form.Item label="Name" name="name" rules={[{ required: true, message: "Please input category name" }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Description" name="description" rules={[{ required: true, message: "Please input category description" }]}>
+          <Form.Item label="Description" name="description">
             <Input.TextArea rows={4} />
           </Form.Item>
           <Form.Item label="Parent Category" name="parent_category_id">
