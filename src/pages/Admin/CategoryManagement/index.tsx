@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, lazy } from "react";
+import React, { useState, useEffect, useCallback, lazy, useRef } from "react";
 import { Table, Modal, message, Empty } from "antd";
 import { GetCategoryRequest } from "../../../model/admin/request/Category.request";
 import { CategoryService } from "../../../services/category/category.service";
@@ -14,6 +14,7 @@ const CategoryManagement: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchType, setSearchType] = useState("Sub Category");
   const [isDataEmpty, setIsDataEmpty] = useState(false); // Track if data is empty
+  const hasMounted = useRef(false);
   const navigate = useNavigate();
   // Function to fetch categories from API
   const fetchCategories = async (params: GetCategoryRequest) => {
@@ -27,6 +28,8 @@ const CategoryManagement: React.FC = () => {
   };
 
   useEffect(() => {
+    if (hasMounted.current) return; // Trả về nếu đã mount
+    hasMounted.current = true;
     const fetchCategoriesData = async () => {
       try {
         const searchCondition = {
