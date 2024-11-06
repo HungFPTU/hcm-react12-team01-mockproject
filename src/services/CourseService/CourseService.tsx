@@ -1,9 +1,7 @@
+import { API } from "../../const/path.api";
 import { ApiResponse } from "../../model/ApiResponse";
+import { CourseStatusEnum } from "../../model/Course";
 import { BaseService } from "../config/base.service";
-
-// Lấy token từ localStorage
-const token = localStorage.getItem("token");
-console.log("Token:", token); // Log token để kiểm tra
 
 export const CourseService = {
   createCourse(
@@ -27,9 +25,6 @@ export const CourseService = {
         image_url: imageUrl,
         price: price,
         discount: discount,
-      },
-      headers: {
-        Authorization: token ? `Bearer ${String(token)}` : "",
       },
       isLoading: true,
     })
@@ -64,9 +59,6 @@ export const CourseService = {
           pageSize: pageSize,
         },
       },
-      headers: {
-        Authorization: token ? `Bearer ${String(token)}` : "",
-      },
       isLoading: true,
     })
       .then((response) => {
@@ -78,4 +70,12 @@ export const CourseService = {
         throw error; // Ném lỗi lên trên để xử lý thêm nếu cần
       });
   },
+    changeStatus(params: { course_id: string; new_status: CourseStatusEnum }) {
+      return BaseService.put<ApiResponse<any>>({
+        url: API.INSTRUCTOR.CHANGE_STATUS,
+        payload: params,
+        isLoading: true,
+      });
+    },
+
 };

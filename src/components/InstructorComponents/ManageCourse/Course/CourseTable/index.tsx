@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Table, Button, Switch } from "antd";
+import { Table, Button, Switch, message } from "antd";
 import { Course, CourseStatusEnum } from "../../../../../model/Course";
 import { useNavigate } from "react-router-dom";
 import { CourseService } from "../../../../../services/CourseService/CourseService";
+import { SendOutlined } from '@ant-design/icons'; // Import Send icon from Ant Design
 
 const CourseTable = () => {
   const navigate = useNavigate();
@@ -35,6 +36,31 @@ const CourseTable = () => {
     // Xử lý logic thay đổi trạng thái ở đây
   };
 
+  const handleSendClick = async (courseId: string) => {
+    try {
+      // Gọi API để thay đổi trạng thái khóa học
+      await CourseService.changeStatus({
+        course_id: courseId,
+        new_status: CourseStatusEnum.WaitingApprove, // Đặt trạng thái là "waiting_approve"
+      });
+
+      // Cập nhật lại trạng thái khóa học trong bảng chỉ cho khóa học được nhấn
+      setCoursesData((prevCourses) =>
+        prevCourses.map((course) =>
+          course.id === courseId
+            ? { ...course, status: CourseStatusEnum.WaitingApprove }
+            : course
+        )
+      );
+
+      // Hiển thị thông báo thành công
+      message.success("Course status updated to Waiting Approve!");
+    } catch (error) {
+      message.error("Failed to update course status!");
+      console.error("Error changing status:", error);
+    }
+  };
+
   const columns = [
     {
       title: "Name",
@@ -45,11 +71,6 @@ const CourseTable = () => {
       title: "Category",
       dataIndex: "category_name",
       key: "category_name",
-    },
-    {
-      title: "Instructor",
-      dataIndex: "user_name",
-      key: "user_name",
     },
     {
       title: "Status",
@@ -94,12 +115,22 @@ const CourseTable = () => {
       title: "Action",
       key: "actions",
       render: (_: unknown, record: Course) => (
-        <Button
-          onClick={() => handleViewDetails(record.id)}
-          className="bg-blue-500 hover:bg-blue-600 text-white"
-        >
-          View Detail
-        </Button>
+        <div className="flex space-x-2">
+          {/* View Details Button */}
+          <Button
+            onClick={() => handleViewDetails(record.id)}
+            className="bg-blue-500 hover:bg-blue-600 text-white"
+          >
+            View Detail
+          </Button>
+
+          {/* Send Button */}
+          <Button
+            icon={<SendOutlined />} // Using the Send icon
+            className="bg-green-500 hover:bg-green-600 text-white"
+            onClick={() => handleSendClick(record.id)} // Call the API when clicked
+          />
+        </div>
       ),
     },
   ];
