@@ -3,7 +3,7 @@ export type Session = {
   id: string;
   name: string;
   course_id: string;
-  courseName: string;
+  course_name: string;
   lesson: string;
   user_id: string;
   description: string;
