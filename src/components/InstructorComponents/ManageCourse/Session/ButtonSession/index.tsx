@@ -1,11 +1,44 @@
-import { useState, useRef } from "react";
-import { Button, Modal, Form, Input, message } from "antd";
+import { useState, useRef, useEffect } from "react";
+import { Button, Modal, Form, Input, message, Select } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
+import { CourseService } from "../../../../../services/CourseService/CourseService";
 import { SessionService } from "../../../../../services/SessionService/SessionService";
+
+interface Course {
+  _id: string;
+  name: string;
+  session: string;
+  categoryName: string;
+  category_id: string;
+  user_id: string;
+  description: string;
+  content: string;
+  video_url: string;
+  image_url: string;
+  price: number;
+  discount: number;
+  created_at: string;
+  updated_at: string;
+  is_deleted: boolean;
+}
 
 const ButtonSession = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
+  const [coursesData, setCoursesData] = useState<Course[]>([]);
+  const editorRef = useRef<any>(null);
+
+  useEffect(() => {
+    // Gọi API để lấy danh sách khóa học
+    CourseService.getCourses()
+      .then((response) => {
+        if (response && response.data && response.data.data) {
+          setCoursesData(response.data.data.pageData); // Cập nhật dữ liệu khóa học từ API
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching courses:", error); // Log lỗi khi gọi API
+      });
+  }, []);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -17,16 +50,14 @@ const ButtonSession = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      console.log(values);
       const positionOrder = Number(values.positionOrder);
-      
-      // Lấy nội dung từ editor
+      const courseId = values.courseId;
+
       const description = editorRef.current
         ? editorRef.current.getContent()
         : "";
-      const { sessionName,   } = values;
-      const courseId = "672a25c36ee2db309c2d4ee4";
-      // Gọi API để tạo session mới
+      const { sessionName } = values;
+
       const response = await SessionService.createSession(
         sessionName,
         courseId,
@@ -34,9 +65,10 @@ const ButtonSession = () => {
         positionOrder
       );
 
-      message.success("Session đã được tạo thành công!");
-      console.log("API Response:", response); // Kiểm tra phản hồi từ API
-      setIsModalVisible(false);
+      if (response) {
+        message.success("Session đã được tạo thành công!");
+        setIsModalVisible(false);
+      }
     } catch (error) {
       message.error("Có lỗi xảy ra khi tạo session!");
       console.error("Error creating session:", error);
@@ -67,11 +99,17 @@ const ButtonSession = () => {
 
           <Form.Item
             name="courseId"
-            label="Course ID"
+            label="Course"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: "Vui lòng nhập ID khóa học" }]}
+            rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}
           >
-            <Input placeholder="Nhập ID khóa học" />
+            <Select placeholder="Chọn khóa học">
+              {coursesData.map((courses) => (
+                <Select.Option key={courses._id} value={courses._id}>
+                  {courses.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item
@@ -80,7 +118,7 @@ const ButtonSession = () => {
             labelCol={{ span: 24 }}
           >
             <Editor
-              onInit={(_evt, editor) => (editorRef.current = editor)} // Lưu tham chiếu đến editor
+              onInit={(_evt, editor) => (editorRef.current = editor)}
               apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
               init={{
                 width: "100%",
@@ -139,7 +177,7 @@ const ButtonSession = () => {
               type="number"
               placeholder="Nhập thứ tự vị trí"
               onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9]/g, ""); // Loại bỏ ký tự không phải số
+                const value = e.target.value.replace(/[^0-9]/g, "");
                 e.target.value = value;
               }}
             />
