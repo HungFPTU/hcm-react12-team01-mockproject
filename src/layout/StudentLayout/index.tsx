@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 
 const Footer = React.lazy(() => import("../../components/Footer"));
-const HeaderStudent = React.lazy(() => import('../../components/StudentComponents/headerStudent'));
+const HeaderStudent = React.lazy(() => import('../../components/HeaderDashboard'));
 const StudentSidebar = React.lazy(() => import("../../components/StudentComponents/StudentSidebar"));
 
 
