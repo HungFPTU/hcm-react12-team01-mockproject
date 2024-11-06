@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { Layout, Menu, Dropdown, Button, Avatar, Badge } from "antd";
-import {
-  ShoppingCartOutlined,
-  UserOutlined,
-  MenuOutlined,
-} from "@ant-design/icons";
+import { ShoppingCartOutlined, UserOutlined, MenuOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import assets from "../../assets/assets";
 import { AuthService } from "../../services/authService/AuthService";
+import { useAuth } from "../../context/AuthContent";
+import { ROUTER_URL } from "../../const/router.const";
+import { UserRole } from "../../model/User";
 
 const { Header } = Layout;
 
@@ -41,7 +40,8 @@ const items = [
 export default function Home() {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const token = localStorage.getItem("token");
+  // const token = localStorage.getItem("token");
+  const { userInfo } = useAuth();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -61,10 +61,27 @@ export default function Home() {
     }
   };
 
+  const getDashboardLink = () => {
+    if (!userInfo) {
+      return ROUTER_URL.COMMON.HOME;
+    }
+    switch (userInfo.role) {
+      case UserRole.admin:
+        return ROUTER_URL.ADMIN.DASHBOARD;
+      case UserRole.instructor:
+        return ROUTER_URL.INSTRUCTOR.INSTRUCTORDASHBOARD;
+      case UserRole.student:
+        return ROUTER_URL.STUDENT.STUDENTDASHBOARD;
+      case UserRole.all:
+        return ROUTER_URL.COMMON.HOME;
+      default:
+        return ROUTER_URL.COMMON.HOME;
+    }
+  };
+
   const userMenuItems = [
-    { key: "1", label: "Profile", onClick: () => navigate("/profile") },
-    { key: "2", label: "Logout", onClick: handleLogOut },
-    { key: "3", label: "DashBoard", onClick: () => navigate("/dashboard") },
+    { key: "1", label: `Dashboard`, onClick: () => navigate(getDashboardLink()) },
+    { key: "2", label: "Logout", onClick: handleLogOut }, 
   ];
 
   return (
@@ -103,7 +120,7 @@ export default function Home() {
           )}
 
           <div className="flex items-center space-x-2 md:space-x-4">
-            {token ? (
+            {userInfo ? (
               <>
                 <Badge showZero>
                   <Button
@@ -112,12 +129,14 @@ export default function Home() {
                     onClick={() => navigate("/student/cart")}
                   />
                 </Badge>
-                <Dropdown
-                  menu={{ items: userMenuItems }}
-                  placement="bottomRight"
-                >
-                  <Avatar size={40} icon={<UserOutlined />} />
+                <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+                  <Avatar
+                    size={40}
+                    src={userInfo.avatar_url || null}
+                    icon={!userInfo.avatar_url && <UserOutlined />}
+                  />
                 </Dropdown>
+                <span className="font-semibold text-gray-700">{userInfo.name}</span>
               </>
             ) : (
               <>

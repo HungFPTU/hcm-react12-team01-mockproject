@@ -1,4 +1,4 @@
-import { createContext, useState,useContext } from "react";
+import { createContext, useState,useContext,useEffect } from "react";
 import { User, UserRole } from "../model/User"; 
 import { ReponseSuccess } from "../app/reponse";
 import { AuthService } from "../services/authService/AuthService";
@@ -16,6 +16,7 @@ interface AuthContextType {
   setIsLoading: (isLoading: boolean) => void;
   userInfo: ReponseSuccess<User>["data"] | null;
   setUserInfo: (userInfo: ReponseSuccess<User>["data"] | null) => void;
+  getCurrentUser: () => Promise<void>;
   forgotPassword: (params: { email: string }) => Promise<ReponseSuccess<string>>;
 }
 
@@ -32,8 +33,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return storedToken as string | null;
   });
 
-  const [userInfo, setUserInfo] = useState<ReponseSuccess<User>["data"] | null>(null);
+  const [userInfo, setUserInfo] = useState<ReponseSuccess<User>["data"] | null>(() => {
+    const storedUserInfo = localStorage.getItem("userInfo");
+    return storedUserInfo ? JSON.parse(storedUserInfo) : null;
+  });
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Store userInfo in localStorage whenever it changes
+    if (userInfo) {
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+    } else {
+      localStorage.removeItem("userInfo");
+    }
+  }, [userInfo]);
 
   const handleLogin = async (token: string) => {
     try {
@@ -81,6 +94,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const getCurrentUser = async () => {
+    try {
+      const storedToken = localStorage.getItem("token");
+      if (!storedToken) {
+        throw new HttpException("No token found", HTTP_STATUS.UNAUTHORIZED);
+      }
+      const response = await AuthService.getUserRole({ token: storedToken });
+      if (!response.data?.data) {
+        throw new HttpException("Invalid response data", HTTP_STATUS.BADREQUEST);
+      }
+      setUserInfo(response.data.data);
+    } catch (error) {
+      console.error("Failed to get current user:", error);
+      logout();
+      throw error instanceof HttpException ? error : new HttpException("Failed to get current user", HTTP_STATUS.INTERNALSERVER_ERROR);
+    }
+  };
+  
+
   return (
     <AuthContext.Provider
       value={{
@@ -94,7 +126,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsLoading,
         handleLogin,
         logout,
-        forgotPassword
+        forgotPassword,
+        getCurrentUser,
       }}
     >
       {children}

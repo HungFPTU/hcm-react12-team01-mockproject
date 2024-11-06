@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Outlet } from 'react-router-dom'; // Import Outlet
 import SidebarComponents from "../../components/AdminComponents/SidebarCoponent";
 import Footer from "../../components/Footer";
-import Header from "../../components/Header";
+import Header from "../../components/HeaderDashboard";
 
 const { Content, Sider } = Layout;
 
