@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { CategoryService } from "../../../services/category/category.service";
 import { UpdateCategoryRequest } from "../../../model/admin/request/Category.request";
 import { Category } from "../../../model/admin/response/Category.response";
-import { Rule } from "antd/es/form";
 import { ROUTER_URL } from "../../../const/router.const";
 import { ApiResponse } from "../../../model/ApiResponse";
 
@@ -26,7 +25,6 @@ const EditCategory = () => {
   const validationRules = useMemo(
     () => ({
       name: [{ required: true, message: "Please enter the category name" }],
-      description: [{ required: true, message: "Please enter the description" }],
     }),
     []
   );
@@ -112,7 +110,6 @@ const EditCategory = () => {
             <Form.Item
               label={<span className="font-medium text-[#1a237e]">Description</span>}
               name="description"
-              rules={validationRules.description as Rule[]}
             >
               <Input.TextArea rows={4} />
             </Form.Item>

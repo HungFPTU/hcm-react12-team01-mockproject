@@ -36,14 +36,6 @@ const items = [
     ],
   },
   { label: "ABOUT", key: "about" },
-  {
-    label: (
-      <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
-        Link
-      </a>
-    ),
-    key: "link",
-  },
 ];
 
 export default function Home() {
