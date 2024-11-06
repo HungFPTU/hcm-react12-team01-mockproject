@@ -10,7 +10,7 @@ const TableSession = () => {
   useEffect(() => {
     const fetchSessions = async () => {
       try {
-        const response = await SessionService.getLessons();
+        const response = await SessionService.getSessons();
 
         if (response.data?.success && response.data.data?.pageData) {
           const sessionsWithKey = response.data.data.pageData.map(

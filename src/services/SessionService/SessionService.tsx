@@ -29,7 +29,7 @@ export const SessionService = {
       });
   },
 
-  getLessons() {
+  getSessons() {
     return BaseService.post<ApiResponse<any>>({
       url: "/api/session/search",
       payload: {
