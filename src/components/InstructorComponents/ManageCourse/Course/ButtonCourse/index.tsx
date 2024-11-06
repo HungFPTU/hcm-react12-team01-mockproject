@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Button, Modal, Form, Input, Select, Radio, message } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
-import { CourseService } from "../../../../../services/CourseService/CourseService";
+import { CourseService } from "../../../../../services/CourseService/course.service";
 
 const { Option } = Select;
 

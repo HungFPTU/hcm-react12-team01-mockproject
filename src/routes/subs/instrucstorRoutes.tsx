@@ -36,9 +36,9 @@ const instructorRoute: RouteObject[] = [
         children: [
             { index: true , element:<InstructorDashboard/>},
             { path: "manage-course", element:<ManageCourse/>},
-            { path: "manage-course/view-detail-course", element: <ViewDetailCourse/>},
-            { path: "manage-course/view-detail-session", element: <ViewDetailSession/>},
-            { path: "manage-course/view-detail-lesson", element: <ViewDetailLesson/>},
+            { path: "manage-course/view-detail-course/:id", element: <ViewDetailCourse/>},
+            { path: "manage-course/view-detail-session/:id", element: <ViewDetailSession/>},
+            { path: "manage-course/view-detail-lesson/:id", element: <ViewDetailLesson/>},
             { path: "sales-history", element: <SalesHistory/>},
             { path: "course-log", element: <InstructorCourseLog/>},
             { path: "review", element: <Review/>},

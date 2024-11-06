@@ -17,39 +17,39 @@ const PurchaseLog = lazy(() => import("../../pages/Admin/purchaselog"));
 // const SettingPage = lazy(() => import("../../pages/Student/setting"));
 
 export const instructorPaths: Record<string, RouteObject[]> = {
-    [ROUTER_URL.INSTRUCTOR.INSTRUCTORDASHBOARD]: [
+    [ROUTER_URL.INSTRUCTOR.INSTRUCTOR_DASHBOARD]: [
         {
             index: true,
             element: <InstructorDashboard/>,
         },
         {
             index: false,
-            path: ROUTER_URL.INSTRUCTOR.MANAGECOURSE ,
+            path: ROUTER_URL.INSTRUCTOR.MANAGE_COURSE ,
             element: <ManageCourse/>,
         },
         {
             index: false,
-            path: ROUTER_URL.INSTRUCTOR.VIEWDETAILCOURSE,
+            path: ROUTER_URL.INSTRUCTOR.VIEW_DETAIL_COURSE,
             element: <ViewDetailCourse/>,
         },
         {
             index: false,
-            path: ROUTER_URL.INSTRUCTOR.VIEWDETAILSESSION ,
+            path: ROUTER_URL.INSTRUCTOR.VIEW_DETAIL_SESSION,
             element: <ViewDetailSession/>,
         },
         {
             index: false,
-            path: ROUTER_URL.INSTRUCTOR.VIEWDETAILSESSION ,
+            path: ROUTER_URL.INSTRUCTOR.VIEW_DETAIL_LESSON ,
             element: <ViewDetailLesson/>,
         },
         {
             index: false,
-            path: ROUTER_URL.INSTRUCTOR.SALESHISTORY ,
+            path: ROUTER_URL.INSTRUCTOR.SALES_HISTORY ,
             element: <SalesHistory/>,
         },
         {
             index: false,
-            path: ROUTER_URL.INSTRUCTOR.INTRUCTORCOURSELOG ,
+            path: ROUTER_URL.INSTRUCTOR.INSTRUCTOR_COURSE_LOG ,
             element: <InstructorCourseLog/>,
         },
         {
@@ -59,17 +59,17 @@ export const instructorPaths: Record<string, RouteObject[]> = {
         },
         {
             index: false,
-            path: ROUTER_URL.INSTRUCTOR.INSTRUCTORSUB ,
+            path: ROUTER_URL.INSTRUCTOR.INSTRUCTOR_SUB ,
             element: <InstructorSub/>,
         },
         {
             index: false,
-            path: ROUTER_URL.INSTRUCTOR.PAYOUTINSTRUCTORPAGE ,
+            path: ROUTER_URL.INSTRUCTOR.PAYOUT_INSTRUCTOR_PAGE ,
             element: <PayoutInstructorPage/>,
         },
         {
             index: false,
-            path: ROUTER_URL.INSTRUCTOR.PURCHASELOG ,
+            path: ROUTER_URL.INSTRUCTOR.PURCHASE_LOG ,
             element: <PurchaseLog/>,
         },
         // {

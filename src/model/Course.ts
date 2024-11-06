@@ -8,7 +8,7 @@ export enum CourseStatusEnum {
 }
   
 export interface Course {
-  id: string;
+  _id: string;
   name: string;
   session: string;
   categoryName: string;

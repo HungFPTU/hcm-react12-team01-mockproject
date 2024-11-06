@@ -72,7 +72,7 @@ export const CourseService = {
   },
     changeStatus(params: { course_id: string; new_status: CourseStatusEnum }) {
       return BaseService.put<ApiResponse<any>>({
-        url: API.INSTRUCTOR.CHANGE_STATUS,
+        url: API.COURSE.CHANGE_STATUS,
         payload: params,
         isLoading: true,
       });

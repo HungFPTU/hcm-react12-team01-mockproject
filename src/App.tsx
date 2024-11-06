@@ -24,9 +24,9 @@ const App = () => {
       case UserRole.admin:
         return ROUTER_URL.ADMIN.DASHBOARD;
       case UserRole.instructor:
-        return ROUTER_URL.INSTRUCTOR.INSTRUCTORDASHBOARD;
+        return ROUTER_URL.INSTRUCTOR.INSTRUCTOR_DASHBOARD;
       case UserRole.student:
-        return ROUTER_URL.STUDENT.STUDENTDASHBOARD;
+        return ROUTER_URL.STUDENT.STUDENT_DASHBOARD;
       default:
         return ROUTER_URL.COMMON.HOME;
     }
@@ -70,7 +70,7 @@ const App = () => {
 
         {/* Instructor routes */}
         <Route
-          path={ROUTER_URL.INSTRUCTOR.INSTRUCTORDASHBOARD}
+          path={ROUTER_URL.INSTRUCTOR.INSTRUCTOR_DASHBOARD}
           element={
             <ProtectedRoute
               component={<InstructorLayout />}
@@ -80,14 +80,14 @@ const App = () => {
             />
           }
         >
-          {instructorPaths[ROUTER_URL.INSTRUCTOR.INSTRUCTORDASHBOARD]?.map((route) => (
+          {instructorPaths[ROUTER_URL.INSTRUCTOR.INSTRUCTOR_DASHBOARD]?.map((route) => (
             <Route key={route.path || "index"} index={route.index} path={route.path} element={route.element} />
           ))}
         </Route>
 
         {/* Student routes */}
         <Route
-          path={ROUTER_URL.STUDENT.STUDENTDASHBOARD}
+          path={ROUTER_URL.STUDENT.STUDENT_DASHBOARD}
           element={
             <ProtectedRoute
               component={<StudentLayout />}
@@ -97,7 +97,7 @@ const App = () => {
             />
           }
         >
-          {studentPaths[ROUTER_URL.STUDENT.STUDENTDASHBOARD]?.map((route) => (
+          {studentPaths[ROUTER_URL.STUDENT.STUDENT_DASHBOARD]?.map((route) => (
             <Route key={route.path || "index"} index={route.index} path={route.path} element={route.element} />
           ))}
         </Route>
