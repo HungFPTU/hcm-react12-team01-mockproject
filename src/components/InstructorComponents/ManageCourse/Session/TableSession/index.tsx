@@ -18,7 +18,7 @@ const TableSession = () => {
     // Gắn tên khóa học vào từng session
     const sessionsWithCourseName = sessions.map(session => ({
       ...session,
-      courseName: courses.find(course => course.id === session.course_id)?.name || 'Không xác định',
+      courseName: courses.find(course => course._id === session.course_id)?.name || 'Không xác định',
     }));
 
     setSessionsData(sessionsWithCourseName);

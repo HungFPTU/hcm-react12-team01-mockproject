@@ -27,16 +27,16 @@ const ButtonCourse = () => {
       const category = "6728958bcd80da40c9983f83";
 
       // Gọi API để tạo khóa học
-      const response = await CourseService.createCourse(
-        values.courseName,
-        category,
-        values.description,
-        content, // Gửi nội dung đã lấy từ editor
-        values.videoUrl,
-        values.imageUrl,
-        price,
-        discount
-      );
+      const response = await CourseService.createCourse({
+        name: values.courseName,
+        category_id: category,
+        description: values.description,
+        content: content, 
+        video_url: values.videoUrl, 
+        image_url: values.imageUrl, 
+        price: price,
+        discount: discount
+      });
       message.success("Khóa học đã được tạo thành công!");
       console.log("API Response:", response); // Kiểm tra phản hồi từ API
       setIsModalVisible(false);

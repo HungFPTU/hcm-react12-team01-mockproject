@@ -163,7 +163,7 @@ const paginatedCourses = courses.slice((currentPage - 1) * pageSize, currentPage
           <div className="container mx-auto px-4">
         <Row gutter={[16, 16]}>
           {paginatedCourses.map((course: Course) => (
-            <Col key={course.id} xs={24} sm={12} md={8} lg={6}>
+            <Col key={course._id} xs={24} sm={12} md={8} lg={6}>
               <Card
                 hoverable
                 className="rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
