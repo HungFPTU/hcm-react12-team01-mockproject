@@ -5,7 +5,7 @@ import FilterCourse from './FilterCourse';
 
 const Course = () => {
   return (
-    <div className="manage-course-container max-w-7xl mx-auto px-4">
+    <div className="manage-course-container max-w-full mx-auto px-4">
 
       <div className="mt-6 flex justify-between">
 
