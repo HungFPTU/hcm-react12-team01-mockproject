@@ -58,6 +58,7 @@ const TableSession = () => {
       title: "Created At",
       dataIndex: "created_at",
       key: "created_at",
+      render: (created_at: string) => new Date(created_at).toLocaleDateString(),
     },
     {
       title: "Action",
