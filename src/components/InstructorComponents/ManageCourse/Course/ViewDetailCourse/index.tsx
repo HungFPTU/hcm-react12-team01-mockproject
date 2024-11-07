@@ -19,6 +19,7 @@ const ViewDetailCourse = () => {
     } else {
       navigate('/instructor/manage-course');
     }
+    console.log(courseId);
   }, [courseId, navigate]);
 
   const onFinish = (values: Course) => {

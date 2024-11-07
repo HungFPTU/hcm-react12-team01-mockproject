@@ -20,22 +20,22 @@ export const adminPaths: Record<string, RouteObject[]> = {
         },
         {
             index: false,
-            path: ROUTER_URL.ADMIN.ALLCOURSES ,
+            path: ROUTER_URL.ADMIN.ALL_COURSES ,
             element: <AllCourses/>,
         },
         {
             index: false,
-            path: ROUTER_URL.ADMIN.COURSESLOG,
+            path: ROUTER_URL.ADMIN.COURSES_LOG,
             element: <CoursesLog/>,
         },
         {
             index: false,
-            path: ROUTER_URL.ADMIN.PENDINGCOURSES ,
+            path: ROUTER_URL.ADMIN.PENDING_COURSES ,
             element: <PendingCourses/>,
         },
         {
             index: false,
-            path: ROUTER_URL.ADMIN.PURCHASELOG ,
+            path: ROUTER_URL.ADMIN.PURCHASE_LOG ,
             element: <PurchaseLog/>,
         },
         {
@@ -45,17 +45,17 @@ export const adminPaths: Record<string, RouteObject[]> = {
         },
         {
             index: false,
-            path: ROUTER_URL.ADMIN.REQUESTMANAGEMENT ,
+            path: ROUTER_URL.ADMIN.REQUEST_MANAGEMENT ,
             element: <RequestManagement/>,
         },
         {
             index: false,
-            path: ROUTER_URL.ADMIN.USERMANAGEMENT ,
+            path: ROUTER_URL.ADMIN.USER_MANAGEMENT ,
             element: <UserManagement/>,
         },
         {
             index: false,
-            path: ROUTER_URL.ADMIN.PAYOUTMANAGEMENT ,
+            path: ROUTER_URL.ADMIN.PAYOUT_MANAGEMENT ,
             element: <PayoutManagement/>,
         },
         {
