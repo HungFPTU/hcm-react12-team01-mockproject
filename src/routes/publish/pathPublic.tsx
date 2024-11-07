@@ -23,11 +23,11 @@ export const pathPublic: Record<string, RouteObject[]> = {
                 element: <HomePage/>,
             },
             {
-                path:ROUTER_URL.COMMON.ALLCOURSES,
+                path:ROUTER_URL.COMMON.ALL_COURSES,
                 element: <AllCourses/>,
             },
             {
-                path:ROUTER_URL.COMMON.COURSEDETAIL,
+                path:ROUTER_URL.COMMON.COURSE_DETAIL,
                 element: <CoursesDetail/>,
             }
         ]
@@ -47,7 +47,7 @@ export const pathPublic: Record<string, RouteObject[]> = {
           element: <VerifyEmail />
         },
         {
-          path: ROUTER_URL.FORGOTPASSWORD,
+          path: ROUTER_URL.FORGOT_PASSWORD,
           element: <ForgotPasswordPage />
         },
         {

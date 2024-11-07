@@ -18,7 +18,7 @@ const TableLesson = () => {
     // Gắn tên khóa học vào từng session
     const lessonsWithCourseName = lessons.map(lesson => ({
       ...lesson,
-      courseName: courses.find(course => course.id === lesson.course_id)?.name || 'Không xác định',
+      courseName: courses.find(course => course._id === lesson.course_id)?.name || 'Không xác định',
     }));
 
     setLessonsData(lessonsWithCourseName);
