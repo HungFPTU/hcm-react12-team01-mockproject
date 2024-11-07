@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Table, Button } from "antd";
+import { Table, Button, Popover } from "antd";
 import { useNavigate } from "react-router-dom";
 import { SessionService } from "../../../../../services/SessionService/SessionService";
+import { EyeOutlined } from "@ant-design/icons";
 
 const TableSession = () => {
   const navigate = useNavigate();
@@ -58,14 +59,20 @@ const TableSession = () => {
       title: "Created At",
       dataIndex: "created_at",
       key: "created_at",
+      render: (created_at: string) => new Date(created_at).toLocaleDateString(),
     },
     {
       title: "Action",
       key: "action",
       render: (_: unknown, record: any) => (
-        <Button type="primary" onClick={() => handleViewDetails(record._id)}>
-          View Details
-        </Button>
+        <Popover content="View Session Detail">
+          <Button
+            onClick={() => handleViewDetails(record._id)}
+            className="bg-blue-500 hover:bg-blue-600 text-white"
+          >
+            <EyeOutlined />
+          </Button>
+        </Popover>
       ),
     },
   ];

@@ -16,7 +16,6 @@ export const SessionService = {
         description: description,
         position_order: positionOrder,
       },
-
       isLoading: true,
     })
       .then((response) => {
