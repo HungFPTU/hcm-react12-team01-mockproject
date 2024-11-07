@@ -1,23 +1,25 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Switch } from "antd";
+import { Table, Button, Switch, Empty, Modal } from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
-import { useNavigate } from "react-router-dom";
+
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { EyeOutlined } from "@ant-design/icons";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
+import ViewDetailCourse from "../ViewDetailCourse"; // Import the modal component
+
 const CourseTable = () => {
-  const navigate = useNavigate();
+  
   const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isDataEmpty, setIsDataEmpty] = useState(false);
   const hasMounted = useRef(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 
   const fetchCourse = async (params: GetCourseRequest) => {
     try {
       const response = await CourseService.getCourse(params);
       return response.data;
-      
     } catch (error) {
       console.error("Failed to fetch courses:", error);
     }
@@ -27,34 +29,32 @@ const CourseTable = () => {
     if (hasMounted.current) return;
     hasMounted.current = true;
 
-      const fetchCoursesData = async () => {
-        try {
-              const searchCondition = {
-                keyword: searchQuery,
-                category_id: "",
-                status: undefined,
-                is_delete: false,
-              };
-        
-              const response = await fetchCourse({
-                searchCondition,
-                pageInfo: {
-                  pageNum: 1,
-                  pageSize: 10,
-                },
-              });
-              if (response && response.success) {
-                const data = response.data.pageData;
-                setCoursesData(data);
-                setIsDataEmpty(data.length === 0); // Check if data is empty
-              }
-        }catch (error) {
-          console.error("Failed to fetch categories:", error);
+    const fetchCoursesData = async () => {
+      try {
+        const searchCondition = {
+          keyword: searchQuery,
+          category_id: "",
+          status: undefined,
+          is_delete: false,
+        };
+
+        const response = await fetchCourse({
+          searchCondition,
+          pageInfo: {
+            pageNum: 1,
+            pageSize: 10,
+          },
+        });
+        if (response && response.success) {
+          const data = response.data.pageData;
+          setCoursesData(data);
         }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
       }
+    };
 
-
-      fetchCoursesData();
+    fetchCoursesData();
   }, [searchQuery]);
 
   const filteredCourses = coursesData.filter((course) =>
@@ -62,7 +62,13 @@ const CourseTable = () => {
   );
 
   const handleViewDetails = (courseId: string) => {
-    navigate(`/instructor/manage-course/view-detail-course/${courseId}`);
+    setSelectedCourseId(courseId);
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    setSelectedCourseId(null);
   };
 
   const onChangeStatus = (id: string, status: CourseStatusEnum) => {
@@ -71,21 +77,9 @@ const CourseTable = () => {
   };
 
   const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Category",
-      dataIndex: "category_name",
-      key: "category_name",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
+    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Category", dataIndex: "category_name", key: "category_name" },
+    { title: "Status", dataIndex: "status", key: "status" },
     {
       title: "Price",
       dataIndex: "price",
@@ -135,19 +129,34 @@ const CourseTable = () => {
   ];
 
   return (
-    <Table<GetCourseResponsePageData>
-      columns={columns}
-      dataSource={filteredCourses}
-      rowKey="_id"
-      className="w-full shadow-md rounded-lg overflow-hidden"
-      pagination={{
-        pageSize: 10,
-        showSizeChanger: true,
-        showQuickJumper: true,
-        showTotal: (total, range) =>
-          `${range[0]}-${range[1]} of ${total} courses`,
-      }}
-    />
+    <div>
+      {filteredCourses.length === 0 ? (
+        <Empty description="No courses found" />
+      ) : (
+        <Table<GetCourseResponsePageData>
+          columns={columns}
+          dataSource={filteredCourses}
+          rowKey="_id"
+          className="w-full shadow-md rounded-lg overflow-hidden"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} courses`,
+          }}
+        />
+      )}
+      
+      <Modal
+        visible={isModalVisible}
+        onCancel={handleModalClose}
+        footer={null}
+        width={800}
+      >
+        {selectedCourseId && <ViewDetailCourse courseId={selectedCourseId} />}
+      </Modal>
+    </div>
   );
 };
 

@@ -12,9 +12,9 @@ export const CourseService = {
       payload: params
     });
   },
-  getCourseById(id: string) {
+  getCourseById(_id: string) {
     return BaseService.get<ApiResponse<GetCourseByIdResponse>>({
-      url: API.COURSE.GET_COURSE.replace(":id", id)
+      url: API.COURSE.GET_COURSE.replace(":id", _id)
     });
   },
   //instructor
