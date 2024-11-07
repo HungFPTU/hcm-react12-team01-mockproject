@@ -19,12 +19,12 @@ const ButtonSession = () => {
     try {
       console.log(values);
       const positionOrder = Number(values.positionOrder);
-      
+
       // Lấy nội dung từ editor
       const description = editorRef.current
         ? editorRef.current.getContent()
         : "";
-      const { sessionName,   } = values;
+      const { sessionName, } = values;
       const courseId = "672a25c36ee2db309c2d4ee4";
       // Gọi API để tạo session mới
       const response = await SessionService.createSession(

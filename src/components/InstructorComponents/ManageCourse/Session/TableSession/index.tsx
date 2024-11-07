@@ -1,33 +1,39 @@
-import { useState, useEffect } from 'react';
-import { Table, Button } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import Sessions from '../../../../../data/Sessions.json';
-import Courses from '../../../../../data/Courses.json';
-import { Session } from '../../../../../model/Session';
-import { Course } from '../../../../../model/Course';
+import { useState, useEffect } from "react";
+import { Table, Button, Popover } from "antd";
+import { useNavigate } from "react-router-dom";
+import { SessionService } from "../../../../../services/SessionService/SessionService";
+import { EyeOutlined } from "@ant-design/icons";
 
 const TableSession = () => {
   const navigate = useNavigate();
-  const [sessionsData, setSessionsData] = useState<Session[]>([]);
-  const [searchTerm] = useState<string>("");
+  const [sessionsData, setSessionsData] = useState<any[]>([]);
 
   useEffect(() => {
-    const courses = Courses.courses as unknown as Course[];
-    const sessions = Sessions.sessions as unknown as Session[];
+    const fetchSessions = async () => {
+      try {
+        const response = await SessionService.getSessons();
 
-    // Gắn tên khóa học vào từng session
-    const sessionsWithCourseName = sessions.map(session => ({
-      ...session,
-      courseName: courses.find(course => course.id === session.course_id)?.name || 'Không xác định',
-    }));
+        if (response.data?.success && response.data.data?.pageData) {
+          const sessionsWithKey = response.data.data.pageData.map(
+            (session: any) => ({
+              ...session,
+              key: session._id,
+            })
+          );
+          setSessionsData(sessionsWithKey);
+        } else {
+          console.error(
+            "Failed to fetch sessions: pageData not found",
+            response
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching sessions:", error);
+      }
+    };
 
-    setSessionsData(sessionsWithCourseName);
+    fetchSessions();
   }, []);
-
-  const filteredSessions = sessionsData.filter((session) =>
-    session.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    session.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const handleViewDetails = (sessionId: string) => {
     navigate(`/instructor/${sessionId}`);
@@ -35,43 +41,47 @@ const TableSession = () => {
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: 'Course Name',
-      dataIndex: 'courseName',
-      key: 'courseName',
-      render: (text: string) => text,
+      title: "Course Name",
+      dataIndex: "course_name",
+      key: "course_name",
     },
     {
-      title: 'Lesson',
-      dataIndex: 'lesson',
-      key: 'lesson',
-      render: (text: string) => text,
+      title: "Position Order",
+      dataIndex: "position_order",
+      key: "position_order",
     },
     {
-      title: 'Created At',
-      dataIndex: 'created_at',
-      key: 'created_at',
+      title: "Created At",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (created_at: string) => new Date(created_at).toLocaleDateString(),
     },
     {
-      title: 'Action',
-      key: 'action',
-      render: (_: unknown, record: Session) => (
-        <Button type="primary" onClick={() => handleViewDetails(record.id)}>
-          View Details
-        </Button>
+      title: "Action",
+      key: "action",
+      render: (_: unknown, record: any) => (
+        <Popover content="View Session Detail">
+          <Button
+            onClick={() => handleViewDetails(record._id)}
+            className="bg-blue-500 hover:bg-blue-600 text-white"
+          >
+            <EyeOutlined />
+          </Button>
+        </Popover>
       ),
     },
   ];
 
   return (
-    <Table<Session>
-      dataSource={filteredSessions}
+    <Table
+      dataSource={sessionsData}
       columns={columns}
-      rowKey="id"
+      rowKey="key"
       className="w-full shadow-md rounded-lg overflow-hidden"
       pagination={{
         pageSize: 10,

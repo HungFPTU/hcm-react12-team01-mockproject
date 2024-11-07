@@ -1,17 +1,20 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Switch, Empty, Modal } from "antd";
+import { Table, Button, Switch, message, Popover,Modal } from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
 
 import { CourseService } from "../../../../../services/CourseService/course.service";
-import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
-import { EyeOutlined } from "@ant-design/icons";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
 import ViewDetailCourse from "../ViewDetailCourse"; // Import the modal component
+import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
+import { EyeOutlined, SendOutlined } from "@ant-design/icons";
+
+
 
 const CourseTable = () => {
   
   const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery] = useState("");
+  const [isDataEmpty, setIsDataEmpty] = useState(false);
   const hasMounted = useRef(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
@@ -21,7 +24,7 @@ const CourseTable = () => {
       const response = await CourseService.getCourse(params);
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch courses:", error);
+      console.error("Fail to fetch courses:", error);
     }
   };
 
@@ -45,12 +48,14 @@ const CourseTable = () => {
             pageSize: 10,
           },
         });
+
         if (response && response.success) {
           const data = response.data.pageData;
           setCoursesData(data);
+          setIsDataEmpty(data.length === 0);
         }
       } catch (error) {
-        console.error("Failed to fetch categories:", error);
+        console.error("Failed to fetch courses:", error);
       }
     };
 
@@ -71,15 +76,134 @@ const CourseTable = () => {
     setSelectedCourseId(null);
   };
 
-  const onChangeStatus = (id: string, status: CourseStatusEnum) => {
-    console.log(`Changing status for course ${id} to ${status}`);
-    // Implement status update logic here
+  const onChangeStatus = async (id: string, status: CourseStatusEnum) => {
+    try {
+      await CourseService.changeStatusCourse({
+        course_id: id,
+        new_status: status,
+        comment: `Changed status to ${status}`,
+      });
+
+      setCoursesData((prevCourses) =>
+        prevCourses.map((course) =>
+          course._id === id ? { ...course, status } : course
+        )
+      );
+
+      message.success(`Course status updated to ${status}!`);
+    } catch (error) {
+      message.error("Failed to update course status!");
+      console.error("Error changing status:", error);
+    }
+  };
+
+  const handleSendClick = async (courseId: string) => {
+    try {
+      await CourseService.changeStatusCourse({
+        course_id: courseId,
+        new_status: CourseStatusEnum.WaitingApprove,
+        comment: "Thay đổi trạng thái khóa học",
+      });
+
+      setCoursesData((prevCourses) =>
+        prevCourses.map((course) =>
+          course._id === courseId
+            ? { ...course, status: CourseStatusEnum.WaitingApprove }
+            : course
+        )
+      );
+
+      message.success("Course status updated to Waiting Approve!");
+    } catch (error) {
+      message.error("Failed to update course status!");
+      console.error("Error changing status:", error);
+    }
   };
 
   const columns = [
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Category", dataIndex: "category_name", key: "category_name" },
-    { title: "Status", dataIndex: "status", key: "status" },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Category",
+      dataIndex: "category_name",
+      key: "category_name",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status: CourseStatusEnum) => {
+        let statusText = "";
+        let statusColor = "";
+        let borderColor = "";
+        let popoverContent = "";
+
+        switch (status) {
+          case CourseStatusEnum.New:
+            statusText = "New";
+            statusColor = "text-blue-500";
+            borderColor = "border-blue-500";
+            popoverContent = "You can send approval request to admin"
+            break;
+          case CourseStatusEnum.WaitingApprove:
+            statusText = "Waiting for Approval";
+            statusColor = "text-orange-500";
+            borderColor = "border-orange-500";
+            popoverContent = "Please watting for the approval from admin"
+
+            break;
+          case CourseStatusEnum.Approved:
+            statusText = "Approved";
+            statusColor = "text-green-500";
+            borderColor = "border-green-500";
+            popoverContent = "Your course has been approved, you can activate the course"
+
+            break;
+          case CourseStatusEnum.Rejected:
+            statusText = "Rejected";
+            statusColor = "text-red-500";
+            borderColor = "border-red-500";
+            popoverContent = "Your course has been rejected, please check your course and resend approval request to admin"
+
+            break;
+          case CourseStatusEnum.Active:
+            statusText = "Active";
+            statusColor = "text-purple-500";
+            borderColor = "border-purple-500";
+            popoverContent = "Your course has been activated, now student can see your course at homepage!"
+
+            break;
+          case CourseStatusEnum.Inactive:
+            statusText = "Inactive";
+            statusColor = "text-gray-500";
+            borderColor = "border-gray-500";
+            popoverContent = "Your course has been inactivated, now student can not see your course at homepage!"
+
+            break;
+          default:
+            statusText = "Unknown";
+            statusColor = "text-gray-500";
+            borderColor = "border-gray-500";
+            popoverContent = "NO CAP!"
+
+            break;
+        }
+
+        return (
+          <Popover content={`${popoverContent}`}>
+            <span
+              className={`font-semibold ${statusColor} border-2 ${borderColor} px-2 py-1 rounded-md`}
+            >
+              {statusText}
+            </span>
+
+          </Popover>
+        );
+      },
+    },
     {
       title: "Price",
       dataIndex: "price",
@@ -101,37 +225,77 @@ const CourseTable = () => {
     {
       title: "Change Status",
       key: "changeStatus",
-      render: (_: unknown, record: GetCourseResponsePageData) => (
-        <Switch
-          checked={record.status === CourseStatusEnum.Active}
-          onChange={(checked) =>
-            onChangeStatus(
-              record._id,
-              checked ? CourseStatusEnum.Active : CourseStatusEnum.Inactive
-            )
-          }
-          className="bg-blue-500"
-        />
-      ),
+      render: (_: unknown, record: GetCourseResponsePageData) => {
+        // Kiểm tra nếu khóa học có trạng thái là 'Approved', 'Active', hoặc 'Inactive'
+        const canChangeStatus = [
+          CourseStatusEnum.Approved,
+          CourseStatusEnum.Active,
+          CourseStatusEnum.Inactive,
+        ].includes(record.status);
+
+        return (
+          <div>
+            {canChangeStatus && (
+              <Popover
+                content={<div>Click to activate your course</div>}
+                title="Status Update"
+                trigger="hover"
+                placement="top"
+                arrowPointAtCenter
+                className="transition-all duration-300"
+              >
+                <Switch
+                  checked={record.status === CourseStatusEnum.Active}
+                  onChange={(checked) => {
+                    const newStatus = checked
+                      ? CourseStatusEnum.Active
+                      : CourseStatusEnum.Inactive;
+                    onChangeStatus(record._id, newStatus);
+                  }}
+                  disabled={!canChangeStatus}
+                  className={`transition-all duration-300 ${record.status === CourseStatusEnum.Active ? 'bg-blue-500' : 'bg-gray-500'}`}
+                />
+              </Popover>
+            )}
+          </div>
+        );
+      },
     },
     {
       title: "Action",
       key: "actions",
       render: (_: unknown, record: GetCourseResponsePageData) => (
-        <Button
-          onClick={() => handleViewDetails(record._id)}
-          className="bg-blue-500 hover:bg-blue-600 text-white"
-        >
-          <EyeOutlined />
-        </Button>
+        <div className="flex space-x-2">
+
+          <Popover content="View Session Detail">
+            <Button
+              onClick={() => handleViewDetails(record._id)}
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+            >
+              <EyeOutlined />
+            </Button>
+          </Popover>
+
+          {/* Kiểm tra nếu trạng thái là 'New' mới hiển thị nút 'Send' */}
+          {record.status === CourseStatusEnum.New && (
+            <Popover content="Send course to admin">
+              <Button
+                className="bg-green-400 hover:bg-green-600 text-white"
+                onClick={() => handleSendClick(record._id)}
+              >
+                <SendOutlined />
+              </Button>
+            </Popover>
+          )}
+        </div>
       ),
     },
   ];
 
   return (
-    <div>
-      {filteredCourses.length === 0 ? (
-        <Empty description="No courses found" />
+    <div className="w-full">
+      {isDataEmpty ? (
+        <div className="text-center text-red-500">No courses found.</div>
       ) : (
         <Table<GetCourseResponsePageData>
           columns={columns}
@@ -156,6 +320,7 @@ const CourseTable = () => {
       >
         {selectedCourseId && <ViewDetailCourse courseId={selectedCourseId} />}
       </Modal>
+
     </div>
   );
 };

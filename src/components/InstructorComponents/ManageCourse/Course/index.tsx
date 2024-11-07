@@ -5,20 +5,30 @@ import FilterCourse from './FilterCourse';
 
 const Course = () => {
   return (
-    <div className="manage-course-container">
-      <div className='mt-4'>
-        <ButtonCourse/>
+    <div className="manage-course-container max-w-full mx-auto px-4">
+
+      <div className="mt-6 flex justify-between">
+
+        <div className="flex gap-2">
+          <div className="flex-1 max-w-full ">
+            <SearchCourse onSearch={() => {}} />
+          </div>
+
+          <div className="flex-1">
+            <FilterCourse onChange={() => {}} />
+          </div>
+        </div>
+
+        <div className="flex-shrink-0">
+          <ButtonCourse />
+        </div>
       </div>
-      <div className='mt-4'>
-        <SearchCourse onSearch={() => {}}/>
-      </div>
-      <div className='mt-4'>
-        <FilterCourse onChange={() => {}}/>
-      </div>
-      <div className='mt-4'>
-        <CourseTable/>
+
+      <div className="mt-6">
+        <CourseTable />
       </div>
     </div>
   );
-}
+};
+
 export default Course;
