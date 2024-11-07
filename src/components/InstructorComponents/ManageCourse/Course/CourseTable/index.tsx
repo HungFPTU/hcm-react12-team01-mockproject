@@ -7,24 +7,24 @@ import { GetCourseResponsePageData } from "../../../../../model/admin/response/C
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { EyeOutlined, SendOutlined } from "@ant-design/icons";
 
-interface Course {
-  _id: string;
-  name: string;
-  session: string;
-  category_name: string;
-  category_id: string;
-  user_id: string;
-  description: string;
-  content: string;
-  status: CourseStatusEnum;
-  video_url: string;
-  image_url: string;
-  price: number;
-  discount: number;
-  created_at: string;
-  updated_at: string;
-  is_deleted: boolean;
-}
+// interface Course {
+//   _id: string;
+//   name: string;
+//   session: string;
+//   category_name: string;
+//   category_id: string;
+//   user_id: string;
+//   description: string;
+//   content: string;
+//   status: CourseStatusEnum;
+//   video_url: string;
+//   image_url: string;
+//   price: number;
+//   discount: number;
+//   created_at: string;
+//   updated_at: string;
+//   is_deleted: boolean;
+// }
 
 const CourseTable = () => {
   const navigate = useNavigate();
@@ -147,51 +147,68 @@ const CourseTable = () => {
         let statusText = "";
         let statusColor = "";
         let borderColor = "";
+        let popoverContent = "";
 
         switch (status) {
           case CourseStatusEnum.New:
             statusText = "New";
             statusColor = "text-blue-500";
             borderColor = "border-blue-500";
+            popoverContent = "You can send approval request to admin"
             break;
           case CourseStatusEnum.WaitingApprove:
             statusText = "Waiting for Approval";
             statusColor = "text-orange-500";
             borderColor = "border-orange-500";
+            popoverContent = "Please watting for the approval from admin"
+
             break;
           case CourseStatusEnum.Approved:
             statusText = "Approved";
             statusColor = "text-green-500";
             borderColor = "border-green-500";
+            popoverContent = "Your course has been approved, you can activate the course"
+
             break;
           case CourseStatusEnum.Rejected:
             statusText = "Rejected";
             statusColor = "text-red-500";
             borderColor = "border-red-500";
+            popoverContent = "Your course has been rejected, please check your course and resend approval request to admin"
+
             break;
           case CourseStatusEnum.Active:
             statusText = "Active";
             statusColor = "text-purple-500";
             borderColor = "border-purple-500";
+            popoverContent = "Your course has been activated, now student can see your course at homepage!"
+
             break;
           case CourseStatusEnum.Inactive:
             statusText = "Inactive";
             statusColor = "text-gray-500";
             borderColor = "border-gray-500";
+            popoverContent = "Your course has been inactivated, now student can not see your course at homepage!"
+
             break;
           default:
             statusText = "Unknown";
             statusColor = "text-gray-500";
             borderColor = "border-gray-500";
+            popoverContent = "NO CAP!"
+
             break;
         }
 
         return (
-          <span
-            className={`font-semibold ${statusColor} border-2 ${borderColor} px-2 py-1 rounded-md`}
-          >
-            {statusText}
-          </span>
+          <Popover content={`${popoverContent}`}>
+            <span
+              className={`font-semibold ${statusColor} border-2 ${borderColor} px-2 py-1 rounded-md`}
+            >
+              {statusText}
+            </span>
+
+          </Popover>
         );
       },
     },
@@ -257,21 +274,26 @@ const CourseTable = () => {
       key: "actions",
       render: (_: unknown, record: GetCourseResponsePageData) => (
         <div className="flex space-x-2">
-          <Button
-            onClick={() => handleViewDetails(record._id)}
-            className="bg-blue-500 hover:bg-blue-600 text-white"
-          >
-            <EyeOutlined />
-          </Button>
-    
+
+          <Popover content="View Session Detail">
+            <Button
+              onClick={() => handleViewDetails(record._id)}
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+            >
+              <EyeOutlined />
+            </Button>
+          </Popover>
+
           {/* Kiểm tra nếu trạng thái là 'New' mới hiển thị nút 'Send' */}
           {record.status === CourseStatusEnum.New && (
-            <Button
-              className="bg-green-400 hover:bg-green-600 text-white"
-              onClick={() => handleSendClick(record._id)}
-            >
-              <SendOutlined />
-            </Button>
+            <Popover content="Send course to admin">
+              <Button
+                className="bg-green-400 hover:bg-green-600 text-white"
+                onClick={() => handleSendClick(record._id)}
+              >
+                <SendOutlined />
+              </Button>
+            </Popover>
           )}
         </div>
       ),
