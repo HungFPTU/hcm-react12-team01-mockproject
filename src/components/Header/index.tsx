@@ -69,9 +69,9 @@ export default function Home() {
       case UserRole.admin:
         return ROUTER_URL.ADMIN.DASHBOARD;
       case UserRole.instructor:
-        return ROUTER_URL.INSTRUCTOR.INSTRUCTORDASHBOARD;
+        return ROUTER_URL.INSTRUCTOR.INSTRUCTOR_DASHBOARD;
       case UserRole.student:
-        return ROUTER_URL.STUDENT.STUDENTDASHBOARD;
+        return ROUTER_URL.STUDENT.STUDENT_DASHBOARD;
       case UserRole.all:
         return ROUTER_URL.COMMON.HOME;
       default:

@@ -18,7 +18,7 @@ export const AdminLayout = (): JSX.Element => {
           collapsible
           collapsed={collapsed}
           onCollapse={(value) => setCollapsed(value)}
-          style={{ position: "fixed", left: 0, top: 66, bottom: 0 }}
+          style={{ position: "fixed", left: 0, top: 66, bottom: 0}}
         >
           <SidebarComponents />
         </Sider>
@@ -31,7 +31,7 @@ export const AdminLayout = (): JSX.Element => {
         >
           <Content
             style={{
-              margin: "24px 16px 0",
+              margin: "24px 0px 0px 52px",
               padding: "24px",
               backgroundColor: "#fff",
             }}

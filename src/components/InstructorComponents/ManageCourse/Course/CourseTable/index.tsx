@@ -1,7 +1,12 @@
-import { useState, useEffect } from "react";
-import { Table, Button, Switch, Modal, Input, Form } from "antd";
+import { useState, useEffect, useRef } from "react";
+import { Table, Button, Switch, message } from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
-import { CourseService } from "../../../../../services/CourseService/CourseService";
+import { useNavigate } from "react-router-dom";
+import { CourseService } from "../../../../../services/CourseService/course.service";
+import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
+import { EyeOutlined } from "@ant-design/icons";
+import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
+import { SendOutlined } from '@ant-design/icons';
 
 interface Course {
   _id: string;
@@ -23,62 +28,92 @@ interface Course {
 }
 
 const CourseTable = () => {
-  const [coursesData, setCoursesData] = useState<Course[]>([]);
-  const [searchTerm] = useState<string>("");
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
+  const navigate = useNavigate();
+  const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
+  const [searchQuery] = useState("");
+  const [isDataEmpty, setIsDataEmpty] = useState(false);  // state để kiểm tra dữ liệu có rỗng hay không
+  const hasMounted = useRef(false);
+
+  const fetchCourse = async (params: GetCourseRequest) => {
+    try {
+      const response = await CourseService.getCourse(params);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch courses:", error);
+    }
+  };
 
   useEffect(() => {
-    // Gọi API để lấy danh sách khóa học
-    CourseService.getCourses()
-      .then((response) => {
-        if (response && response.data && response.data.data) {
-          setCoursesData(response.data.data.pageData); // Cập nhật dữ liệu khóa học từ API
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+
+    const fetchCoursesData = async () => {
+      try {
+        const searchCondition = {
+          keyword: searchQuery,
+          category_id: "",
+          status: undefined,
+          is_delete: false,
+        };
+
+        const response = await fetchCourse({
+          searchCondition,
+          pageInfo: {
+            pageNum: 1,
+            pageSize: 10,
+          },
+        });
+
+        if (response && response.success) {
+          const data = response.data.pageData;
+          setCoursesData(data);
+          setIsDataEmpty(data.length === 0); // Check if data is empty
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching courses:", error); // Log lỗi khi gọi API
-      });
-  }, []);
+      } catch (error) {
+        console.error("Failed to fetch courses:", error);
+      }
+    };
+
+    fetchCoursesData();
+  }, [searchQuery]);
 
   const filteredCourses = coursesData.filter((course) =>
-    course.name.toLowerCase().includes(searchTerm.toLowerCase())
+    course.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleUpdate = (courseId: string) => {
-    CourseService.getCourse(courseId)
-      .then((response) => {
-        if (response && response.data && response.data.data) {
-          const course = response.data.data;
-          setSelectedCourse(course);
-
-          // Tìm `category_name` tương ứng với `category_id`
-          const categoryName = coursesData.find(
-            (c) => c.category_id === course.category_id
-          )?.category_name;
-          setSelectedCategoryName(categoryName || ""); // Gán `category_name` nếu tìm thấy
-
-          setIsModalVisible(true);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching course details:", error);
-      });
-  };
-
-  const handleDelete = (courseId: string) => {
-    console.log(`Deleting course with ID: ${courseId}`);
-  };
-
-  const handleModalCancel = () => {
-    setIsModalVisible(false);
-    setSelectedCourse(null);
-    setSelectedCategoryName("");
+  const handleViewDetails = (courseId: string) => {
+    navigate(`/instructor/manage-course/view-detail-course/${courseId}`);
   };
 
   const onChangeStatus = (id: string, status: CourseStatusEnum) => {
     console.log(`Changing status for course ${id} to ${status}`);
+    // Implement status update logic here
+  };
+
+  const handleSendClick = async (courseId: string) => {
+    try {
+      // Gọi API để thay đổi trạng thái khóa học
+      await CourseService.changeStatusCourse({
+        course_id: courseId,
+        new_status: CourseStatusEnum.WaitingApprove, // Đặt trạng thái là "waiting_approve"
+        comment: "Thay đổi trạng thái khóa học"
+      });
+
+      // Cập nhật lại trạng thái khóa học trong bảng chỉ cho khóa học được nhấn
+      setCoursesData((prevCourses) =>
+        prevCourses.map((course) =>
+          course._id === courseId
+            ? { ...course, status: CourseStatusEnum.WaitingApprove }
+            : course
+        )
+      );
+
+      // Hiển thị thông báo thành công
+      message.success("Course status updated to Waiting Approve!");
+    } catch (error) {
+      message.error("Failed to update course status!");
+      console.error("Error changing status:", error);
+    }
   };
 
   const columns = [
@@ -118,7 +153,7 @@ const CourseTable = () => {
     {
       title: "Change Status",
       key: "changeStatus",
-      render: (_: unknown, record: Course) => (
+      render: (_: unknown, record: GetCourseResponsePageData) => (
         <Switch
           checked={record.status === CourseStatusEnum.Active}
           onChange={(checked) =>
@@ -134,117 +169,50 @@ const CourseTable = () => {
     {
       title: "Action",
       key: "actions",
-      render: (_: unknown, record: Course) => (
-        <>
+      render: (_: unknown, record: GetCourseResponsePageData) => (
+        <div className="flex space-x-2">
+          {/* View Details Button */}
           <Button
-            onClick={() => handleUpdate(record._id)}
-            className="bg-blue-500 hover:bg-blue-600 text-white mr-2"
+            onClick={() => handleViewDetails(record._id)}
+            className="bg-blue-500 hover:bg-blue-600 text-white"
           >
-            Update
+            <EyeOutlined />
           </Button>
+
+          {/* Send Button */}
           <Button
-            onClick={() => handleDelete(record._id)}
-            className="bg-red-500 hover:bg-red-600 text-white"
-          >
-            Delete
-          </Button>
-        </>
+            icon={<SendOutlined />} // Using the Send icon
+            className="bg-green-500 hover:bg-green-600 text-white"
+            onClick={() => handleSendClick(record._id)} // Call the API when clicked
+          />
+        </div>
       ),
     },
   ];
 
   return (
-    <>
-      <Table<Course>
-        columns={columns}
-        dataSource={filteredCourses}
-        rowKey="_id"
-        className="w-full shadow-md rounded-lg overflow-hidden"
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: true,
-          showQuickJumper: true,
-          showTotal: (total, range) =>
-            `${range[0]}-${range[1]} của ${total} khóa học`,
-        }}
-      />
-      <Modal
-        title="Update Course"
-        visible={isModalVisible}
-        onCancel={handleModalCancel}
-        footer={null}
-      >
-        {selectedCourse && (
-          <Form layout="vertical">
-            <Form.Item label="Name">
-              <Input defaultValue={selectedCourse.name} />
-            </Form.Item>
-
-            <Form.Item label="Category">
-              <Input value={selectedCategoryName} readOnly />
-            </Form.Item>
-
-            <Form.Item label="Description">
-              <Input defaultValue={selectedCourse.description} />
-            </Form.Item>
-
-            <Form.Item label="Content">
-              <Input defaultValue={selectedCourse.content} />
-            </Form.Item>
-
-            <Form.Item label="Video">
-              {selectedCourse.video_url &&
-              selectedCourse.video_url.includes("youtube.com") ? (
-                <iframe
-                  width="100%"
-                  height="315"
-                  src={selectedCourse.video_url.replace("watch?v=", "embed/")}
-                  title="Course Video"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              ) : (
-                <video width="100%" height="315" controls>
-                  <source src={selectedCourse.video_url} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              )}
-            </Form.Item>
-
-            <Form.Item label="Image URL">
-              <Input defaultValue={selectedCourse.image_url} />
-              {selectedCourse.image_url && (
-                <img
-                  src={selectedCourse.image_url}
-                  alt="Course Image"
-                  style={{
-                    width: "100%",
-                    marginTop: "10px",
-                    borderRadius: "8px",
-                  }}
-                />
-              )}
-            </Form.Item>
-
-            <Form.Item label="Price">
-              <Input defaultValue={selectedCourse.price} />
-            </Form.Item>
-
-            <Form.Item label="Discount">
-              <Input defaultValue={selectedCourse.discount} />
-            </Form.Item>
-
-            <Button
-              type="primary"
-              onClick={() => console.log("Updating course...")}
-              className="w-full"
-            >
-              Save Changes
-            </Button>
-          </Form>
-        )}
-      </Modal>
-    </>
+    <div className="w-full">
+      {/* Hiển thị thông báo nếu không có dữ liệu */}
+      {isDataEmpty ? (
+        <div className="text-center text-red-500">
+          No courses found.
+        </div>
+      ) : (
+        <Table<GetCourseResponsePageData>
+          columns={columns}
+          dataSource={filteredCourses}
+          rowKey="_id"
+          className="w-full shadow-md rounded-lg overflow-hidden"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} courses`,
+          }}
+        />
+      )}
+    </div>
   );
 };
 
