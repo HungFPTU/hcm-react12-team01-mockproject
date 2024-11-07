@@ -32,17 +32,17 @@ function SidebarComponents() {
           {
             key: "/admin/request-management",
             icon: <UserOutlined />,
-            label: "Request Management",
+            label: "Request ",
           },
           {
             key: "/admin/category-management",
             icon: <TagsOutlined />,
-            label: "Category Management",
+            label: "Category ",
           },
           {
             key: "/admin/payout-management",
             icon: <FileTextOutlined />,
-            label: "Payout Management",
+            label: "Payout ",
           },
           {
             key: "/admin/all-courses",

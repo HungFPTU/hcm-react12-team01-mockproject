@@ -10,29 +10,29 @@ const CheckoutPage = lazy(() => import("../../pages/Student/order/checkout"));
 
 
 export const studentPaths: Record<string, RouteObject[]> = {
-    [ROUTER_URL.STUDENT.STUDENTDASHBOARD]: [
+    [ROUTER_URL.STUDENT.STUDENT_DASHBOARD]: [
         {
             index: true,
             element: <StudentDashboard/>,
         },
         {
             index: false,
-            path: ROUTER_URL.STUDENT.ORDERPAGE ,
+            path: ROUTER_URL.STUDENT.ORDER_PAGE ,
             element: <OrderPage/>,
         },
         {
             index: false,
-            path: ROUTER_URL.STUDENT.SUBSCRIPTIONPAGE,
+            path: ROUTER_URL.STUDENT.SUBSCRIPTION_PAGE,
             element: <SubscriptionPage/>,
         },
         {
             index: false,
-            path: ROUTER_URL.STUDENT.CHECKOUTPAGE ,
+            path: ROUTER_URL.STUDENT.CHECKOUT_PAGE ,
             element: <CheckoutPage/>,
         },
         {
             index: false,
-            path: ROUTER_URL.STUDENT.SETTINGPAGE ,
+            path: ROUTER_URL.STUDENT.SETTING_PAGE ,
             element: <SettingPage/>,
         },
 

@@ -11,15 +11,20 @@ const CourseStatusSelect = ({ onChange }: { onChange: (status: CourseStatusEnum)
   };
 
   return (
-    <div>
-      <select value={selectedStatus} onChange={handleChange} style={{ width: '15%', padding: '8px', fontSize: '16px' }}>
+    <div className="w-48">
+      <select
+        value={selectedStatus}
+        onChange={handleChange}
+        className="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm
+         text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      >
         {Object.values(CourseStatusEnum).map((status) => (
           <option key={status} value={status}>
             {status}
           </option>
         ))}
       </select>
-  </div>
+    </div>
   );
 };
 
