@@ -1,17 +1,19 @@
 import { useState, useEffect, useCallback,useRef } from 'react';
-import { Descriptions, message, Image } from 'antd';
+import { Descriptions, message, Image, Spin } from 'antd';
 import { GetCourseByIdResponse } from "../../../../../model/admin/response/Course.response";
 import { CourseService } from '../../../../../services/CourseService/course.service';
-interface ViewDetailCourseProps {
-  courseId: string;
-}
+import { useParams } from 'react-router-dom';
 
-const ViewDetailCourse: React.FC<ViewDetailCourseProps> = ({ courseId }) => {
+
+const ViewDetailCourse = () => {
+  const { id } = useParams<{ id: string }>();
   const [course, setCourse] = useState<GetCourseByIdResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const hasMounted = useRef(false);
   const fetchCourseDetails = useCallback(
     async (courseId: string) => {
       try {
+        setLoading(true);
         const response = await CourseService.getCourseById(courseId);
         const courseData = response.data?.data as GetCourseByIdResponse;
 
@@ -22,6 +24,8 @@ const ViewDetailCourse: React.FC<ViewDetailCourseProps> = ({ courseId }) => {
         }
       } catch (error) {
         message.error("Failed to fetch course details. Please try again.");
+      } finally {
+        setLoading(false);
       }
     },
     []
@@ -30,8 +34,12 @@ const ViewDetailCourse: React.FC<ViewDetailCourseProps> = ({ courseId }) => {
   useEffect(() => {
     if (hasMounted.current) return;
     hasMounted.current = true;
-    fetchCourseDetails(courseId);
-  }, [courseId, fetchCourseDetails]);
+    if (id) {
+      fetchCourseDetails(id);
+    }
+  }, [id, fetchCourseDetails]);
+
+  if (loading) return <Spin tip="Loading course details..." />;
 
   if (!course) return <div>Course not found</div>;
 
@@ -50,9 +58,7 @@ const ViewDetailCourse: React.FC<ViewDetailCourseProps> = ({ courseId }) => {
         <Image src={course.image_url} alt={course.name} width={200} />
       </Descriptions.Item>
       <Descriptions.Item label="Description">{course.description}</Descriptions.Item>
-      <Descriptions.Item label="Content">
-        {course.content}
-      </Descriptions.Item>
+      <Descriptions.Item label="Content">{course.content}</Descriptions.Item>
       <Descriptions.Item label="Created At">{new Date(course.created_at).toLocaleDateString()}</Descriptions.Item>
       <Descriptions.Item label="Updated At">{new Date(course.updated_at).toLocaleDateString()}</Descriptions.Item>
     </Descriptions>

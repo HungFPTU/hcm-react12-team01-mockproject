@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Switch, message, Popover,Modal } from "antd";
+import { Table, Button, Switch, message, Popover } from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
 
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
-import ViewDetailCourse from "../ViewDetailCourse"; // Import the modal component
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { EyeOutlined, SendOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -16,9 +16,7 @@ const CourseTable = () => {
   const [searchQuery] = useState("");
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const hasMounted = useRef(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
-
+  const navigate = useNavigate();
   const fetchCourse = async (params: GetCourseRequest) => {
     try {
       const response = await CourseService.getCourse(params);
@@ -66,15 +64,10 @@ const CourseTable = () => {
     course.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleViewDetails = (courseId: string) => {
-    setSelectedCourseId(courseId);
-    setIsModalVisible(true);
+  const handleViewDetails = (id: string) => {
+    navigate(`/instructor/manage-course/view-detail-course/${id}`);
   };
 
-  const handleModalClose = () => {
-    setIsModalVisible(false);
-    setSelectedCourseId(null);
-  };
 
   const onChangeStatus = async (id: string, status: CourseStatusEnum) => {
     try {
@@ -312,14 +305,6 @@ const CourseTable = () => {
         />
       )}
       
-      <Modal
-        visible={isModalVisible}
-        onCancel={handleModalClose}
-        footer={null}
-        width={800}
-      >
-        {selectedCourseId && <ViewDetailCourse courseId={selectedCourseId} />}
-      </Modal>
 
     </div>
   );
