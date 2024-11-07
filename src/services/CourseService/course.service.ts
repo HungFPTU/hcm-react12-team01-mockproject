@@ -6,7 +6,7 @@ import { CreateCourseResponse, GetCourseResponse, GetPublicCourseResponse, GetCo
 
 export const CourseService = {
   //instructor & admin
-  getCourse(params: GetCourseRequest) {
+      getCourse(params: GetCourseRequest) {
     return BaseService.post<ApiResponse<GetCourseResponse>>({
       url: API.COURSE.GET_COURSES,
       payload: params
