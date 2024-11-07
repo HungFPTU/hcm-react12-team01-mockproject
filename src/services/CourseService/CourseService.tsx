@@ -78,4 +78,21 @@ export const CourseService = {
         throw error; // Ném lỗi lên trên để xử lý thêm nếu cần
       });
   },
+  getCourse(courseId: string) {
+    return BaseService.get<ApiResponse<any>>({
+      url: `/api/course/${courseId}`,
+      headers: {
+        Authorization: token ? `Bearer ${String(token)}` : "",
+      },
+      isLoading: true,
+    })
+      .then((response) => {
+        console.log("API getCourse Response:", response); // Log phản hồi từ API
+        return response;
+      })
+      .catch((error) => {
+        console.error("Error fetching course details:", error); // Log lỗi chi tiết
+        throw error; // Ném lỗi lên trên để xử lý thêm nếu cần
+      });
+  },
 };
