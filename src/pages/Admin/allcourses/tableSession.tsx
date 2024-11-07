@@ -9,7 +9,7 @@ const dataSource: Session[] = [
     key: "1",
     name: "Session 1",
     course_id: "1",
-    courseName: "JavaScript Basics",
+    course_name: "JavaScript Basics",
     lesson: "1",
     user_id: "1",
     description: "1",
@@ -20,8 +20,8 @@ const dataSource: Session[] = [
   },
   {
     key: "2",
-    name: "Session 2",  
-    courseName: "Advanced CSS",
+    name: "Session 2",
+    course_name: "Advanced CSS",
     created_at: "2023-08-15",
     id: "2",
     course_id: "2",
@@ -35,7 +35,7 @@ const dataSource: Session[] = [
   {
     key: "3",
     name: "Session 3",
-    courseName: "React for Beginners",
+    course_name: "React for Beginners",
     created_at: "2023-09-05",
     id: "3",
     course_id: "3",
@@ -49,7 +49,7 @@ const dataSource: Session[] = [
   {
     key: "4",
     name: "Session 4",
-    courseName: "Node.js Mastery",
+    course_name: "Node.js Mastery",
     created_at: "2023-09-20",
     id: "4",
     course_id: "4",
@@ -63,7 +63,7 @@ const dataSource: Session[] = [
   {
     key: "5",
     name: "Session 5",
-    courseName: "Python Programming",
+    course_name: "Python Programming",
     created_at: "2023-10-01",
     id: "5",
     course_id: "5",
@@ -77,7 +77,7 @@ const dataSource: Session[] = [
   {
     key: "6",
     name: "Session 6",
-    courseName: "Machine Learning A-Z",
+    course_name: "Machine Learning A-Z",
     created_at: "2023-10-15",
     id: "6",
     course_id: "6",
@@ -91,7 +91,7 @@ const dataSource: Session[] = [
   {
     key: "7",
     name: "Session 7",
-    courseName: "Docker Essentials",
+    course_name: "Docker Essentials",
     created_at: "2023-11-05",
     id: "7",
     course_id: "7",
@@ -105,7 +105,7 @@ const dataSource: Session[] = [
   {
     key: "8",
     name: "Session 8",
-    courseName: "Kubernetes Fundamentals",
+    course_name: "Kubernetes Fundamentals",
     created_at: "2023-11-20",
     id: "8",
     course_id: "8",
@@ -119,7 +119,7 @@ const dataSource: Session[] = [
   {
     key: "9",
     name: "Session 9",
-    courseName: "AWS Certified Solutions Architect",
+    course_name: "AWS Certified Solutions Architect",
     created_at: "2023-12-10",
     id: "9",
     course_id: "9",
@@ -133,7 +133,7 @@ const dataSource: Session[] = [
   {
     key: "10",
     name: "Session 10",
-    courseName: "Introduction to SQL",
+    course_name: "Introduction to SQL",
     created_at: "2023-12-25",
     id: "10",
     course_id: "10",
@@ -147,7 +147,7 @@ const dataSource: Session[] = [
   {
     key: "11",
     name: "Session 11",
-    courseName: "Cybersecurity Basics",
+    course_name: "Cybersecurity Basics",
     created_at: "2024-01-05",
     id: "11",
     course_id: "11",
@@ -161,7 +161,7 @@ const dataSource: Session[] = [
   {
     key: "12",
     name: "Session 12",
-    courseName: "Agile Project Management",
+    course_name: "Agile Project Management",
     created_at: "2024-01-20",
     id: "12",
     course_id: "12",
@@ -175,7 +175,7 @@ const dataSource: Session[] = [
   {
     key: "13",
     name: "Session 13",
-    courseName: "Intro to Blockchain",
+    course_name: "Intro to Blockchain",
     created_at: "2024-02-10",
     id: "13",
     course_id: "13",
@@ -189,7 +189,7 @@ const dataSource: Session[] = [
   {
     key: "14",
     name: "Session 14",
-    courseName: "Fullstack Development",
+    course_name: "Fullstack Development",
     created_at: "2024-03-01",
     id: "14",
     course_id: "14",
@@ -203,7 +203,7 @@ const dataSource: Session[] = [
   {
     key: "15",
     name: "Session 15",
-    courseName: "Artificial Intelligence",
+    course_name: "Artificial Intelligence",
     created_at: "2024-03-25",
     id: "15",
     course_id: "15",
@@ -224,8 +224,8 @@ const columns: ColumnsType<Session> = [
   },
   {
     title: "Course Name",
-    dataIndex: "courseName",
-    key: "courseName",
+    dataIndex: "course_name",
+    key: "course_name",
   },
   {
     title: "Created At",

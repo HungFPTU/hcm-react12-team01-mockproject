@@ -1,10 +1,6 @@
 import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
 
-// Lấy token từ localStorage
-const token = localStorage.getItem("token");
-console.log("Token:", token); // Log token để kiểm tra
-
 export const SessionService = {
   createSession(
     name: string,
@@ -20,9 +16,7 @@ export const SessionService = {
         description: description,
         position_order: positionOrder,
       },
-      headers: {
-        Authorization: token ? `Bearer ${String(token)}` : "",
-      },
+
       isLoading: true,
     })
       .then((response) => {
@@ -32,6 +26,35 @@ export const SessionService = {
       .catch((error) => {
         console.error("Error creating session:", error); // Log lỗi chi tiết
         throw error; // Ném lỗi lên trên để xử lý thêm nếu cần
+      });
+  },
+
+  getSessons() {
+    return BaseService.post<ApiResponse<any>>({
+      url: "/api/session/search",
+      payload: {
+        searchCondition: {
+          keyword: "",
+          course_id: "",
+          session_id: "",
+          lesson_type: "",
+          is_position_order: false,
+          is_deleted: false,
+        },
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      },
+      isLoading: true,
+    })
+      .then((response) => {
+        console.log("API Response:", response); // Log phản hồi từ API
+        return response;
+      })
+      .catch((error) => {
+        console.error("Error fetching lessons:", error); // Log lỗi chi tiết
+        throw error;
       });
   },
 };
