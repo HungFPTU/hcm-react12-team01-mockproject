@@ -6,15 +6,15 @@ import { BaseService } from "../config/base.service";
 
 export const LessonService = {
   //instructor & admin
-    
+
   //instructor
   createLesson(params: CreateLessonRequest) {
     return BaseService.post<ApiResponse<CreateLessonResponse>>({
       url: API.LESSON.CREATE_LESSON,
-      payload: params
+      payload: params,
     });
   },
-   getLessons() {
+  getLessons() {
     return BaseService.post<ApiResponse<any>>({
       url: "/api/lesson/search",
       payload: {
@@ -41,5 +41,11 @@ export const LessonService = {
         console.error("Error fetching lessons:", error); // Log lỗi chi tiết
         throw error;
       });
+  },
+  deleteLesson(lessonId: string) {
+    return BaseService.remove<ApiResponse<string>>({
+      url: API.LESSON.DELETE_LESSON.replace(":id", lessonId),
+      isLoading: true,
+    });
   },
 };

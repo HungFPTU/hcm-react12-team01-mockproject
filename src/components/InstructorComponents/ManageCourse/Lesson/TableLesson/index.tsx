@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Table, Button, Spin } from "antd";
+import { Table, Button, Spin, Modal, message, Space } from "antd";
 import { useNavigate } from "react-router-dom";
-import { LessonService } from "../../../../../services/LessonService/LessonService";
+import { LessonService } from "../../../../../services/LessonService/LessionService";
+import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 
 const TableLesson = () => {
   const navigate = useNavigate();
@@ -41,6 +42,35 @@ const TableLesson = () => {
 
   const handleViewDetails = (lessonId: string) => {
     navigate(`/instructor/${lessonId}`);
+  };
+
+  const handleDeleteLesson = async (lessonId: string) => {
+    try {
+      await LessonService.deleteLesson(lessonId);
+
+      // Cập nhật state sau khi xóa
+      setLessonsData((prevLessons) =>
+        prevLessons.filter((lesson) => lesson._id !== lessonId)
+      );
+
+      message.success("Lesson deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting lesson:", error);
+      message.error("Failed to delete lesson!");
+    }
+  };
+
+  const showDeleteConfirm = (lessonId: string) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this lesson?",
+      content: "This action cannot be undone.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        handleDeleteLesson(lessonId);
+      },
+    });
   };
 
   const columns = [
@@ -88,9 +118,22 @@ const TableLesson = () => {
       title: "Action",
       key: "action",
       render: (_: unknown, record: any) => (
-        <Button type="primary" onClick={() => handleViewDetails(record._id)}>
-          View Details
-        </Button>
+        <Space size="middle">
+          <Button
+            icon={<EyeOutlined />}
+            type="primary"
+            onClick={() => handleViewDetails(record._id)}
+          >
+            View Details
+          </Button>
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => showDeleteConfirm(record._id)}
+          >
+            Delete
+          </Button>
+        </Space>
       ),
     },
   ];
