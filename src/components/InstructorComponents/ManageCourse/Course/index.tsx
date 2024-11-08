@@ -2,7 +2,7 @@ import CourseTable from './CourseTable';
 import ButtonCourse from './ButtonCourse';
 import SearchCourse from './SearchCourse';
 import FilterCourse from './FilterCourse';
-
+//fasdas
 const Course = () => {
   return (
     <div className="manage-course-container max-w-full mx-auto px-4">
