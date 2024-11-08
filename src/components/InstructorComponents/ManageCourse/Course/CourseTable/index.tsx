@@ -1,18 +1,17 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Switch, message, Popover, Spin } from "antd";
+import { Table, Button, Switch, message, Popover, Spin, Modal } from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
 
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
-import { EyeOutlined, SendOutlined } from "@ant-design/icons";
+import { EyeOutlined, SendOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
-
-
 const CourseTable = () => {
-
-  const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
+  const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>(
+    []
+  );
   const [searchQuery] = useState("");
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -75,7 +74,6 @@ const CourseTable = () => {
     navigate(`/instructor/manage-course/view-detail-course/${id}`);
   };
 
-
   const onChangeStatus = async (id: string, status: CourseStatusEnum) => {
     try {
       await CourseService.changeStatusCourse({
@@ -120,6 +118,34 @@ const CourseTable = () => {
     }
   };
 
+  const handleDeleteCourse = async (courseId: string) => {
+    try {
+      await CourseService.deleteCourse(courseId);
+
+      setCoursesData((prevCourses) =>
+        prevCourses.filter((course) => course._id !== courseId)
+      );
+
+      message.success("Course deleted successfully!");
+    } catch (error) {
+      message.error("Failed to delete course!");
+      console.error("Error deleting course:", error);
+    }
+  };
+
+  const showDeleteConfirm = (courseId: string) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this course?",
+      content: "This action cannot be undone.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        handleDeleteCourse(courseId);
+      },
+    });
+  };
+
   const columns = [
     {
       title: "Name",
@@ -146,48 +172,52 @@ const CourseTable = () => {
             statusText = "New";
             statusColor = "text-blue-500";
             borderColor = "border-blue-500";
-            popoverContent = "You can send approval request to admin"
+            popoverContent = "You can send approval request to admin";
             break;
           case CourseStatusEnum.WaitingApprove:
             statusText = "Waiting for Approval";
             statusColor = "text-orange-500";
             borderColor = "border-orange-500";
-            popoverContent = "Please watting for the approval from admin"
+            popoverContent = "Please watting for the approval from admin";
 
             break;
           case CourseStatusEnum.Approved:
             statusText = "Approved";
             statusColor = "text-green-500";
             borderColor = "border-green-500";
-            popoverContent = "Your course has been approved, you can activate the course"
+            popoverContent =
+              "Your course has been approved, you can activate the course";
 
             break;
           case CourseStatusEnum.Rejected:
             statusText = "Rejected";
             statusColor = "text-red-500";
             borderColor = "border-red-500";
-            popoverContent = "Your course has been rejected, please check your course and resend approval request to admin"
+            popoverContent =
+              "Your course has been rejected, please check your course and resend approval request to admin";
 
             break;
           case CourseStatusEnum.Active:
             statusText = "Active";
             statusColor = "text-purple-500";
             borderColor = "border-purple-500";
-            popoverContent = "Your course has been activated, now student can see your course at homepage!"
+            popoverContent =
+              "Your course has been activated, now student can see your course at homepage!";
 
             break;
           case CourseStatusEnum.Inactive:
             statusText = "Inactive";
             statusColor = "text-gray-500";
             borderColor = "border-gray-500";
-            popoverContent = "Your course has been inactivated, now student can not see your course at homepage!"
+            popoverContent =
+              "Your course has been inactivated, now student can not see your course at homepage!";
 
             break;
           default:
             statusText = "Unknown";
             statusColor = "text-gray-500";
             borderColor = "border-gray-500";
-            popoverContent = "NO CAP!"
+            popoverContent = "NO CAP!";
 
             break;
         }
@@ -199,7 +229,6 @@ const CourseTable = () => {
             >
               {statusText}
             </span>
-
           </Popover>
         );
       },
@@ -265,7 +294,11 @@ const CourseTable = () => {
                     onChangeStatus(record._id, newStatus);
                   }}
                   disabled={!canChangeStatus}
-                  className={`transition-all duration-300 ${record.status === CourseStatusEnum.Active ? 'bg-blue-500' : 'bg-gray-500'}`}
+                  className={`transition-all duration-300 ${
+                    record.status === CourseStatusEnum.Active
+                      ? "bg-blue-500"
+                      : "bg-gray-500"
+                  }`}
                 />
               </Popover>
             )}
@@ -278,7 +311,6 @@ const CourseTable = () => {
       key: "actions",
       render: (_: unknown, record: GetCourseResponsePageData) => (
         <div className="flex space-x-2">
-
           <Popover content="View Session Detail">
             <Button
               onClick={() => handleViewDetails(record._id)}
@@ -288,7 +320,15 @@ const CourseTable = () => {
             </Button>
           </Popover>
 
-          {/* Kiểm tra nếu trạng thái là 'New' mới hiển thị nút 'Send' */}
+          <Popover content="Delete Course">
+            <Button
+              onClick={() => showDeleteConfirm(record._id)}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              <DeleteOutlined />
+            </Button>
+          </Popover>
+
           {record.status === CourseStatusEnum.New && (
             <Popover content="Send course to admin">
               <Button
@@ -324,8 +364,6 @@ const CourseTable = () => {
           }}
         />
       )}
-
-
     </div>
   );
 };

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Table, Button, Spin } from "antd";
+import { Table, Button, Spin, Modal, message, Space, Popover } from "antd";
 import { useNavigate } from "react-router-dom";
-import { LessonService } from "../../../../../services/LessonService/LessonService";
+import { LessonService } from "../../../../../services/LessonService/LessionService";
+import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 
 const TableLesson = () => {
   const navigate = useNavigate();
@@ -41,6 +42,35 @@ const TableLesson = () => {
 
   const handleViewDetails = (lessonId: string) => {
     navigate(`/instructor/${lessonId}`);
+  };
+
+  const handleDeleteLesson = async (lessonId: string) => {
+    try {
+      await LessonService.deleteLesson(lessonId);
+
+      // Cập nhật state sau khi xóa
+      setLessonsData((prevLessons) =>
+        prevLessons.filter((lesson) => lesson._id !== lessonId)
+      );
+
+      message.success("Lesson deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting lesson:", error);
+      message.error("Failed to delete lesson!");
+    }
+  };
+
+  const showDeleteConfirm = (lessonId: string) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this lesson?",
+      content: "This action cannot be undone.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        handleDeleteLesson(lessonId);
+      },
+    });
   };
 
   const columns = [
@@ -88,9 +118,24 @@ const TableLesson = () => {
       title: "Action",
       key: "action",
       render: (_: unknown, record: any) => (
-        <Button type="primary" onClick={() => handleViewDetails(record._id)}>
-          View Details
-        </Button>
+        <Space size="middle">
+          <Popover content="View Lesson Detail">
+            <Button
+              onClick={() => handleViewDetails(record._id)}
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+            >
+              <EyeOutlined />
+            </Button>
+          </Popover>
+          <Popover content="Delete Lesson">
+            <Button
+              onClick={() => showDeleteConfirm(record._id)}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              <DeleteOutlined />
+            </Button>
+          </Popover>
+        </Space>
       ),
     },
   ];
