@@ -107,7 +107,11 @@ const App = () => {
   };
 
   return (
-    <Suspense fallback={<Spin tip="Loading course details..." />}>
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen">
+        <Spin tip="Loading course details..." />
+      </div>}
+    >
       <Routes>
         {/* Public Routes */}
         {Object.entries(pathPublic).map(([key, routes]) =>
