@@ -35,8 +35,8 @@ const TableSession = () => {
     fetchSessions();
   }, []);
 
-  const handleViewDetails = (sessionId: string) => {
-    navigate(`/instructor/${sessionId}`);
+  const handleViewDetails = (id: string) => {
+    navigate(`/instructor/manage-course/view-detail-session/${id}`);
   };
 
   const columns = [
