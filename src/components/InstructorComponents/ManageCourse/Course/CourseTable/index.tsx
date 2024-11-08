@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const CourseTable = () => {
-  
+
   const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
   const [searchQuery] = useState("");
   const [isDataEmpty, setIsDataEmpty] = useState(false);
@@ -210,6 +210,18 @@ const CourseTable = () => {
       render: (discount: number) => `${discount}%`,
     },
     {
+      title: "Session Count",
+      dataIndex: "session_count",
+      key: "session_count",
+      render: (session_count: number) => `${session_count}`,
+    },
+    {
+      title: "Lesson Count",
+      dataIndex: "lesson_count",
+      key: "lesson_count",
+      render: (lesson_count: number) => `${lesson_count}`,
+    },
+    {
       title: "Created At",
       dataIndex: "created_at",
       key: "created_at",
@@ -304,7 +316,7 @@ const CourseTable = () => {
           }}
         />
       )}
-      
+
 
     </div>
   );

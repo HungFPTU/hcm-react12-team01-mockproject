@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import { Button, Modal, Form, Input, Select, Radio, message } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
+
+import { CreateCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 
 const { Option } = Select;
@@ -24,32 +26,40 @@ const ButtonCourse = () => {
       console.log(">>>>>>>>>>>values", values);
       const price = Number(values.price);
       const discount = Number(values.discount);
-      const category = "6728958bcd80da40c9983f83";
-
+      const category_id = "6728958bcd80da40c9983f83";
+      const { name, description, video_url, image_url } = values;
+      const newCourse: CreateCourseRequest = {
+        name,
+        category_id,
+        description,
+        content, // Gửi nội dung đã lấy từ editor
+        video_url,
+        image_url,
+        price,
+        discount,
+      };
       // Gọi API để tạo khóa học
-      const response = await CourseService.createCourse({
-        name: values.courseName,
-        category_id: category,
-        description: values.description,
-        content: content, 
-        video_url: values.videoUrl, 
-        image_url: values.imageUrl, 
-        price: price,
-        discount: discount
-      });
+      const response = await CourseService.createCourse(newCourse);
       message.success("Khóa học đã được tạo thành công!");
       console.log("API Response:", response); // Kiểm tra phản hồi từ API
       setIsModalVisible(false);
     } catch (error) {
-      message.error("Có lỗi xảy ra khi tạo khóa học!");
       console.error("Error creating course:", error);
     }
   };
-  
+
+  const handleRequestApproval = () => {
+    console.log("Gửi yêu cầu duyệt khóa học");
+    message.success("Đã gửi yêu cầu duyệt khóa học lên admin");
+  };
+
   return (
     <>
       <Button onClick={showModal} style={{ marginRight: "10px" }}>
         Create Course
+      </Button>
+      <Button onClick={handleRequestApproval} type="primary">
+        Send Request
       </Button>
 
       <Modal
@@ -60,7 +70,7 @@ const ButtonCourse = () => {
       >
         <Form onFinish={handleSubmit}>
           <Form.Item
-            name="courseName"
+            name="name"
             label="Tên khóa học"
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
@@ -69,7 +79,7 @@ const ButtonCourse = () => {
           </Form.Item>
 
           <Form.Item
-            name="category"
+            name="category_id"
             label="Thể loại"
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
@@ -123,11 +133,11 @@ const ButtonCourse = () => {
             />
           </Form.Item>
 
-          <Form.Item name="imageUrl" label="Image URL">
+          <Form.Item name="image_url" label="Image URL">
             <Input placeholder="Nhập đường dẫn hình ảnh" />
           </Form.Item>
 
-          <Form.Item name="videoUrl" label="Video URL">
+          <Form.Item name="video_url" label="Video URL">
             <Input placeholder="Nhập đường dẫn video" />
           </Form.Item>
 
