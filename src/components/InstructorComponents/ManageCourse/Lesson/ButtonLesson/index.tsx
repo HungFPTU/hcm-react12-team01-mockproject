@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button, Modal, Form, Input, Select, InputNumber, message } from "antd";
+import { Editor } from "@tinymce/tinymce-react";
 import { LessonService } from "../../../../../services/LessonService/LessionService";
 import { CourseService } from "../../../../../services/CourseService/CourseService";
 import { SessionService } from "../../../../../services/SessionService/SessionService";
@@ -17,6 +18,7 @@ const ButtonLesson = () => {
   const [sessionData, setSessionData] = useState<Session[]>([]);
   const [courseID, setCourseID] = useState<string | null>();
   const [filteredSessionData, setFilteredSessionData] = useState<Session[]>([]);
+  const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -52,12 +54,16 @@ const ButtonLesson = () => {
 
   const handleSubmit = async (values: any) => {
     try {
+      const description = editorRef.current
+        ? editorRef.current.getContent()
+        : ""; // Lấy nội dung từ editor
+
       const newLesson: CreateLessonRequest = {
         name: values.name,
         course_id: values.course_id,
         session_id: values.session_id,
         lesson_type: values.lesson_type,
-        description: values.description,
+        description, // Gửi nội dung dạng chuỗi thay vì đối tượng editor
         video_url: values.video_url,
         image_url: values.image_url,
         full_time: values.full_time,
@@ -67,9 +73,7 @@ const ButtonLesson = () => {
       const response = await LessonService.createLesson(newLesson);
       console.log("API Response:", response);
 
-      // Hiển thị thông báo thành công
       message.success("Bài học đã được tạo thành công!");
-
       setIsModalVisible(false);
     } catch (error) {
       console.error("Error creating lesson:", error);
@@ -153,9 +157,41 @@ const ButtonLesson = () => {
           </Form.Item>
 
           <Form.Item name="description" label="Mô tả" labelCol={{ span: 24 }}>
-            <Input.TextArea
-              placeholder="Nhập mô tả bài học"
-              style={{ width: "100%", height: "100px" }}
+            <Editor
+              onInit={(_evt, editor) => (editorRef.current = editor)} // Lưu tham chiếu đến editor
+              apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
+              init={{
+                width: "100%",
+                height: 300,
+                plugins: [
+                  "advlist",
+                  "autolink",
+                  "link",
+                  "image",
+                  "lists",
+                  "charmap",
+                  "preview",
+                  "anchor",
+                  "pagebreak",
+                  "searchreplace",
+                  "wordcount",
+                  "visualblocks",
+                  "code",
+                  "fullscreen",
+                  "insertdatetime",
+                  "media",
+                  "table",
+                  "emoticons",
+                  "help",
+                ],
+                toolbar:
+                  "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | " +
+                  "bullist numlist outdent indent | link image | print preview media fullscreen | " +
+                  "forecolor backcolor emoticons | help",
+                menubar: "file edit view insert format tools table help",
+                content_style:
+                  "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
+              }}
             />
           </Form.Item>
 

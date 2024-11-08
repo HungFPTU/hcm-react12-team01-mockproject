@@ -1,15 +1,16 @@
-import { useState, useRef } from "react";
+import { useState,  useEffect } from "react";
 import { Button, Modal, Form, Input, Select, Radio, message } from "antd";
-import { Editor } from "@tinymce/tinymce-react";
 
 import { CreateCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { CourseService } from "../../../../../services/CourseService/course.service";
+import { CategoryService } from "../../../../../services/category/category.service";
+import { Category } from "../../../../../model/admin/response/Category.response";
 
 const { Option } = Select;
 
 const ButtonCourse = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
+  const [categoryData, setCategoryData] = useState<Category[]>([]);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -21,27 +22,26 @@ const ButtonCourse = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      // Lấy nội dung từ editor
-      const content = editorRef.current ? editorRef.current.getContent() : "";
+      const content = values.content || ""; // Lấy nội dung từ TextArea
       console.log(">>>>>>>>>>>values", values);
       const price = Number(values.price);
       const discount = Number(values.discount);
-      const category_id = "6728958bcd80da40c9983f83";
-      const { name, description, video_url, image_url } = values;
+
+      const { name, description, video_url, image_url, category_id } = values;
       const newCourse: CreateCourseRequest = {
         name,
         category_id,
         description,
-        content, // Gửi nội dung đã lấy từ editor
+        content,
         video_url,
         image_url,
         price,
         discount,
       };
-      // Gọi API để tạo khóa học
+
       const response = await CourseService.createCourse(newCourse);
       message.success("Khóa học đã được tạo thành công!");
-      console.log("API Response:", response); // Kiểm tra phản hồi từ API
+      console.log("API Response:", response);
       setIsModalVisible(false);
     } catch (error) {
       console.error("Error creating course:", error);
@@ -52,6 +52,30 @@ const ButtonCourse = () => {
     console.log("Gửi yêu cầu duyệt khóa học");
     message.success("Đã gửi yêu cầu duyệt khóa học lên admin");
   };
+
+  useEffect(() => {
+    const params = {
+      searchCondition: {
+        keyword: "",
+        is_parent: true,
+        is_delete: false,
+      },
+      pageInfo: {
+        pageNum: 1,
+        pageSize: 10,
+      },
+    };
+
+    CategoryService.getCategory(params)
+      .then((response) => {
+        if (response && response.data && response.data.data) {
+          setCategoryData(response.data.data.pageData);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching categories:", error);
+      });
+  }, []);
 
   return (
     <>
@@ -85,8 +109,11 @@ const ButtonCourse = () => {
             rules={[{ required: true }]}
           >
             <Select placeholder="Chọn thể loại">
-              <Option value="667d6f9887d3be7cec496e7a">Thể loại 1</Option>
-              <Option value="anotherCategoryID">Thể loại 2</Option>
+              {categoryData.map((category) => (
+                <Option key={category._id} value={category._id}>
+                  {category.name}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
 
@@ -94,43 +121,13 @@ const ButtonCourse = () => {
             <Input.TextArea placeholder="Nhập mô tả khóa học" />
           </Form.Item>
 
-          <Form.Item name="content" label="Nội dung" labelCol={{ span: 24 }}>
-            <Editor
-              onInit={(_evt, editor) => (editorRef.current = editor)} // Lưu tham chiếu đến editor
-              apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
-              init={{
-                width: "100%",
-                height: 300,
-                plugins: [
-                  "advlist",
-                  "autolink",
-                  "link",
-                  "image",
-                  "lists",
-                  "charmap",
-                  "preview",
-                  "anchor",
-                  "pagebreak",
-                  "searchreplace",
-                  "wordcount",
-                  "visualblocks",
-                  "code",
-                  "fullscreen",
-                  "insertdatetime",
-                  "media",
-                  "table",
-                  "emoticons",
-                  "help",
-                ],
-                toolbar:
-                  "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | " +
-                  "bullist numlist outdent indent | link image | print preview media fullscreen | " +
-                  "forecolor backcolor emoticons | help",
-                menubar: "file edit view insert format tools table help",
-                content_style:
-                  "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
-              }}
-            />
+          <Form.Item
+            name="content"
+            label="Nội dung"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
+          >
+            <Input.TextArea placeholder="Nhập nội dung khóa học" />
           </Form.Item>
 
           <Form.Item name="image_url" label="Image URL">

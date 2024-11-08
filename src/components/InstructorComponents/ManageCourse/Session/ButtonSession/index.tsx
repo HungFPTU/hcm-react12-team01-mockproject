@@ -1,11 +1,16 @@
-import { useState, useRef } from "react";
-import { Button, Modal, Form, Input, message } from "antd";
-import { Editor } from "@tinymce/tinymce-react";
+import { useState,  useEffect } from "react";
+import { Button, Modal, Form, Input, Select, message } from "antd";
 import { SessionService } from "../../../../../services/SessionService/SessionService";
+import { CourseService } from "../../../../../services/CourseService/CourseService";
+import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
+
+const { Option } = Select;
 
 const ButtonSession = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
+  const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>(
+    []
+  );
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -15,27 +20,32 @@ const ButtonSession = () => {
     setIsModalVisible(false);
   };
 
+  useEffect(() => {
+    CourseService.getCourses()
+      .then((response) => {
+        if (response && response.data && response.data.data) {
+          setCoursesData(response.data.data.pageData);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching courses:", error);
+      });
+  }, []);
+
   const handleSubmit = async (values: any) => {
     try {
-      console.log(values);
       const positionOrder = Number(values.positionOrder);
+      const description = values.description || "";
+      const { sessionName, courseId } = values;
 
-      // Lấy nội dung từ editor
-      const description = editorRef.current
-        ? editorRef.current.getContent()
-        : "";
-      const { sessionName, } = values;
-      const courseId = "672a25c36ee2db309c2d4ee4";
-      // Gọi API để tạo session mới
       const response = await SessionService.createSession(
         sessionName,
         courseId,
         description,
         positionOrder
       );
-
-      message.success("Session đã được tạo thành công!");
       console.log("API Response:", response); // Kiểm tra phản hồi từ API
+      message.success("Session đã được tạo thành công!");
       setIsModalVisible(false);
     } catch (error) {
       message.error("Có lỗi xảy ra khi tạo session!");
@@ -69,9 +79,15 @@ const ButtonSession = () => {
             name="courseId"
             label="Course ID"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: "Vui lòng nhập ID khóa học" }]}
+            rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}
           >
-            <Input placeholder="Nhập ID khóa học" />
+            <Select placeholder="Chọn khóa học">
+              {coursesData.map((course) => (
+                <Option key={course._id} value={course._id}>
+                  {course.name}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item
@@ -79,41 +95,9 @@ const ButtonSession = () => {
             label="Description"
             labelCol={{ span: 24 }}
           >
-            <Editor
-              onInit={(_evt, editor) => (editorRef.current = editor)} // Lưu tham chiếu đến editor
-              apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
-              init={{
-                width: "100%",
-                height: 300,
-                plugins: [
-                  "advlist",
-                  "autolink",
-                  "link",
-                  "image",
-                  "lists",
-                  "charmap",
-                  "preview",
-                  "anchor",
-                  "pagebreak",
-                  "searchreplace",
-                  "wordcount",
-                  "visualblocks",
-                  "code",
-                  "fullscreen",
-                  "insertdatetime",
-                  "media",
-                  "table",
-                  "emoticons",
-                  "help",
-                ],
-                toolbar:
-                  "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | " +
-                  "bullist numlist outdent indent | link image | print preview media fullscreen | " +
-                  "forecolor backcolor emoticons | help",
-                menubar: "file edit view insert format tools table help",
-                content_style:
-                  "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
-              }}
+            <Input.TextArea
+              placeholder="Nhập mô tả"
+              style={{ width: "100%", height: "100px" }}
             />
           </Form.Item>
 
@@ -139,7 +123,7 @@ const ButtonSession = () => {
               type="number"
               placeholder="Nhập thứ tự vị trí"
               onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9]/g, ""); // Loại bỏ ký tự không phải số
+                const value = e.target.value.replace(/[^0-9]/g, "");
                 e.target.value = value;
               }}
             />
