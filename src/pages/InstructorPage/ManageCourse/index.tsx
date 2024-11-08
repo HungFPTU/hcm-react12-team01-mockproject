@@ -1,6 +1,8 @@
-import Course from '../../../components/InstructorComponents/ManageCourse/Course';
-import Session from '../../../components/InstructorComponents/ManageCourse/Session';
-import Lesson from '../../../components/InstructorComponents/ManageCourse/Lesson';
+import { lazy } from 'react';
+const Course = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Course"));
+const Session = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Session"));
+const Lesson = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Lesson"));
+
 import { Tabs } from 'antd';
 const ManageCourse = () => {
   const items = [
