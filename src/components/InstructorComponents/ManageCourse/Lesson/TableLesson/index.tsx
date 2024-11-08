@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Table, Button, Spin, Modal, message, Space } from "antd";
+import { Table, Button, Spin, Modal, message, Space, Popover } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LessonService } from "../../../../../services/LessonService/LessionService";
 import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -119,20 +119,22 @@ const TableLesson = () => {
       key: "action",
       render: (_: unknown, record: any) => (
         <Space size="middle">
-          <Button
-            icon={<EyeOutlined />}
-            type="primary"
-            onClick={() => handleViewDetails(record._id)}
-          >
-            View Details
-          </Button>
-          <Button
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => showDeleteConfirm(record._id)}
-          >
-            Delete
-          </Button>
+          <Popover content="View Lesson Detail">
+            <Button
+              onClick={() => handleViewDetails(record._id)}
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+            >
+              <EyeOutlined />
+            </Button>
+          </Popover>
+          <Popover content="Delete Lesson">
+            <Button
+              onClick={() => showDeleteConfirm(record._id)}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              <DeleteOutlined />
+            </Button>
+          </Popover>
         </Space>
       ),
     },
