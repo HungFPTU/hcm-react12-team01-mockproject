@@ -1,42 +1,36 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Table, Button } from "antd";
 import { useNavigate } from "react-router-dom";
-import { LessonService } from "../../../../../services/LessonService/LessonService";
-
+import { LessonService } from "../../../../../services/LessonService/lesson.service";
+import { Lesson } from "../../../../../model/admin/response/Lesson.response";
 const TableLesson = () => {
   const navigate = useNavigate();
-  const [lessonsData, setLessonsData] = useState<any[]>([]);
+  const [lessonsData, setLessonsData] = useState<Lesson["pageData"]>([]);
 
-  useEffect(() => {
-    const fetchLessons = async () => {
-      try {
-        const response = await LessonService.getLessons();
 
-        if (response.data?.success && response.data.data?.pageData) {
-          // Gắn key từ _id để sử dụng cho dataSource của bảng
-          const lessonsWithKey = response.data.data.pageData.map(
-            (lesson: any) => ({
-              ...lesson,
-              key: lesson._id,
-            })
-          );
-          setLessonsData(lessonsWithKey);
-        } else {
-          console.error(
-            "Failed to fetch lessons: pageData not found",
-            response
-          );
+
+      const fetchLesson = useCallback(async () => {
+        const response = await LessonService.getLesson({
+          searchCondition: {
+            keyword: "",
+            course_id: "",
+            is_delete: false,
+            is_position_order: false,
+          },
+          pageInfo: { pageNum: 1, pageSize: 100},
+        });
+        if (response.data) {
+          const lessons = Array.isArray(response.data.data.pageData) ? response.data.data.pageData :[response.data.data.pageData];
+          setLessonsData(lessons);
         }
-      } catch (error) {
-        console.error("Error fetching lessons:", error);
-      }
-    };
-
-    fetchLessons();
   }, []);
 
-  const handleViewDetails = (lessonId: string) => {
-    navigate(`/instructor/${lessonId}`);
+    useEffect(() => {
+      fetchLesson();
+    },[fetchLesson])
+
+  const handleViewDetails = (id: string) => {
+    navigate(`/instructor/manage-course/view-detail-lesson/${id}`);
   };
 
   const columns = [
@@ -83,7 +77,7 @@ const TableLesson = () => {
     {
       title: "Action",
       key: "action",
-      render: (_: unknown, record: any) => (
+      render: (_: unknown, record: Lesson["pageData"][0]) => (
         <Button type="primary" onClick={() => handleViewDetails(record._id)}>
           View Details
         </Button>
