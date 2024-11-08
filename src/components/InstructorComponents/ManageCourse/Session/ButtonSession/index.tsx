@@ -77,7 +77,7 @@ const ButtonSession = () => {
 
           <Form.Item
             name="courseId"
-            label="Course ID"
+            label="Course "
             labelCol={{ span: 24 }}
             rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}
           >
