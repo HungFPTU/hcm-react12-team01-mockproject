@@ -95,7 +95,7 @@ const ButtonCourse = () => {
         <Form onFinish={handleSubmit}>
           <Form.Item
             name="name"
-            label="Tên khóa học"
+            label="Name"
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
@@ -104,7 +104,7 @@ const ButtonCourse = () => {
 
           <Form.Item
             name="category_id"
-            label="Thể loại"
+            label="Category"
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
@@ -117,13 +117,17 @@ const ButtonCourse = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item name="description" label="Mô tả" labelCol={{ span: 24 }}>
+          <Form.Item
+            name="description"
+            label="Description"
+            labelCol={{ span: 24 }}
+          >
             <Input.TextArea placeholder="Nhập mô tả khóa học" />
           </Form.Item>
 
           <Form.Item
             name="content"
-            label="Nội dung"
+            label="Content"
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
@@ -140,7 +144,7 @@ const ButtonCourse = () => {
 
           <Form.Item
             name="price"
-            label="Giá"
+            label="Price"
             labelCol={{ span: 24 }}
             rules={[
               { required: true, message: "Giá là trường bắt buộc" },
@@ -164,7 +168,7 @@ const ButtonCourse = () => {
             />
           </Form.Item>
 
-          <Form.Item name="discount" label="Giảm giá" labelCol={{ span: 24 }}>
+          <Form.Item name="discount" label="Discount" labelCol={{ span: 24 }}>
             <Input
               type="number"
               placeholder="Nhập phần trăm giảm giá (nếu có)"
@@ -173,12 +177,12 @@ const ButtonCourse = () => {
 
           <Form.Item
             name="courseType"
-            label="Loại khóa học"
+            label="CourseType"
             labelCol={{ span: 24 }}
           >
             <Radio.Group>
-              <Radio value="free">Miễn phí</Radio>
-              <Radio value="paid">Trả phí</Radio>
+              <Radio value="free">Free</Radio>
+              <Radio value="paid">Paid</Radio>
             </Radio.Group>
           </Form.Item>
 

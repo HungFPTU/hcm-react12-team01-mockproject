@@ -18,6 +18,7 @@ const ButtonLesson = () => {
   const [sessionData, setSessionData] = useState<Session[]>([]);
   const [courseID, setCourseID] = useState<string | null>();
   const [filteredSessionData, setFilteredSessionData] = useState<Session[]>([]);
+  const [lessonType, setLessonType] = useState<string>(""); // Theo dõi loại bài học
   const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
 
   const showModal = () => {
@@ -58,17 +59,22 @@ const ButtonLesson = () => {
         ? editorRef.current.getContent()
         : ""; // Lấy nội dung từ editor
 
+      // Tạo đối tượng bài học dựa vào loại bài học
       const newLesson: CreateLessonRequest = {
         name: values.name,
         course_id: values.course_id,
         session_id: values.session_id,
         lesson_type: values.lesson_type,
-        description, // Gửi nội dung dạng chuỗi thay vì đối tượng editor
-        video_url: values.video_url,
-        image_url: values.image_url,
+        description,
         full_time: values.full_time,
         position_order: values.position_order,
       };
+
+      if (values.lesson_type === "video") {
+        newLesson.video_url = values.video_url;
+      } else {
+        newLesson.image_url = values.image_url;
+      }
 
       const response = await LessonService.createLesson(newLesson);
       console.log("API Response:", response);
@@ -88,6 +94,10 @@ const ButtonLesson = () => {
     );
   };
 
+  const handleLessonTypeChange = (value: string) => {
+    setLessonType(value);
+  };
+
   return (
     <>
       <Button onClick={showModal} style={{ marginRight: "10px" }}>
@@ -103,7 +113,7 @@ const ButtonLesson = () => {
         <Form onFinish={handleSubmit}>
           <Form.Item
             name="name"
-            label="Tên bài học"
+            label="Name"
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
@@ -115,7 +125,7 @@ const ButtonLesson = () => {
 
           <Form.Item
             name="course_id"
-            label="Tên khóa học"
+            label="Course"
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
@@ -145,20 +155,24 @@ const ButtonLesson = () => {
 
           <Form.Item
             name="lesson_type"
-            label="Loại bài học"
+            label="Lesson Type"
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
-            <Select style={{ width: "100%" }}>
+            <Select style={{ width: "100%" }} onChange={handleLessonTypeChange}>
               <Option value="video">Video</Option>
               <Option value="text">Text</Option>
-              <Option value="audio">Audio</Option>
+              <Option value="image">Image</Option>
             </Select>
           </Form.Item>
 
-          <Form.Item name="description" label="Mô tả" labelCol={{ span: 24 }}>
+          <Form.Item
+            name="description"
+            label="Description"
+            labelCol={{ span: 24 }}
+          >
             <Editor
-              onInit={(_evt, editor) => (editorRef.current = editor)} // Lưu tham chiếu đến editor
+              onInit={(_evt, editor) => (editorRef.current = editor)}
               apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
               init={{
                 width: "100%",
@@ -195,14 +209,34 @@ const ButtonLesson = () => {
             />
           </Form.Item>
 
-          <Form.Item
-            name="video_url"
-            label="Video URL"
-            labelCol={{ span: 24 }}
-            rules={[{ required: true, message: "Vui lòng nhập URL của video" }]}
-          >
-            <Input placeholder="Nhập URL video" style={{ width: "100%" }} />
-          </Form.Item>
+          {lessonType === "video" && (
+            <Form.Item
+              name="video_url"
+              label="Video URL"
+              labelCol={{ span: 24 }}
+              rules={[
+                { required: true, message: "Vui lòng nhập URL của video" },
+              ]}
+            >
+              <Input placeholder="Nhập URL video" style={{ width: "100%" }} />
+            </Form.Item>
+          )}
+
+          {(lessonType === "text" || lessonType === "image") && (
+            <Form.Item
+              name="image_url"
+              label="Image URL"
+              labelCol={{ span: 24 }}
+              rules={[
+                { required: true, message: "Vui lòng nhập URL của hình ảnh" },
+              ]}
+            >
+              <Input
+                placeholder="Nhập URL hình ảnh"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+          )}
 
           <Form.Item name="full_time" label="Full Time" labelCol={{ span: 24 }}>
             <InputNumber style={{ width: "100%" }} />
