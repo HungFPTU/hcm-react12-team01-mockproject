@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Button, Modal, Form, Input, Select, InputNumber, message } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
-import { LessonService } from "../../../../../services/LessonService/LessionService";
-import { CourseService } from "../../../../../services/CourseService/CourseService";
 import { SessionService } from "../../../../../services/SessionService/SessionService";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
 import { Session } from "../../../../../model/admin/response/Sesson.response";
