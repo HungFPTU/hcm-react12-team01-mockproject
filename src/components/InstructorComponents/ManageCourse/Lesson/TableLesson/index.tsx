@@ -1,76 +1,36 @@
-import { useState, useEffect } from "react";
-import { Table, Button, Spin, Modal, message, Space, Popover } from "antd";
+import { useState, useEffect, useCallback } from "react";
+import { Table, Button } from "antd";
 import { useNavigate } from "react-router-dom";
-import { LessonService } from "../../../../../services/LessonService/LessionService";
-import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
-
+import { LessonService } from "../../../../../services/LessonService/lesson.service";
+import { Lesson } from "../../../../../model/admin/response/Lesson.response";
 const TableLesson = () => {
   const navigate = useNavigate();
-  const [lessonsData, setLessonsData] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [lessonsData, setLessonsData] = useState<Lesson["pageData"]>([]);
 
-  useEffect(() => {
-    const fetchLessons = async () => {
-      try {
-        setLoading(true);
-        const response = await LessonService.getLessons();
 
-        if (response.data?.success && response.data.data?.pageData) {
-          // Gắn key từ _id để sử dụng cho dataSource của bảng
-          const lessonsWithKey = response.data.data.pageData.map(
-            (lesson: any) => ({
-              ...lesson,
-              key: lesson._id,
-            })
-          );
-          setLessonsData(lessonsWithKey);
-        } else {
-          console.error(
-            "Failed to fetch lessons: pageData not found",
-            response
-          );
+
+      const fetchLesson = useCallback(async () => {
+        const response = await LessonService.getLesson({
+          searchCondition: {
+            keyword: "",
+            course_id: "",
+            is_delete: false,
+            is_position_order: false,
+          },
+          pageInfo: { pageNum: 1, pageSize: 100},
+        });
+        if (response.data) {
+          const lessons = Array.isArray(response.data.data.pageData) ? response.data.data.pageData :[response.data.data.pageData];
+          setLessonsData(lessons);
         }
-      } catch (error) {
-        console.error("Error fetching lessons:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLessons();
   }, []);
 
-  const handleViewDetails = (lessonId: string) => {
-    navigate(`/instructor/${lessonId}`);
-  };
+    useEffect(() => {
+      fetchLesson();
+    },[fetchLesson])
 
-  const handleDeleteLesson = async (lessonId: string) => {
-    try {
-      await LessonService.deleteLesson(lessonId);
-
-      // Cập nhật state sau khi xóa
-      setLessonsData((prevLessons) =>
-        prevLessons.filter((lesson) => lesson._id !== lessonId)
-      );
-
-      message.success("Lesson deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting lesson:", error);
-      message.error("Failed to delete lesson!");
-    }
-  };
-
-  const showDeleteConfirm = (lessonId: string) => {
-    Modal.confirm({
-      title: "Are you sure you want to delete this lesson?",
-      content: "This action cannot be undone.",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      onOk() {
-        handleDeleteLesson(lessonId);
-      },
-    });
+  const handleViewDetails = (id: string) => {
+    navigate(`/instructor/manage-course/view-detail-lesson/${id}`);
   };
 
   const columns = [
@@ -117,29 +77,13 @@ const TableLesson = () => {
     {
       title: "Action",
       key: "action",
-      render: (_: unknown, record: any) => (
-        <Space size="middle">
-          <Popover content="View Lesson Detail">
-            <Button
-              onClick={() => handleViewDetails(record._id)}
-              className="bg-blue-500 hover:bg-blue-600 text-white"
-            >
-              <EyeOutlined />
-            </Button>
-          </Popover>
-          <Popover content="Delete Lesson">
-            <Button
-              onClick={() => showDeleteConfirm(record._id)}
-              className="bg-red-500 hover:bg-red-600 text-white"
-            >
-              <DeleteOutlined />
-            </Button>
-          </Popover>
-        </Space>
+      render: (_: unknown, record: Lesson["pageData"][0]) => (
+        <Button type="primary" onClick={() => handleViewDetails(record._id)}>
+          View Details
+        </Button>
       ),
     },
   ];
-  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
     <Table
