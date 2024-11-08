@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Table, Button, Popover } from "antd";
+import { Table, Button, Popover, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import { SessionService } from "../../../../../services/SessionService/SessionService";
 import { EyeOutlined } from "@ant-design/icons";
@@ -7,10 +7,13 @@ import { EyeOutlined } from "@ant-design/icons";
 const TableSession = () => {
   const navigate = useNavigate();
   const [sessionsData, setSessionsData] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchSessions = async () => {
       try {
+        setLoading(true);
+
         const response = await SessionService.getSessons();
 
         if (response.data?.success && response.data.data?.pageData) {
@@ -29,6 +32,8 @@ const TableSession = () => {
         }
       } catch (error) {
         console.error("Error fetching sessions:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -76,6 +81,7 @@ const TableSession = () => {
       ),
     },
   ];
+  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
     <Table

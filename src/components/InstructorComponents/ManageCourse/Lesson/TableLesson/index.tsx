@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
-import { Table, Button } from "antd";
+import { Table, Button, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LessonService } from "../../../../../services/LessonService/LessonService";
 
 const TableLesson = () => {
   const navigate = useNavigate();
   const [lessonsData, setLessonsData] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchLessons = async () => {
       try {
+        setLoading(true);
         const response = await LessonService.getLessons();
 
         if (response.data?.success && response.data.data?.pageData) {
@@ -29,6 +31,8 @@ const TableLesson = () => {
         }
       } catch (error) {
         console.error("Error fetching lessons:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -90,6 +94,7 @@ const TableLesson = () => {
       ),
     },
   ];
+  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
     <Table

@@ -15,6 +15,7 @@ import { pathPublic } from "./routes/publish/pathPublic";
 
 import ProtectedRoute from "./routes/protected/navigateRoute";
 import PublicRoute from "./routes/publish/navigatePublicRoute";
+import { Spin } from "antd";
 
 const App = () => {
   const { role } = useAuth();
@@ -39,7 +40,7 @@ const App = () => {
       window.location.href = defaultPath;
     }
   }, [role]); // Add role as a dependency
-  
+
 
   const renderProtectedRoutes = () => {
     const currentRole = role || (localStorage.getItem("role") as UserRole);
@@ -106,7 +107,11 @@ const App = () => {
   };
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen">
+        <Spin tip="Loading course details..." />
+      </div>}
+    >
       <Routes>
         {/* Public Routes */}
         {Object.entries(pathPublic).map(([key, routes]) =>
