@@ -48,11 +48,6 @@ const ButtonCourse = () => {
     }
   };
 
-  const handleRequestApproval = () => {
-    console.log("Gửi yêu cầu duyệt khóa học");
-    message.success("Đã gửi yêu cầu duyệt khóa học lên admin");
-  };
-
   useEffect(() => {
     const params = {
       searchCondition: {
@@ -81,9 +76,6 @@ const ButtonCourse = () => {
     <>
       <Button onClick={showModal} style={{ marginRight: "10px" }}>
         Create Course
-      </Button>
-      <Button onClick={handleRequestApproval} type="primary">
-        Send Request
       </Button>
 
       <Modal

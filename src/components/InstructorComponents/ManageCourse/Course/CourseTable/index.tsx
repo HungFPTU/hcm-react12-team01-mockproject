@@ -37,7 +37,6 @@ const CourseTable = () => {
         const searchCondition = {
           keyword: searchQuery,
           category_id: "",
-          // status: CourseStatusEnum.New,
           status: undefined,
 
           is_delete: false,
@@ -99,12 +98,20 @@ const CourseTable = () => {
 
   const handleSendClick = async (courseId: string) => {
     try {
+      const course = coursesData.find((course) => course._id === courseId);
+      if (!course) return;
+  
+      if (![CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(course.status)) {
+        message.error("Invalid course status for sending.");
+        return;
+      }
+  
       await CourseService.changeStatusCourse({
         course_id: courseId,
         new_status: CourseStatusEnum.WaitingApprove,
-        comment: "Thay đổi trạng thái khóa học",
+        comment: "Sent to admin for approval",
       });
-
+  
       setCoursesData((prevCourses) =>
         prevCourses.map((course) =>
           course._id === courseId
@@ -112,14 +119,14 @@ const CourseTable = () => {
             : course
         )
       );
-
-      message.success("Course status updated to Waiting Approve!");
+      message.success("Course status updated to Waiting for Approval!");
+  
     } catch (error) {
-      message.error("Failed to update course status!");
-      console.error("Error changing status:", error);
+      message.error("Failed to send course to admin!");
+      console.error("Error sending course:", error);
     }
   };
-
+  
   const handleDeleteCourse = async (courseId: string) => {
     try {
       await CourseService.deleteCourse(courseId);
@@ -178,8 +185,8 @@ const CourseTable = () => {
             break;
           case CourseStatusEnum.WaitingApprove:
             statusText = "Waiting for Approval";
-            statusColor = "text-orange-500";
-            borderColor = "border-orange-500";
+            statusColor = "text-orange-300";
+            borderColor = "border-orange-300";
             popoverContent = "Please watting for the approval from admin";
 
             break;
@@ -269,7 +276,6 @@ const CourseTable = () => {
       title: "Change Status",
       key: "changeStatus",
       render: (_: unknown, record: GetCourseResponsePageData) => {
-        // Kiểm tra nếu khóa học có trạng thái là 'Approved', 'Active', hoặc 'Inactive'
         const canChangeStatus = [
           CourseStatusEnum.Approved,
           CourseStatusEnum.Active,
@@ -312,7 +318,7 @@ const CourseTable = () => {
       key: "actions",
       render: (_: unknown, record: GetCourseResponsePageData) => (
         <div className="flex space-x-2">
-          <Popover content="View Session Detail">
+          <Popover content="View Course Detail">
             <Button
               onClick={() => handleViewDetails(record._id)}
               className="bg-blue-500 hover:bg-blue-600 text-white"
@@ -330,7 +336,7 @@ const CourseTable = () => {
             </Button>
           </Popover>
 
-          {record.status === CourseStatusEnum.New && (
+          {([CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(record.status)) && (
             <Popover content="Send course to admin">
               <Button
                 className="bg-green-400 hover:bg-green-600 text-white"
