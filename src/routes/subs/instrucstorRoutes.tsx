@@ -46,9 +46,6 @@ const instructorRoute: RouteObject[] = [
             { path: "payouts", element: <PayoutInstructorPage/>},
             { path: "purchase-log", element: <PurchaseLog/>},
             { path: "setting", element:<SettingPage/>},
-            { path:":courseId", element:<ViewDetailCourse /> },
-            { path:":sessionId", element:<ViewDetailSession /> },
-            { path:":lessonId", element:<ViewDetailLesson /> }
         ],
     },
     ]
