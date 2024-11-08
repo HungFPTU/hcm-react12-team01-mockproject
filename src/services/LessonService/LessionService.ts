@@ -1,6 +1,6 @@
 import { API } from "../../const/path.api";
-import { CreateLessonRequest } from "../../model/admin/request/Lession.request";
-import { CreateLessonResponse } from "../../model/admin/response/Lession.response";
+import { CreateLessonRequest } from "../../model/admin/request/Lesson.request";
+import { CreateLessonResponse } from "../../model/admin/response/Lesson.response";
 import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
 

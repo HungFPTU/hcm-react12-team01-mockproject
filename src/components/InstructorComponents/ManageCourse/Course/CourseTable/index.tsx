@@ -37,7 +37,9 @@ const CourseTable = () => {
         const searchCondition = {
           keyword: searchQuery,
           category_id: "",
+          // status: CourseStatusEnum.New,
           status: undefined,
+
           is_delete: false,
         };
 
@@ -294,11 +296,10 @@ const CourseTable = () => {
                     onChangeStatus(record._id, newStatus);
                   }}
                   disabled={!canChangeStatus}
-                  className={`transition-all duration-300 ${
-                    record.status === CourseStatusEnum.Active
-                      ? "bg-blue-500"
-                      : "bg-gray-500"
-                  }`}
+                  className={`transition-all duration-300 ${record.status === CourseStatusEnum.Active
+                    ? "bg-blue-500"
+                    : "bg-gray-500"
+                    }`}
                 />
               </Popover>
             )}
