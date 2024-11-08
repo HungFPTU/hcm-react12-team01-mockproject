@@ -5,8 +5,8 @@ import { LessonService } from "../../../../../services/LessonService/LessionServ
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { SessionService } from "../../../../../services/SessionService/SessionService";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
-import { Session } from "../../../../../model/admin/response/Sesson.response";
-import { CreateLessonRequest } from "../../../../../model/admin/request/Lession.request";
+import { Session } from "../../../../../model/admin/response/Sesson.resonse";
+import { CreateLessonRequest } from "../../../../../model/admin/request/Lesson.request";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
 
 const { Option } = Select;
@@ -105,7 +105,9 @@ const ButtonLesson = () => {
         course_id: values.course_id,
         session_id: values.session_id,
         lesson_type: values.lesson_type,
-        description,
+        description: description,
+        video_url: values.video_url,
+        image_url: values.image_url,
         full_time: values.full_time,
         position_order: values.position_order,
       };
