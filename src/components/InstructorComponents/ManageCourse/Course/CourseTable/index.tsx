@@ -1,38 +1,22 @@
 import { useState, useEffect, useRef } from "react";
 import { Table, Button, Switch, message, Popover } from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
-import { useNavigate } from "react-router-dom";
+
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { EyeOutlined, SendOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
-// interface Course {
-//   _id: string;
-//   name: string;
-//   session: string;
-//   category_name: string;
-//   category_id: string;
-//   user_id: string;
-//   description: string;
-//   content: string;
-//   status: CourseStatusEnum;
-//   video_url: string;
-//   image_url: string;
-//   price: number;
-//   discount: number;
-//   created_at: string;
-//   updated_at: string;
-//   is_deleted: boolean;
-// }
+
 
 const CourseTable = () => {
-  const navigate = useNavigate();
+  
   const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
   const [searchQuery] = useState("");
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const hasMounted = useRef(false);
-
+  const navigate = useNavigate();
   const fetchCourse = async (params: GetCourseRequest) => {
     try {
       const response = await CourseService.getCourse(params);
@@ -80,9 +64,10 @@ const CourseTable = () => {
     course.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleViewDetails = (courseId: string) => {
-    navigate(`/instructor/manage-course/view-detail-course/${courseId}`);
+  const handleViewDetails = (id: string) => {
+    navigate(`/instructor/manage-course/view-detail-course/${id}`);
   };
+
 
   const onChangeStatus = async (id: string, status: CourseStatusEnum) => {
     try {
@@ -319,6 +304,8 @@ const CourseTable = () => {
           }}
         />
       )}
+      
+
     </div>
   );
 };
