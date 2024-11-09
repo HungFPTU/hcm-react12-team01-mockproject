@@ -161,3 +161,25 @@ export interface GetPublicCoursePageInfo {
   totalItems: number;
   totalPages: number;
 }
+
+
+//=====================COURSE LOG======================
+export interface CourseLogResponse {
+  pageData: CourseLogResponseData[];
+  pageInfo: GetCourseResponsePageInfo;
+}
+
+export type CourseLogResponseData = {
+  _id: string;
+  course_id: string;
+  user_id: string;
+  old_status: CourseStatusEnum | undefined;
+  new_status: CourseStatusEnum | undefined;
+  comment: string;
+  created_at: Date;
+  is_deleted: boolean;
+  user_name: string;
+  course_name: string;
+};
+
+

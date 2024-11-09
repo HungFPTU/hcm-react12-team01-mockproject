@@ -9,7 +9,6 @@ const InstructorCourseLog: React.FC = () => {
 
     return (
         <>
-            <h1>This is InstructorCourseLog</h1>
             <CourseLogTable />
         </>
     );

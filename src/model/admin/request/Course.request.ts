@@ -51,3 +51,17 @@ export interface GetPublicCourseRequest {
   searchCondition: SearchCondition;
   pageInfo: PageInfo;
 }
+
+//===========COURSE LOG================================
+export interface SearchConditionLog {
+  keyword: string;
+  course_id: string;
+  old_status: CourseStatusEnum | undefined;
+  new_status: CourseStatusEnum | undefined;
+  is_delete: boolean;
+}
+
+export interface GetCourseLogRequest {
+  searchCondition: SearchConditionLog;
+  pageInfo: PageInfo;
+}
