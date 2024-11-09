@@ -119,9 +119,12 @@ const ButtonLesson = () => {
       }
 
       const response = await LessonService.createLesson(newLesson);
-      console.log("API Response:", response);
+      if (response && response.data.success) {
+        console.log("API Response:", response);
+        message.success("Bài học đã được tạo thành công!");
 
-      message.success("Bài học đã được tạo thành công!");
+      }
+
       setIsModalVisible(false);
     } catch (error) {
       console.error("Error creating lesson:", error);
