@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Popover, Spin, Modal, Input, Form, Radio } from "antd";
+import { Table, Button, Popover, Spin, Modal, Input, Form } from "antd";
 import { GetCourseResponsePageData } from "../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../model/admin/request/Course.request";
 import { CourseService } from "../../../services/CourseService/course.service";
 import { CourseStatusEnum } from "../../../model/Course";
 import { toast } from "react-toastify";
+import { CheckCircleOutlined, CloseCircleFilled } from "@ant-design/icons";
 
 const TableCoursesPending = () => {
   const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
@@ -27,72 +28,9 @@ const TableCoursesPending = () => {
     }
   };
 
-  useEffect(() => {
-    if (hasMounted.current) return;
-    hasMounted.current = true;
-
-    const fetchCoursesData = async () => {
-      try {
-        setLoading(true);
-        const searchCondition = {
-          keyword: searchQuery,
-          category_id: "",
-          status: CourseStatusEnum.WaitingApprove,
-          is_delete: false,
-        };
-
-        const response = await fetchCourse({
-          searchCondition,
-          pageInfo: {
-            pageNum: 1,
-            pageSize: 10,
-          },
-        });
-        
-        if (response && response.success) {
-          setLoading(false);
-          const data = response.data.pageData;
-          setCoursesData(data);
-          setIsDataEmpty(data.length === 0);
-        }
-      } catch (error) {
-        console.error("Failed to fetch courses:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchCoursesData();
-  }, [searchQuery]);
-  
-  const filteredCourses = coursesData.filter((course) =>
-    course.name.toLowerCase().includes(searchQuery.toLowerCase())
-);
-
-const handleChangeStatus = (course: GetCourseResponsePageData) => {
-  setSelectedCourse(course);
-  setIsModalVisible(true);
-};
-
-const handleOk = async () => {
-  if (!selectedCourse) return;
-
-  try {
-    setLoading(true);
-
-    const response = await CourseService.changeStatusCourse({
-      course_id: selectedCourse._id,
-      new_status: status,
-      comment: comment,
-    });
-    if (response && response.data && response.data.success) {
-      console.log("Course status updated successfully:", response.data);
-      if (status === CourseStatusEnum.Approved) {
-        toast.success(`Course status changed to Approved successfully!`);
-      } else if (status === CourseStatusEnum.Rejected) {
-        toast.error(`Course status changed to Rejected. Comment: ${comment}`);
-      }
-
+  const fetchCoursesData = async () => {
+    try {
+      setLoading(true);
       const searchCondition = {
         keyword: searchQuery,
         category_id: "",
@@ -100,7 +38,7 @@ const handleOk = async () => {
         is_delete: false,
       };
 
-      const courseResponse = await fetchCourse({
+      const response = await fetchCourse({
         searchCondition,
         pageInfo: {
           pageNum: 1,
@@ -108,37 +46,85 @@ const handleOk = async () => {
         },
       });
 
-      if (courseResponse && courseResponse.success) {
-        const data = courseResponse.data.pageData;
+      if (response && response.success) {
+        setLoading(false);
+        const data = response.data.pageData;
         setCoursesData(data);
         setIsDataEmpty(data.length === 0);
       }
-
-      setIsModalVisible(false);
-      setStatus(CourseStatusEnum.WaitingApprove);
-      setComment("");
-    } else {
-      console.error("Failed to update course status:", response.data);
-      toast.error('Failed to change course status!');
+    } catch (error) {
+      console.error("Failed to fetch courses:", error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Error changing course status:", error);
-    toast.error('An error occurred while changing course status!');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
+  useEffect(() => {
+    if (hasMounted.current) return;
+    hasMounted.current = true;
 
-const handleCancel = () => {
-  setIsModalVisible(false);
-  setStatus(CourseStatusEnum.WaitingApprove);
-  setComment(""); 
-};
 
-if (loading) return <Spin tip="Loading course details..." />;
+    fetchCoursesData();
+  }, [searchQuery]);
 
-const columns = [
-  {
+  const filteredCourses = coursesData.filter((course) =>
+    course.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleApprove = (course: GetCourseResponsePageData) => {
+    setStatus(CourseStatusEnum.Approved)
+    handleOk();
+    setSelectedCourse(course);
+  };
+  const handleReject = (course: GetCourseResponsePageData) => {
+    setStatus(CourseStatusEnum.Rejected)
+    setSelectedCourse(course);
+    setIsModalVisible(true);
+  };
+  //====================================================
+  const handleOk = async () => {
+    if (!selectedCourse) return;
+
+    try {
+      setLoading(true);
+
+      const response = await CourseService.changeStatusCourse({
+        course_id: selectedCourse._id,
+        new_status: status,
+        comment: comment,
+      });
+      if (response && response.data && response.data.success) {
+        console.log("Course status updated successfully:", response.data);
+        if (status === CourseStatusEnum.Approved) {
+          toast.success(`Course status changed to Approved successfully!`);
+        } else if (status === CourseStatusEnum.Rejected) {
+          toast.success(`Course status changed to Rejected. Comment: ${comment}`);
+          setIsModalVisible(false);
+        }
+        setComment("");
+      } else {
+        console.error("Failed to update course status:", response.data);
+        // toast.error('Failed to change course status!');
+      }
+    } catch (error) {
+      console.error("Error changing course status:", error);
+      // toast.error('An error occurred while changing course status!');
+    } finally {
+      fetchCoursesData();
+      setLoading(false);
+    }
+  };
+
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setStatus(CourseStatusEnum.WaitingApprove);
+    setComment("");
+  };
+
+  if (loading) return <Spin tip="Loading course details..." />;
+
+  const columns = [
+    {
       title: "Name",
       dataIndex: "name",
       key: "name",
@@ -189,25 +175,41 @@ const columns = [
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (price: number) => `${price.toLocaleString()} VND`,
+      render: (price: number) => (
+        <div className="text-right">
+          {price.toLocaleString()} VND
+        </div>
+      ),
     },
     {
       title: "Discount",
       dataIndex: "discount",
       key: "discount",
-      render: (discount: number) => `${discount}%`,
+      render: (discount: number) => (
+        <div className="text-right">
+          {discount}%
+        </div>
+      ),
     },
     {
       title: "Session Count",
       dataIndex: "session_count",
       key: "session_count",
-      render: (session_count: number) => `${session_count}`,
+      render: (session_count: number) => (
+        <div className="text-right">
+          {session_count}
+        </div>
+      ),
     },
     {
       title: "Lesson Count",
       dataIndex: "lesson_count",
       key: "lesson_count",
-      render: (lesson_count: number) => `${lesson_count}`,
+      render: (lesson_count: number) => (
+        <div className="text-right">
+          {lesson_count}
+        </div>
+      ),
     },
     {
       title: "Created At",
@@ -219,12 +221,24 @@ const columns = [
       title: "Action",
       key: "actions",
       render: (_: unknown, record: GetCourseResponsePageData) => (
-        <Button
-          className="bg-blue-500 hover:bg-blue-600 text-white"
-          onClick={() => handleChangeStatus(record)}
-        >
-          Change Status
-        </Button>
+        <>
+          <Popover content="Approve">
+            <Button
+              onClick={() => handleApprove(record)}
+              className="bg-green-500 hover:bg-blue-600 text-white"
+            >
+              <CheckCircleOutlined />
+            </Button>
+          </Popover>
+          <Popover content="Reject">
+            <Button
+              onClick={() => handleReject(record)}
+              className="bg-red-500 hover:bg-blue-600 text-white"
+            >
+              <CloseCircleFilled />
+            </Button>
+          </Popover>
+        </>
       ),
     },
   ];
@@ -249,36 +263,25 @@ const columns = [
         />
       )}
 
-<Modal
-  title="Change Course Status"
-  visible={isModalVisible}
-  onOk={handleOk}
-  onCancel={handleCancel}
-  okText="Confirm"
-  cancelText="Cancel"
->
-  <Form>
-    <Form.Item label="Status">
-      <Radio.Group
-        value={status}
-        onChange={(e) => setStatus(e.target.value as CourseStatusEnum)}
+      <Modal
+        title="Change Course Status"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Confirm"
+        cancelText="Cancel"
       >
-        <Radio value={CourseStatusEnum.Approved}>Approve</Radio>
-        <Radio value={CourseStatusEnum.Rejected}>Reject</Radio>
-      </Radio.Group>
-    </Form.Item>
+        <Form>
+          <Form.Item label="Reason for rejection ">
+            <Input.TextArea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Please provide a reason"
+            />
+          </Form.Item>
 
-    {status === CourseStatusEnum.Rejected && (
-      <Form.Item label="Reason for rejection ">
-        <Input.TextArea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Please provide a reason"
-        />
-      </Form.Item>
-    )}
-  </Form>
-</Modal>
+        </Form>
+      </Modal>
 
     </div>
   );

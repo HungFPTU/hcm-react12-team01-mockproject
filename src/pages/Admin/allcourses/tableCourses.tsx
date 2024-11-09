@@ -1,189 +1,236 @@
-import { Table, Tag } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import { Course, CourseStatusEnum } from "../../../model/Course";
-import SearchComponent from "../../../components/StudentComponents/search";
+import { useState, useEffect, useRef } from "react";
+import { Table, Popover, Spin } from "antd";
+import { CourseStatusEnum } from "../../../model/Course";
+import { CourseService } from "../../../services/CourseService/course.service";
+import { GetCourseResponsePageData } from "../../../model/admin/response/Course.response";
+import { GetCourseRequest } from "../../../model/admin/request/Course.request";
 
-const dataSource: Partial<Course>[] = [
-  {
-    name: "JavaScript Basics",
-    categoryName: "Web Development",
-    status: CourseStatusEnum.Active,
-    price: 300,
-    discount: 10,
-    created_at: "2023-01-15",
-  },
-  {
-      name: "Advanced CSS",
-    categoryName: "Web Design",
-    status: CourseStatusEnum.Rejected,
-    price: 200,
-    discount: 20,
-    created_at: "2023-02-22",
-  },
-  {
-    name: "React for Beginners",
-    categoryName: "Frontend Development",
-    status: CourseStatusEnum.Active,
-    price: 400,
-    discount: 15,
-    created_at: "2023-03-12",
-  },
-  {
-    name: "Node.js Mastery",
-    categoryName: "Backend Development",
-    status: CourseStatusEnum.Rejected,
-    price: 450,
-    discount: 25,
-    created_at: "2023-04-08",
-  },
-  {
-    name: "Python Programming",
-    categoryName: "Programming Languages",
-    status: CourseStatusEnum.Active,
-    price: 500,
-    discount: 30,
-    created_at: "2023-05-30",
-  },
-  {
-    name: "Machine Learning A-Z",
-    categoryName: "Data Science",
-    status: CourseStatusEnum.Active,
-    price: 600,
-    discount: 35,
-    created_at: "2023-06-12",
-  },
-  {
-    name: "Docker Essentials",
-    categoryName: "DevOps",
-    status: CourseStatusEnum.WaitingApprove,
-    price: 350,
-    discount: 10,
-    created_at: "2023-07-15",
-  },
-  {
-    name: "Kubernetes Fundamentals",
-    categoryName: "Cloud Computing",
-    status: CourseStatusEnum.Active,
-    price: 650,
-    discount: 20,
-    created_at: "2023-08-20",
-  },
-  {
-    name: "AWS Certified Solutions Architect",
-    categoryName: "Cloud Computing",
-    status: CourseStatusEnum.WaitingApprove,
-    price: 700,
-    discount: 40,
-    created_at: "2023-09-05",
-  },
-  {
-    name: "Introduction to SQL",
-    categoryName: "Database Management",
-    status: CourseStatusEnum.Active,
-    price: 150,
-    discount: 5,
-    created_at: "2023-10-10",
-  },
-  {
-    name: "Cybersecurity Basics",
-    categoryName: "Security",
-    status: CourseStatusEnum.WaitingApprove,
-    price: 550,
-    discount: 30,
-    created_at: "2023-11-18",
-  },
-  {
-    name: "Agile Project Management",
-    categoryName: "Project Management",
-    status: CourseStatusEnum.Active,
-    price: 250,
-    discount: 15,
-    created_at: "2023-12-02",
-  },
-  {
-    name: "Intro to Blockchain",
-    categoryName: "Cryptocurrency",
-    status: CourseStatusEnum.WaitingApprove,
-    price: 800,
-    discount: 25,
-    created_at: "2024-01-05",
-  },
-  {
-    name: "Fullstack Development",
-    categoryName: "Web Development",
-    status: CourseStatusEnum.Active,
-    price: 1000,
-    discount: 50,
-    created_at: "2024-02-17",
-  },
-  {
-    name: "Artificial Intelligence",
-    categoryName: "Data Science",
-    status: CourseStatusEnum.WaitingApprove,
-    price: 1200,
-    discount: 40,
-    created_at: "2024-03-25",
-  },
-];
 
-const columns: ColumnsType<Partial<Course>> = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Category",
-    dataIndex: "categoryName",
-    key: "category",
-  },
-  {
-    title: "Status",
-    dataIndex: "status",
-    key: "status",
-    render: (status) => {
-      if (status === "Active") {
-        return <Tag color="green">{status}</Tag>;
-      } else if (status == "WAITING_APPROVE") {
-        return <Tag color="gold">{status}</Tag>;
-      } else {
-        return <Tag color="red">{status}</Tag>;
-      }
-    },
-  },
-  {
-    title: "Price",
-    dataIndex: "price",
-    key: "price",
-    render: (price) => `$${price}`,
-  },
-  {
-    title: "Discount (%)",
-    dataIndex: "discount",
-    key: "discount",
-  },
-  {
-    title: "Created At",
-    dataIndex: "created_at",
-    key: "createdAt",
-  },
-];
+const TableCourses = () => {
+  const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>(
+    []
+  );
+  const [searchQuery] = useState("");
+  const [isDataEmpty, setIsDataEmpty] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
-function TableCourses() {
-  const handleSearch = () => {
-    console.log("test");
+  const hasMounted = useRef(false);
+  const fetchCourse = async (params: GetCourseRequest) => {
+    try {
+      const response = await CourseService.getCourse(params);
+      return response.data;
+    } catch (error) {
+      console.error("Fail to fetch courses:", error);
+    }
   };
+
+  useEffect(() => {
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+
+    const fetchCoursesData = async () => {
+      try {
+        setLoading(true);
+        const searchCondition = {
+          keyword: searchQuery,
+          category_id: "",
+          status: undefined,
+
+          is_delete: false,
+        };
+
+        const response = await fetchCourse({
+          searchCondition,
+          pageInfo: {
+            pageNum: 1,
+            pageSize: 10,
+          },
+        });
+
+        if (response && response.success) {
+          setLoading(false);
+
+          const data = response.data.pageData;
+          setCoursesData(data);
+          setIsDataEmpty(data.length === 0);
+        }
+      } catch (error) {
+        console.error("Failed to fetch courses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCoursesData();
+  }, [searchQuery]);
+
+  const filteredCourses = coursesData.filter((course) =>
+    course.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Category",
+      dataIndex: "category_name",
+      key: "category_name",
+    },
+    {
+      title: "User Name",
+      dataIndex: "user_name",
+      key: "name",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status: CourseStatusEnum) => {
+        let statusText = "";
+        let statusColor = "";
+        let borderColor = "";
+        let popoverContent = "";
+
+        switch (status) {
+          case CourseStatusEnum.New:
+            statusText = "New";
+            statusColor = "text-blue-500";
+            borderColor = "border-blue-500";
+            popoverContent = "You can send approval request to admin";
+            break;
+          case CourseStatusEnum.WaitingApprove:
+            statusText = "Waiting for Approval";
+            statusColor = "text-orange-300";
+            borderColor = "border-orange-300";
+            popoverContent = "Please watting for the approval from admin";
+
+            break;
+          case CourseStatusEnum.Approved:
+            statusText = "Approved";
+            statusColor = "text-green-500";
+            borderColor = "border-green-500";
+            popoverContent =
+              "Your course has been approved, you can activate the course";
+
+            break;
+          case CourseStatusEnum.Rejected:
+            statusText = "Rejected";
+            statusColor = "text-red-500";
+            borderColor = "border-red-500";
+            popoverContent =
+              "Your course has been rejected, please check your course and resend approval request to admin";
+
+            break;
+          case CourseStatusEnum.Active:
+            statusText = "Active";
+            statusColor = "text-purple-500";
+            borderColor = "border-purple-500";
+            popoverContent =
+              "Your course has been activated, now student can see your course at homepage!";
+
+            break;
+          case CourseStatusEnum.Inactive:
+            statusText = "Inactive";
+            statusColor = "text-gray-500";
+            borderColor = "border-gray-500";
+            popoverContent =
+              "Your course has been inactivated, now student can not see your course at homepage!";
+
+            break;
+          default:
+            statusText = "Unknown";
+            statusColor = "text-gray-500";
+            borderColor = "border-gray-500";
+            popoverContent = "NO CAP!";
+
+            break;
+        }
+
+        return (
+          <Popover content={`${popoverContent}`}>
+            <span
+              className={`font-semibold ${statusColor} border-2 ${borderColor} px-2 py-1 rounded-md`}
+            >
+              {statusText}
+            </span>
+          </Popover>
+        );
+      },
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      render: (price: number) => (
+        <div className="text-right">
+          {price.toLocaleString()} VND
+        </div>
+      ),
+    },
+    {
+      title: "Discount",
+      dataIndex: "discount",
+      key: "discount",
+      render: (discount: number) => (
+        <div className="text-right">
+          {discount}%
+        </div>
+      ),
+    },
+    {
+      title: "Session Count",
+      dataIndex: "session_count",
+      key: "session_count",
+      render: (session_count: number) => (
+        <div className="text-right">
+          {session_count}
+        </div>
+      ),
+    },
+    {
+      title: "Lesson Count",
+      dataIndex: "lesson_count",
+      key: "lesson_count",
+      render: (lesson_count: number) => (
+        <div className="text-right">
+          {lesson_count}
+        </div>
+      ),
+    },
+    {
+      title: "Created At",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (created_at: string) => new Date(created_at).toLocaleDateString(),
+    },
+
+  ];
+  if (loading) return <Spin tip="Loading course details..." />;
+
   return (
-    <div>
-      <div style={{ paddingBottom: "12px" }}>
-        <SearchComponent
-          placeholder="Search by Courses"
-          onSearch={handleSearch}
+    <div className="w-full">
+      {isDataEmpty ? (
+        <div className="text-center text-red-500">No courses found.</div>
+      ) : (
+        <Table<GetCourseResponsePageData>
+          columns={columns}
+          dataSource={filteredCourses}
+          rowKey="_id"
+          className="w-full shadow-md rounded-lg overflow-hidden"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} courses`,
+          }}
         />
-      </div>
-      <Table dataSource={dataSource} columns={columns} />
+      )}
     </div>
   );
-}
+};
 
 export default TableCourses;

@@ -1,4 +1,4 @@
-import { useState,  useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button, Modal, Form, Input, Select, Radio, message } from "antd";
 
 import { CreateCourseRequest } from "../../../../../model/admin/request/Course.request";
@@ -40,8 +40,11 @@ const ButtonCourse = () => {
       };
 
       const response = await CourseService.createCourse(newCourse);
-      message.success("Khóa học đã được tạo thành công!");
-      console.log("API Response:", response);
+      if (response && response.data.success) {
+
+        message.success("Khóa học đã được tạo thành công!");
+        console.log("API Response:", response);
+      }
       setIsModalVisible(false);
     } catch (error) {
       console.error("Error creating course:", error);

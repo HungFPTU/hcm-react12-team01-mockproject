@@ -11,11 +11,11 @@ const Course = () => {
 
         <div className="flex gap-2">
           <div className="flex-1 max-w-full ">
-            <SearchCourse onSearch={() => {}} />
+            <SearchCourse onSearch={() => { }} />
           </div>
 
           <div className="flex-1">
-            <FilterCourse onChange={() => {}} />
+            <FilterCourse onChange={() => { }} />
           </div>
         </div>
 

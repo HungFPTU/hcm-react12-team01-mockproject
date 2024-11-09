@@ -83,8 +83,11 @@ const ButtonSession = () => {
         description,
         positionOrder
       );
-      console.log("API Response:", response); // Kiểm tra phản hồi từ API
-      message.success("Session đã được tạo thành công!");
+      if (response && response.data.success) {
+        console.log("API Response:", response); // Kiểm tra phản hồi từ API
+        message.success("Session đã được tạo thành công!");
+      }
+
       setIsModalVisible(false);
     } catch (error) {
       message.error("Có lỗi xảy ra khi tạo session!");

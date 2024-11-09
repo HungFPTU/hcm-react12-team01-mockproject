@@ -77,19 +77,21 @@ const CourseTable = () => {
 
   const onChangeStatus = async (id: string, status: CourseStatusEnum) => {
     try {
-      await CourseService.changeStatusCourse({
+      const response = await CourseService.changeStatusCourse({
         course_id: id,
         new_status: status,
         comment: `Changed status to ${status}`,
       });
+      if (response && response.data.success) {
 
-      setCoursesData((prevCourses) =>
-        prevCourses.map((course) =>
-          course._id === id ? { ...course, status } : course
-        )
-      );
+        setCoursesData((prevCourses) =>
+          prevCourses.map((course) =>
+            course._id === id ? { ...course, status } : course
+          )
+        );
 
-      message.success(`Course status updated to ${status}!`);
+        message.success(`Course status updated to ${status}!`);
+      }
     } catch (error) {
       message.error("Failed to update course status!");
       console.error("Error changing status:", error);
@@ -100,42 +102,42 @@ const CourseTable = () => {
     try {
       const course = coursesData.find((course) => course._id === courseId);
       if (!course) return;
-  
+
       if (![CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(course.status)) {
         message.error("Invalid course status for sending.");
         return;
       }
-  
-      await CourseService.changeStatusCourse({
+
+      const response = await CourseService.changeStatusCourse({
         course_id: courseId,
         new_status: CourseStatusEnum.WaitingApprove,
         comment: "Sent to admin for approval",
       });
-  
-      setCoursesData((prevCourses) =>
-        prevCourses.map((course) =>
-          course._id === courseId
-            ? { ...course, status: CourseStatusEnum.WaitingApprove }
-            : course
-        )
-      );
-      message.success("Course status updated to Waiting for Approval!");
-  
+      if (response && response.data.success) {
+        setCoursesData((prevCourses) =>
+          prevCourses.map((course) =>
+            course._id === courseId
+              ? { ...course, status: CourseStatusEnum.WaitingApprove }
+              : course
+          )
+        );
+        message.success("Course status updated to Waiting for Approval!");
+      }
+
     } catch (error) {
-      message.error("Failed to send course to admin!");
       console.error("Error sending course:", error);
     }
   };
-  
+
   const handleDeleteCourse = async (courseId: string) => {
     try {
-      await CourseService.deleteCourse(courseId);
-
-      setCoursesData((prevCourses) =>
-        prevCourses.filter((course) => course._id !== courseId)
-      );
-
-      message.success("Course deleted successfully!");
+      const response = await CourseService.deleteCourse(courseId);
+      if (response && response.data.success) {
+        setCoursesData((prevCourses) =>
+          prevCourses.filter((course) => course._id !== courseId)
+        );
+        message.success("Course deleted successfully!");
+      }
     } catch (error) {
       message.error("Failed to delete course!");
       console.error("Error deleting course:", error);
@@ -246,25 +248,41 @@ const CourseTable = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (price: number) => `${price.toLocaleString()} VND`,
+      render: (price: number) => (
+        <div className="text-right">
+          {price.toLocaleString()} VND
+        </div>
+      ),
     },
     {
       title: "Discount",
       dataIndex: "discount",
       key: "discount",
-      render: (discount: number) => `${discount}%`,
+      render: (discount: number) => (
+        <div className="text-right">
+          {discount}%
+        </div>
+      ),
     },
     {
       title: "Session Count",
       dataIndex: "session_count",
       key: "session_count",
-      render: (session_count: number) => `${session_count}`,
+      render: (session_count: number) => (
+        <div className="text-right">
+          {session_count}
+        </div>
+      ),
     },
     {
       title: "Lesson Count",
       dataIndex: "lesson_count",
       key: "lesson_count",
-      render: (lesson_count: number) => `${lesson_count}`,
+      render: (lesson_count: number) => (
+        <div className="text-right">
+          {lesson_count}
+        </div>
+      ),
     },
     {
       title: "Created At",
