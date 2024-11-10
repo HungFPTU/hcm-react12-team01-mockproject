@@ -5,10 +5,10 @@ export const ROUTER_URL = {
   FORGOT_PASSWORD: "/forgot-password",
   VERIFY_EMAIL: "/verify-email/:token",
   RESEND_TOKEN: "/resend-verification",
-  ADMIN:{
+  ADMIN: {
     DASHBOARD: "/admin",
     ALL_COURSES: "/admin/all-courses",
-    PENDING_COURSES:"/admin/pending-courses",
+    PENDING_COURSES: "/admin/pending-courses",
     PURCHASE_LOG: "/admin/purchase-log",
     //category
     CATEGORY: "/admin/category-management",
@@ -17,12 +17,12 @@ export const ROUTER_URL = {
     REQUEST_MANAGEMENT: "/admin/request-management",
     USER_MANAGEMENT: "/admin/user-management",
     PAYOUT_MANAGEMENT: "/admin/payout-management",
-    COURSES_LOG: "/admin/course-log",
+    COURSES_LOG: "/admin/courses-log",
   },
-  INSTRUCTOR:{
+  INSTRUCTOR: {
     INSTRUCTOR_DASHBOARD: "/instructor",
     MANAGE_COURSE: "/instructor/manage-course",
-    VIEW_DETAIL_COURSE:"/instructor/manage-course/view-detail-course/:id",
+    VIEW_DETAIL_COURSE: "/instructor/manage-course/view-detail-course/:id",
     VIEW_DETAIL_SESSION: "/instructor/manage-course/view-detail-session/:id",
     VIEW_DETAIL_LESSON: "/instructor/manage-course/view-detail-lesson/:id",
     SALES_HISTORY: "/instructor/sales-history",
@@ -30,7 +30,7 @@ export const ROUTER_URL = {
     REVIEW: "/instructor/review",
     INSTRUCTOR_SUB: "/instructor/subscriptions",
     PAYOUT_INSTRUCTOR_PAGE: "/instructor/payouts",
-    PURCHASE_LOG:"/instructor/purchase-log",
+    PURCHASE_LOG: "/instructor/purchase-log",
     // SETTING: "/student/setting",
   },
   STUDENT: {
@@ -43,7 +43,7 @@ export const ROUTER_URL = {
   COMMON: {
     HOME: "/",
     COURSE_DETAIL: "/course/:id",
-    ALL_COURSES:"/all"
+    ALL_COURSES: "/all"
   },
-  UNAUTHORIZED:"/unauthorize"
+  UNAUTHORIZED: "/unauthorize"
 };

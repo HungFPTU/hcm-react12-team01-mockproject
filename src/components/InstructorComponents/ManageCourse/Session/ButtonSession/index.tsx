@@ -1,8 +1,9 @@
-import { useState,  useEffect } from "react";
-import { Button, Modal, Form, Input, Select, message } from "antd";
+import { useState, useEffect, useRef } from "react";
+import { Button, Modal, Form, Input, Select, message, Spin } from "antd";
 import { SessionService } from "../../../../../services/SessionService/SessionService";
-import { CourseService } from "../../../../../services/CourseService/CourseService";
+import { CourseService } from "../../../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
+import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
 
 const { Option } = Select;
 
@@ -11,7 +12,9 @@ const ButtonSession = () => {
   const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>(
     []
   );
-
+  const hasMounted = useRef(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery] = useState("");
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -20,17 +23,53 @@ const ButtonSession = () => {
     setIsModalVisible(false);
   };
 
+  const fetchCourse = async (params: GetCourseRequest) => {
+    try {
+      const response = await CourseService.getCourse(params);
+      return response.data;
+    } catch (error) {
+      console.error("Fail to fetch courses:", error);
+    }
+  };
+
   useEffect(() => {
-    CourseService.getCourses()
-      .then((response) => {
-        if (response && response.data && response.data.data) {
-          setCoursesData(response.data.data.pageData);
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+
+    const fetchCoursesData = async () => {
+      try {
+        setLoading(true);
+        const searchCondition = {
+          keyword: searchQuery,
+          category_id: "",
+          status: undefined,
+          is_delete: false,
+        };
+
+        const response = await fetchCourse({
+          searchCondition,
+          pageInfo: {
+            pageNum: 1,
+            pageSize: 10,
+          },
+        });
+
+        if (response && response.success) {
+          setLoading(false);
+
+          const data = response.data.pageData;
+          setCoursesData(data);
+
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching courses:", error);
-      });
-  }, []);
+      } catch (error) {
+        console.error("Failed to fetch courses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCoursesData();
+  }, [searchQuery]);
 
   const handleSubmit = async (values: any) => {
     try {
@@ -44,14 +83,18 @@ const ButtonSession = () => {
         description,
         positionOrder
       );
-      console.log("API Response:", response); // Kiểm tra phản hồi từ API
-      message.success("Session đã được tạo thành công!");
+      if (response && response.data.success) {
+        console.log("API Response:", response); // Kiểm tra phản hồi từ API
+        message.success("Session đã được tạo thành công!");
+      }
+
       setIsModalVisible(false);
     } catch (error) {
       message.error("Có lỗi xảy ra khi tạo session!");
       console.error("Error creating session:", error);
     }
   };
+  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
     <>

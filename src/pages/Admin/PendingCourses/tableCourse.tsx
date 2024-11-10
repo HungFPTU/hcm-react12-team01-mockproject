@@ -1,119 +1,129 @@
-import { Table, Tag, Input, Button, Space,  Modal, Radio } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import { useState } from "react";
-import { Pcourse } from "../../../model/PendingCourse";
-
-// export type Pcourse = {
-//   key: number;
-//   name: string;
-//   categoryName: string;
-//   status: string;
-//   price: number;
-//   discount: number;
-//   createdAt: string;
-// };
-
-const initialCourses: Pcourse[] = [
-  {
-    key: 1,
-    name: "Introduction to Python Programming",
-    categoryName: "Teaching Methods",
-    status: "waiting_approve",
-    price: 0,
-    discount: 0,
-    createdAt: "2024-07-08",
-  },
-  {
-    key: 2,
-    name: "Advanced JavaScript",
-    categoryName: "Web Development",
-    status: "active",
-    price: 100,
-    discount: 10,
-    createdAt: "2024-05-15",
-  },
-  {
-    key: 3,
-    name: "Data Structures in C++",
-    categoryName: "Computer Science",
-    status: "reject",
-    price: 50,
-    discount: 5,
-    createdAt: "2024-06-20",
-  },
-  {
-    key: 4,
-    name: "Machine Learning Basics",
-    categoryName: "Artificial Intelligence",
-    status: "waiting_approve",
-    price: 150,
-    discount: 20,
-    createdAt: "2024-04-10",
-  },
-  {
-    key: 5,
-    name: "Introduction to Databases",
-    categoryName: "Data Management",
-    status: "active",
-    price: 70,
-    discount: 0,
-    createdAt: "2024-03-22",
-  },
-  {
-    key: 6,
-    name: "Principles of Design",
-    categoryName: "Graphic Design",
-    status: "waiting_approve",
-    price: 85,
-    discount: 15,
-    createdAt: "2024-07-01",
-  },
-];
+import { useState, useEffect, useRef } from "react";
+import { Table, Button, Popover, Spin, Modal, Input, Form } from "antd";
+import { GetCourseResponsePageData } from "../../../model/admin/response/Course.response";
+import { GetCourseRequest } from "../../../model/admin/request/Course.request";
+import { CourseService } from "../../../services/CourseService/course.service";
+import { CourseStatusEnum } from "../../../model/Course";
+import { toast } from "react-toastify";
+import { CheckCircleOutlined, CloseCircleFilled } from "@ant-design/icons";
 
 const TableCoursesPending = () => {
-  const [courses, setCourses] = useState(initialCourses);
-  const [message, setMessage] = useState("");
+  const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
+  const [searchQuery] = useState("");
+  const [isDataEmpty, setIsDataEmpty] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentCourse, setCurrentCourse] = useState<Pcourse | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<GetCourseResponsePageData | null>(null);
+  const [status, setStatus] = useState<CourseStatusEnum>(CourseStatusEnum.WaitingApprove);
+  const [comment, setComment] = useState<string>('');
 
-  const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMessage(event.target.value);
+  const hasMounted = useRef(false);
+
+  const fetchCourse = async (params: GetCourseRequest) => {
+    try {
+      const response = await CourseService.getCourse(params);
+      return response.data;
+    } catch (error) {
+      console.error("Fail to fetch courses:", error);
+    }
   };
 
-  const handleSendMessage = () => {
-    console.log("Message sent:", message);
-    setMessage(""); // Clear message input after sending
-  };
+  const fetchCoursesData = async () => {
+    try {
+      setLoading(true);
+      const searchCondition = {
+        keyword: searchQuery,
+        category_id: "",
+        status: CourseStatusEnum.WaitingApprove,
+        is_delete: false,
+      };
 
-  const showModal = (course: Pcourse) => {
-    setCurrentCourse(course);
+      const response = await fetchCourse({
+        searchCondition,
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      });
+
+      if (response && response.success) {
+        setLoading(false);
+        const data = response.data.pageData;
+        setCoursesData(data);
+        setIsDataEmpty(data.length === 0);
+      }
+    } catch (error) {
+      console.error("Failed to fetch courses:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+
+
+    fetchCoursesData();
+  }, [searchQuery]);
+
+  const filteredCourses = coursesData.filter((course) =>
+    course.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleApprove = (course: GetCourseResponsePageData) => {
+    setStatus(CourseStatusEnum.Approved)
+    handleOk();
+    setSelectedCourse(course);
+  };
+  const handleReject = (course: GetCourseResponsePageData) => {
+    setStatus(CourseStatusEnum.Rejected)
+    setSelectedCourse(course);
     setIsModalVisible(true);
   };
+  //====================================================
+  const handleOk = async () => {
+    if (!selectedCourse) return;
 
-  const handleOk = () => {
-    if (currentCourse) {
-      const newCourses = courses.map((course) => {
-        if (course.key === currentCourse.key) {
-          return { ...course, status: currentCourse.status };
-        }
-        return course;
+    try {
+      setLoading(true);
+
+      const response = await CourseService.changeStatusCourse({
+        course_id: selectedCourse._id,
+        new_status: status,
+        comment: comment,
       });
-      setCourses(newCourses);
+      if (response && response.data && response.data.success) {
+        console.log("Course status updated successfully:", response.data);
+        if (status === CourseStatusEnum.Approved) {
+          toast.success(`Course status changed to Approved successfully!`);
+        } else if (status === CourseStatusEnum.Rejected) {
+          toast.success(`Course status changed to Rejected. Comment: ${comment}`);
+          setIsModalVisible(false);
+        }
+        setComment("");
+      } else {
+        console.error("Failed to update course status:", response.data);
+        // toast.error('Failed to change course status!');
+      }
+    } catch (error) {
+      console.error("Error changing course status:", error);
+      // toast.error('An error occurred while changing course status!');
+    } finally {
+      fetchCoursesData();
+      setLoading(false);
     }
-    setIsModalVisible(false);
   };
+
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setStatus(CourseStatusEnum.WaitingApprove);
+    setComment("");
   };
 
-  const handleStatusChange = (e: any) => {
-    if (currentCourse) {
-      setCurrentCourse({ ...currentCourse, status: e.target.value });
-    }
-  };
+  if (loading) return <Spin tip="Loading course details..." />;
 
-  const columns: ColumnsType<Pcourse> = [
+  const columns = [
     {
       title: "Name",
       dataIndex: "name",
@@ -121,87 +131,158 @@ const TableCoursesPending = () => {
     },
     {
       title: "Category",
-      dataIndex: "categoryName",
-      key: "categoryName",
+      dataIndex: "category_name",
+      key: "category_name",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status) => {
-        let color =
-          status === "waiting_approve"
-            ? "gold"
-            : status === "active"
-            ? "green"
-            : "volcano";
-        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+      render: (status: CourseStatusEnum) => {
+        let statusText = "";
+        let statusColor = "";
+        let borderColor = "";
+        let popoverContent = "";
+
+        switch (status) {
+          case CourseStatusEnum.WaitingApprove:
+            statusText = "Waiting for Approval";
+            statusColor = "text-orange-300";
+            borderColor = "border-orange-300";
+            popoverContent = "Please waiting for the approval from admin";
+
+            break;
+          default:
+            statusText = "Unknown";
+            statusColor = "text-gray-500";
+            borderColor = "border-gray-500";
+            popoverContent = "NO CAP!";
+
+            break;
+        }
+        return (
+          <Popover content={popoverContent}>
+            <span
+              className={`font-semibold ${statusColor} border-2 ${borderColor} px-2 py-1 rounded-md`}
+            >
+              {statusText}
+            </span>
+          </Popover>
+        );
       },
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (price) => `$${price}`,
+      render: (price: number) => (
+        <div className="text-right">
+          {price.toLocaleString()} VND
+        </div>
+      ),
     },
     {
-      title: "Discount (%)",
+      title: "Discount",
       dataIndex: "discount",
       key: "discount",
+      render: (discount: number) => (
+        <div className="text-right">
+          {discount}%
+        </div>
+      ),
+    },
+    {
+      title: "Session Count",
+      dataIndex: "session_count",
+      key: "session_count",
+      render: (session_count: number) => (
+        <div className="text-right">
+          {session_count}
+        </div>
+      ),
+    },
+    {
+      title: "Lesson Count",
+      dataIndex: "lesson_count",
+      key: "lesson_count",
+      render: (lesson_count: number) => (
+        <div className="text-right">
+          {lesson_count}
+        </div>
+      ),
     },
     {
       title: "Created At",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (created_at: string) => new Date(created_at).toLocaleDateString(),
     },
     {
       title: "Action",
-      key: "action",
-      render: (_, record) =>
-        record.status === "waiting_approve" && (
-          <Button onClick={() => showModal(record)} type="primary">
-            Change Status
-          </Button>
-        ),
+      key: "actions",
+      render: (_: unknown, record: GetCourseResponsePageData) => (
+        <>
+          <Popover content="Approve">
+            <Button
+              onClick={() => handleApprove(record)}
+              className="bg-green-500 hover:bg-blue-600 text-white"
+            >
+              <CheckCircleOutlined />
+            </Button>
+          </Popover>
+          <Popover content="Reject">
+            <Button
+              onClick={() => handleReject(record)}
+              className="bg-red-500 hover:bg-blue-600 text-white"
+            >
+              <CloseCircleFilled />
+            </Button>
+          </Popover>
+        </>
+      ),
     },
   ];
 
-  const filteredCourses = courses.filter(
-    (course) => course.status === "waiting_approve"
-  );
-
   return (
-    <div>
-      <div style={{ paddingBottom: "12px" }}>
-        <Space>
-          <Input
-            placeholder="Type your message..."
-            value={message}
-            onChange={handleMessageChange}
-            style={{ width: 200 }}
-          />
-          <Button type="primary" onClick={handleSendMessage}>
-            Send
-          </Button>
-        </Space>
-      </div>
-      <Table dataSource={filteredCourses} columns={columns} />
-      {currentCourse && (
-        <Modal
-          title="Change Course Status"
-          visible={isModalVisible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-        >
-          <Radio.Group
-            onChange={handleStatusChange}
-            value={currentCourse.status}
-          >
-            <Radio value="active">Active</Radio>
-            <Radio value="reject">Reject</Radio>
-          </Radio.Group>
-        </Modal>
+    <div className="w-full">
+      {isDataEmpty ? (
+        <div className="text-center text-red-500">No courses found.</div>
+      ) : (
+        <Table<GetCourseResponsePageData>
+          columns={columns}
+          dataSource={filteredCourses}
+          rowKey="_id"
+          className="w-full shadow-md rounded-lg overflow-hidden"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} courses`,
+          }}
+        />
       )}
+
+      <Modal
+        title="Change Course Status"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Confirm"
+        cancelText="Cancel"
+      >
+        <Form>
+          <Form.Item label="Reason for rejection ">
+            <Input.TextArea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Please provide a reason"
+            />
+          </Form.Item>
+
+        </Form>
+      </Modal>
+
     </div>
   );
 };

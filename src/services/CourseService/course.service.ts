@@ -1,14 +1,20 @@
 import { BaseService } from "../config/base.service";
 import { API } from "../../const/path.api"
 import { ApiResponse } from "../../model/ApiResponse";
-import { GetCourseRequest, ChangeStatusCourseRequest,CreateCourseRequest,GetPublicCourseRequest,UpdateCourseRequest } from "../../model/admin/request/Course.request";
-import { CreateCourseResponse, GetCourseResponse, GetPublicCourseResponse, GetCourseByIdResponse, UpdateCourseResponse, GetPublicCourseDetailResponse} from "../../model/admin/response/Course.response";
+import { GetCourseRequest, ChangeStatusCourseRequest, CreateCourseRequest, GetPublicCourseRequest, UpdateCourseRequest, GetCourseLogRequest } from "../../model/admin/request/Course.request";
+import { CreateCourseResponse, GetCourseResponse, GetPublicCourseResponse, GetCourseByIdResponse, UpdateCourseResponse, GetPublicCourseDetailResponse, CourseLogResponse } from "../../model/admin/response/Course.response";
 
 export const CourseService = {
   //instructor & admin
-      getCourse(params: GetCourseRequest) {
+  getCourse(params: GetCourseRequest) {
     return BaseService.post<ApiResponse<GetCourseResponse>>({
       url: API.COURSE.GET_COURSES,
+      payload: params
+    });
+  },
+  getCourseLog(params: GetCourseLogRequest) {
+    return BaseService.post<ApiResponse<CourseLogResponse>>({
+      url: API.COURSE.GET_COURSE_LOG,
       payload: params
     });
   },

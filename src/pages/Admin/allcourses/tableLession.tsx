@@ -1,108 +1,94 @@
+import { useState, useEffect, useCallback } from "react";
 import { Table } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import SearchComponent from "../../../components/StudentComponents/search";
+import { LessonService } from "../../../services/LessonService/lesson.service";
+import { Lesson } from "../../../model/admin/response/Lesson.response";
 
-export type Lession = {
-  key: string;
-  Name: string;
-  CourseName: string;
-  Type: string;
-  Fulltime: string;
-  CreatedAt: string;
-  Media: string;
+const TableLesson = () => {
+  const [lessonsData, setLessonsData] = useState<Lesson["pageData"]>([]);
+
+  const fetchLesson = useCallback(async () => {
+    const response = await LessonService.getLesson({
+      searchCondition: {
+        keyword: "",
+        course_id: "",
+        is_delete: false,
+        is_position_order: false,
+      },
+      pageInfo: { pageNum: 1, pageSize: 100 },
+    });
+    if (response.data) {
+      const lessons = Array.isArray(response.data.data.pageData) ? response.data.data.pageData : [response.data.data.pageData];
+      setLessonsData(lessons);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchLesson();
+  }, [fetchLesson])
+
+
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Course Name",
+      dataIndex: "course_name",
+      key: "course_name",
+    },
+    {
+      title: "User Name",
+      dataIndex: "user_name",
+      key: "name",
+    },
+    {
+      title: "Lesson Type",
+      dataIndex: "lesson_type",
+      key: "lesson_type",
+    },
+    {
+      title: "Full Time",
+      dataIndex: "full_time",
+      key: "full_time",
+    },
+    {
+      title: "Created At",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (created_at: string) => new Date(created_at).toLocaleDateString(),
+    },
+    {
+      title: "Media",
+      dataIndex: "video_url",
+      key: "video_url",
+      render: (video_url: string) =>
+        video_url ? (
+          <video width="200" controls style={{ borderRadius: "7px" }}>
+            <source src={video_url} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        ) : (
+          "No video available"
+        ),
+    },
+
+  ];
+
+  return (
+    <Table
+      dataSource={lessonsData}
+      columns={columns}
+      rowKey="key"
+      className="w-full shadow-md rounded-lg overflow-hidden"
+      pagination={{
+        pageSize: 10,
+        showSizeChanger: true,
+        showQuickJumper: true,
+      }}
+    />
+  );
 };
 
-const dataSource: Lession[] = [
-  {
-    key: "1",
-    Name: "Intro to JavaScript",
-    CourseName: "JavaScript Basics",
-    Type: "Video",
-    Fulltime: "1h 30m",
-    CreatedAt: "2023-01-15",
-    Media: "Video",
-  },
-  {
-    key: "2",
-    Name: "CSS Grid Layout",
-    CourseName: "Advanced CSS",
-    Type: "Article",
-    Fulltime: "45m",
-    CreatedAt: "2023-02-22",
-    Media: "PDF",
-  },
-  {
-    key: "3",
-    Name: "React State Management",
-    CourseName: "React for Beginners",
-    Type: "Video",
-    Fulltime: "2h 10m",
-    CreatedAt: "2023-03-12",
-    Media: "Video",
-  },
-  // More data here...
-];
-
-const columns: ColumnsType<Lession> = [
-  {
-    title: "Lession Name",
-    dataIndex: "Name",
-    key: "name",
-  },
-  {
-    title: "Course Name",
-    dataIndex: "CourseName",
-    key: "courseName",
-  },
-  {
-    title: "Type",
-    dataIndex: "Type",
-    key: "type",
-  },
-  {
-    title: "Full Time",
-    dataIndex: "Fulltime",
-    key: "fulltime",
-  },
-  {
-    title: "Created At",
-    dataIndex: "CreatedAt",
-    key: "createdAt",
-  },
-  {
-    title: "Media",
-    dataIndex: "Media",
-    key: "media",
-    render: (_, record) =>
-      record.Media === "Video" ? (
-        <video width="200" controls>
-          <source
-            src={`https://example.com/${record.Name}.mp4`}
-            type="video/mp4"
-          />
-          Your browser does not support the video tag.
-        </video>
-      ) : (
-        <span>{record.Media}</span>
-      ),
-  },
-];
-
-function TableLession() {
-  const handleSearch = () => {
-    console.log("test");
-  };
-  return (
-    <div>
-      <div style={{ paddingBottom: "12px" }}>
-        <SearchComponent
-          placeholder="Search by Lession"
-          onSearch={handleSearch}
-        />
-      </div>
-      <Table dataSource={dataSource} columns={columns} />
-    </div>
-  );
-}
-
-export default TableLession;
+export default TableLesson;
