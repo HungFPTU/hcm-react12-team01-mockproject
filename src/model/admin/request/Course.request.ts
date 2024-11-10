@@ -1,7 +1,9 @@
+import { CourseStatusEnum } from "../../Course"; 
+
 export interface SearchCondition {
     keyword: string;
     category_id: string;
-    status: string | undefined;
+    status: CourseStatusEnum | undefined;
     is_delete: boolean;
   }
   

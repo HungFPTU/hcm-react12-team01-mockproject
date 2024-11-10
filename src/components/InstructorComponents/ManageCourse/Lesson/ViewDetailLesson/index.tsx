@@ -23,7 +23,7 @@ const ViewDetailLesson = () => {
         } else {
           message.error("No lesson data available.");
         }
-      } catch (error) {
+      } catch {
         message.error("Failed to fetch lesson details. Please try again.");
       } finally {
         setLoading(false);
