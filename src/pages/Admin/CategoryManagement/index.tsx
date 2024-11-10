@@ -34,7 +34,7 @@ const CategoryManagement: React.FC = () => {
       try {
         const searchCondition = {
           keyword: searchQuery,
-          is_parent: searchType === "Parent Category",
+          is_parent: false,
           is_delete: false,
         };
 
@@ -47,10 +47,12 @@ const CategoryManagement: React.FC = () => {
         });
 
         if (response && response.success) {
+          console.log("Fetched data:", response.data.pageData); // Log the data here
           const data = response.data.pageData;
           setCategories(data);
-          setIsDataEmpty(data.length === 0); // Check if data is empty
+          setIsDataEmpty(data.length === 0);
         }
+        
       } catch (error) {
         console.error("Failed to fetch categories:", error);
       }
@@ -60,18 +62,43 @@ const CategoryManagement: React.FC = () => {
   }, [searchQuery, searchType]);
 
   // Handle search functionality
-  const handleSearch = (query: string, type: string) => {
+  const handleSearch = async (query: string, type: string) => {
     setSearchQuery(query);
     setSearchType(type);
+  
+    // Update the search condition based on the latest query and type
+    const searchCondition = {
+      keyword: query,
+      is_parent: false,
+      is_delete: false,
+    };
+  
+    try {
+      const response = await fetchCategories({
+        searchCondition,
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      });
+  
+      if (response && response.success) {
+        const data = response.data.pageData;
+        setCategories(data);
+        setIsDataEmpty(data.length === 0);
+      }
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+    }
   };
-
+  
   // Handle adding a new category
   const handleAddCategory = async () => {
     try {
       const response = await fetchCategories({
         searchCondition: {
           keyword: searchQuery,
-          is_parent: searchType === "Parent Category",
+          is_parent: searchType === "Sub Category",
           is_delete: false,
         },
         pageInfo: {
