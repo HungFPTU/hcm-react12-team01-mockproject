@@ -42,7 +42,7 @@ export interface LessonDetailsResponse {
   video_url: string;
   image_url: string;
   full_time: number;
-  position_order: number;
+  position_order: number ;
   created_at: Date;
   updated_at: Date;
   is_deleted: boolean;
