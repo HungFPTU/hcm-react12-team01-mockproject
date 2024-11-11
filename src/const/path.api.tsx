@@ -24,6 +24,7 @@ export const API = {
       CHANGE_PASSWORD: "api/users/change-password",
       CREATE_USER: "api/users/create",
       DELETE_USER: "api/users/:id",
+      REVIEW_PROFILE_INSTRUCTOR: "/api/users/review-profile-instructor",
       
       GET_SETTING:  "/api/setting/default",
       

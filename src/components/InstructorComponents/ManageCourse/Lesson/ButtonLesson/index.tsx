@@ -3,7 +3,7 @@ import { Button, Modal, Form, Input, Select, InputNumber, message, Spin } from "
 import { Editor } from "@tinymce/tinymce-react";
 import { LessonService } from "../../../../../services/LessonService/LessionService";
 import { CourseService } from "../../../../../services/CourseService/course.service";
-import { SessionService } from "../../../../../services/SessionService/SessionService";
+import { SessionService } from "../../../../../services/SessionService/session.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
 import { Session } from "../../../../../model/admin/response/Sesson.resonse";
 import { CreateLessonRequest } from "../../../../../model/admin/request/Lesson.request";
@@ -82,7 +82,7 @@ const ButtonLesson = () => {
   }, [searchQuery]);
 
   useEffect(() => {
-    SessionService.getSessons()
+    SessionService.getSessions()
       .then((response) => {
         if (response && response.data && response.data.data) {
           setSessionData(response.data.data.pageData);

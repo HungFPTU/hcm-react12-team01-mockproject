@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, Modal, Form, Input, Select, Radio, message } from "antd";
-
 import { CreateCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { CategoryService } from "../../../../../services/category/category.service";
@@ -14,6 +13,31 @@ const ButtonCourse = () => {
 
   const showModal = () => {
     setIsModalVisible(true);
+
+    // Fetch categories only if they haven't been loaded already
+    if (categoryData.length === 0) {
+      const params = {
+        searchCondition: {
+          keyword: "",
+          is_parent: true,
+          is_delete: false,
+        },
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      };
+
+      CategoryService.getCategory(params)
+        .then((response) => {
+          if (response && response.data && response.data.data) {
+            setCategoryData(response.data.data.pageData);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching categories:", error);
+        });
+    }
   };
 
   const handleCancel = () => {
@@ -22,8 +46,7 @@ const ButtonCourse = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      const content = values.content || ""; // Lấy nội dung từ TextArea
-      console.log(">>>>>>>>>>>values", values);
+      const content = values.content || ""; 
       const price = Number(values.price);
       const discount = Number(values.discount);
 
@@ -41,7 +64,6 @@ const ButtonCourse = () => {
 
       const response = await CourseService.createCourse(newCourse);
       if (response && response.data.success) {
-
         message.success("Khóa học đã được tạo thành công!");
         console.log("API Response:", response);
       }
@@ -50,30 +72,6 @@ const ButtonCourse = () => {
       console.error("Error creating course:", error);
     }
   };
-
-  useEffect(() => {
-    const params = {
-      searchCondition: {
-        keyword: "",
-        is_parent: true,
-        is_delete: false,
-      },
-      pageInfo: {
-        pageNum: 1,
-        pageSize: 10,
-      },
-    };
-
-    CategoryService.getCategory(params)
-      .then((response) => {
-        if (response && response.data && response.data.data) {
-          setCategoryData(response.data.data.pageData);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-      });
-  }, []);
 
   return (
     <>
@@ -116,6 +114,7 @@ const ButtonCourse = () => {
             name="description"
             label="Description"
             labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
           >
             <Input.TextArea placeholder="Nhập mô tả khóa học" />
           </Form.Item>
@@ -129,11 +128,11 @@ const ButtonCourse = () => {
             <Input.TextArea placeholder="Nhập nội dung khóa học" />
           </Form.Item>
 
-          <Form.Item name="image_url" label="Image URL">
+          <Form.Item name="image_url" label="Image URL" rules={[{ required: true }]}>
             <Input placeholder="Nhập đường dẫn hình ảnh" />
           </Form.Item>
 
-          <Form.Item name="video_url" label="Video URL">
+          <Form.Item name="video_url" label="Video URL" >
             <Input placeholder="Nhập đường dẫn video" />
           </Form.Item>
 
@@ -157,13 +156,13 @@ const ButtonCourse = () => {
               type="number"
               placeholder="Nhập giá khóa học"
               onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9]/g, ""); // Loại bỏ ký tự không phải số
+                const value = e.target.value.replace(/[^0-9]/g, "");
                 e.target.value = value;
               }}
             />
           </Form.Item>
 
-          <Form.Item name="discount" label="Discount" labelCol={{ span: 24 }}>
+          <Form.Item name="discount" label="Discount" labelCol={{ span: 24 }} rules={[{ required: true }]}>
             <Input
               type="number"
               placeholder="Nhập phần trăm giảm giá (nếu có)"

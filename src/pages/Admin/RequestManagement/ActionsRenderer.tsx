@@ -4,12 +4,11 @@ import { Button } from "antd";
 
 interface ActionsRendererProps {
   requestKey: string;
-  onApprove: (key: string) => void;
-  onReject: (key: string) => void;
+  onApprove: () => void;
+  onReject: () => void;
 }
 
 const ActionsRenderer: React.FC<ActionsRendererProps> = ({
-  requestKey,
   onApprove,
   onReject,
 }) => {
@@ -17,12 +16,12 @@ const ActionsRenderer: React.FC<ActionsRendererProps> = ({
     <>
       <Button
         type="primary"
-        onClick={() => onApprove(requestKey)}
+        onClick={onApprove}
         style={{ marginRight: 8 }}
       >
         Approve
       </Button>
-      <Button type="primary" danger onClick={() => onReject(requestKey)}>
+      <Button type="primary" danger onClick={onReject}>
         Reject
       </Button>
     </>
