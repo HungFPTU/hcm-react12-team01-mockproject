@@ -19,10 +19,11 @@ const RequestManagement: React.FC = () => {
   const [requests, setRequests] = useState<Request[]>([]);
   const [filteredRequests, setFilteredRequests] = useState<Request[]>([]);
 
-  // State cho modal và lý do từ chối
+  // State cho modal reject và confirm modal approve
   const [isRejectModalVisible, setIsRejectModalVisible] = useState<boolean>(false);
   const [rejectReason, setRejectReason] = useState<string>(''); // Lý do từ chối
   const [currentRequestKey, setCurrentRequestKey] = useState<string>('');
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState<boolean>(false); // Modal xác nhận duyệt
 
   useEffect(() => {
     UserService.getUsersWatingManager()
@@ -59,53 +60,68 @@ const RequestManagement: React.FC = () => {
     setFilteredRequests(filtered);
   };
 
-  const handleApprove = (key: string) => {
-    UserService.reviewProfileInstructor(key, "approve")
-      .then((response) => {
+  const handleApprove = () => {
+    // Gọi API để duyệt yêu cầu
+    UserService.reviewProfileInstructor({
+        userId: currentRequestKey, // Truyền userId
+        status: "approve" // Truyền status là "approve"
+    })
+    .then((response) => {
         if (response.data.success) {
-          message.success(`Request with key ${key} approved.`);
-          setRequests((prevRequests) =>
-            prevRequests.filter((request) => request.key !== key)
-          );
-          setFilteredRequests((prevFilteredRequests) =>
-            prevFilteredRequests.filter((request) => request.key !== key)
-          );
+            message.success(`Request with key ${currentRequestKey} approved.`);
+            setRequests((prevRequests) =>
+                prevRequests.filter((request) => request.key !== currentRequestKey)
+            );
+            setFilteredRequests((prevFilteredRequests) =>
+                prevFilteredRequests.filter((request) => request.key !== currentRequestKey)
+            );
+            setIsConfirmModalVisible(false); // Đóng modal xác nhận
         } else {
-          message.error("Failed to approve request.");
+            message.error("Failed to approve request.");
         }
-      })
-      .catch(() => {
+    })
+    .catch(() => {
         message.error("Error approving request.");
-      });
+    });
+};
+
+
+  const showConfirmModal = (key: string) => {
+    setCurrentRequestKey(key); // Lưu key yêu cầu đang duyệt
+    setIsConfirmModalVisible(true); // Hiển thị modal xác nhận
   };
 
   const handleReject = () => {
     if (!rejectReason) {
-      message.error("Please provide a reason for rejection.");
-      return;
+        message.error("Please provide a reason for rejection.");
+        return;
     }
-  
+
     // Gọi API với lý do từ chối
-    UserService.reviewProfileInstructor(currentRequestKey, "reject", rejectReason)
-      .then((response) => {
+    UserService.reviewProfileInstructor({
+        userId: currentRequestKey, // Truyền userId
+        status: "reject", // Truyền status là "reject"
+        comment: rejectReason // Thêm lý do từ chối
+    })
+    .then((response) => {
         if (response.data.success) {
-          message.success(`Request with key ${currentRequestKey} rejected.`);
-          setRequests((prevRequests) =>
-            prevRequests.filter((request) => request.key !== currentRequestKey)
-          );
-          setFilteredRequests((prevFilteredRequests) =>
-            prevFilteredRequests.filter((request) => request.key !== currentRequestKey)
-          );
-          setIsRejectModalVisible(false); // Đóng modal sau khi từ chối
+            message.success(`Request with key ${currentRequestKey} rejected.`);
+            setRequests((prevRequests) =>
+                prevRequests.filter((request) => request.key !== currentRequestKey)
+            );
+            setFilteredRequests((prevFilteredRequests) =>
+                prevFilteredRequests.filter((request) => request.key !== currentRequestKey)
+            );
+            setIsRejectModalVisible(false); // Đóng modal reject
         } else {
-          message.error("Failed to reject request.");
+            message.error("Failed to reject request.");
         }
-      })
-      .catch(() => {
+    })
+    .catch(() => {
         message.error("Error rejecting request.");
-      });
-  };
-  
+    });
+};
+
 
   const showRejectModal = (key: string) => {
     setCurrentRequestKey(key);  // Set the current request key
@@ -146,8 +162,8 @@ const RequestManagement: React.FC = () => {
       render: (_: any, record: any) => (
         <ActionsRenderer
           requestKey={record.key}
-          onApprove={() => handleApprove(record.key)}
-          onReject={() => showRejectModal(record.key)} // Show the reject modal
+          onApprove={() => showConfirmModal(record.key)} // Hiển thị modal xác nhận
+          onReject={() => showRejectModal(record.key)} // Hiển thị modal từ chối
         />
       ),
     },
@@ -183,17 +199,33 @@ const RequestManagement: React.FC = () => {
         ]}
       >
         <Form>
-        <Form.Item label="Reason for rejection">
-        <Input.TextArea
-          value={rejectReason} // Gán giá trị từ rejectReason
-          onChange={(e) => setRejectReason(e.target.value)}  // Cập nhật state rejectReason khi thay đổi
-          placeholder="Please provide a reason for rejection"
-          rows={4}
-        />
-        </Form.Item>
+          <Form.Item label="Reason for rejection">
+            <Input.TextArea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Please provide a reason for rejection"
+              rows={4}
+            />
+          </Form.Item>
         </Form>
       </Modal>
 
+      {/* Modal Confirm Approve */}
+      <Modal
+        title="Confirm Approval"
+        visible={isConfirmModalVisible}
+        onCancel={() => setIsConfirmModalVisible(false)}
+        footer={[
+          <Button key="back" onClick={() => setIsConfirmModalVisible(false)}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleApprove}>
+            Confirm
+          </Button>,
+        ]}
+      >
+        <p>Are you sure you want to approve this request?</p>
+      </Modal>
     </div>
   );
 };
