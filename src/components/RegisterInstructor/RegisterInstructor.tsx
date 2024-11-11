@@ -20,6 +20,7 @@ interface RegisterInstructorProps {
 const RegisterInstructor = ({ handleChange, handleBlur, values }: RegisterInstructorProps) => {
     return (
         <div>
+            {/* Phone Number */}
             <div className="relative my-2">
                 <Field
                     as={Input}
@@ -33,6 +34,7 @@ const RegisterInstructor = ({ handleChange, handleBlur, values }: RegisterInstru
                 <ErrorMessage name="phone_number" component="div" className="text-red-500 text-sm absolute -bottom-5" />
             </div>
 
+            {/* Description */}
             <div className="relative my-6">
                 <Field
                     as={Input.TextArea}
@@ -45,6 +47,7 @@ const RegisterInstructor = ({ handleChange, handleBlur, values }: RegisterInstru
                 <ErrorMessage name="description" component="div" className="text-red-500 text-sm absolute -bottom-5" />
             </div>
 
+            {/* Avatar URL */}
             <div className="relative my-6">
                 <Field
                     as={Input}
@@ -55,9 +58,10 @@ const RegisterInstructor = ({ handleChange, handleBlur, values }: RegisterInstru
                     onBlur={handleBlur}
                     value={values.avatar_url}
                 />
-                <ErrorMessage name="avatar" component="div" className="text-red-500 text-sm absolute -bottom-5" />
+                <ErrorMessage name="avatar_url" component="div" className="text-red-500 text-sm absolute -bottom-5" />
             </div>
 
+            {/* Video URL */}
             <div className="relative my-6">
                 <Field
                     as={Input}
@@ -68,7 +72,49 @@ const RegisterInstructor = ({ handleChange, handleBlur, values }: RegisterInstru
                     onBlur={handleBlur}
                     value={values.video_url}
                 />
-                <ErrorMessage name="video" component="div" className="text-red-500 text-sm absolute -bottom-5" />
+                <ErrorMessage name="video_url" component="div" className="text-red-500 text-sm absolute -bottom-5" />
+            </div>
+
+            {/* Bank Name */}
+            <div className="relative my-6">
+                <Field
+                    as={Input}
+                    name="bank_name"
+                    type="text"
+                    placeholder="Bank Name"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.bank_name}
+                />
+                <ErrorMessage name="bank_name" component="div" className="text-red-500 text-sm absolute -bottom-5" />
+            </div>
+
+            {/* Bank Account Number */}
+            <div className="relative my-6">
+                <Field
+                    as={Input}
+                    name="bank_account_no"
+                    type="text"
+                    placeholder="Bank Account Number"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.bank_account_no}
+                />
+                <ErrorMessage name="bank_account_no" component="div" className="text-red-500 text-sm absolute -bottom-5" />
+            </div>
+
+            {/* Bank Account Name */}
+            <div className="relative my-6">
+                <Field
+                    as={Input}
+                    name="bank_account_name"
+                    type="text"
+                    placeholder="Bank Account Name"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.bank_account_name}
+                />
+                <ErrorMessage name="bank_account_name" component="div" className="text-red-500 text-sm absolute -bottom-5" />
             </div>
         </div>
     );
