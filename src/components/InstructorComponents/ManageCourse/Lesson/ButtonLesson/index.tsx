@@ -106,10 +106,7 @@ const ButtonLesson = () => {
       const description = editorRef.current
         ? editorRef.current.getContent()
         : ""; // Lấy nội dung từ editor
-        const positionOrder = values.position_order
-          ? Number(values.position_order)
-          : 1;
-          console.log(positionOrder);
+       
           
 
       // Tạo đối tượng bài học dựa vào loại bài học
@@ -304,7 +301,7 @@ const ButtonLesson = () => {
           </Form.Item>
 
           <Form.Item
-            name="positionOrder"
+            name="position_order"
             label="Position Order"
             labelCol={{ span: 24 }}
             initialValue={1} // Giá trị mặc định là 1 nếu không nhập
