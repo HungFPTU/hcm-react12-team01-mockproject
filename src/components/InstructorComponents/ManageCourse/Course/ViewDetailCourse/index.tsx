@@ -1,15 +1,18 @@
-import { useState, useEffect, useCallback,useRef } from 'react';
-import { Descriptions, message, Image, Spin } from 'antd';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Descriptions, message, Image, Spin, Button } from 'antd';
 import { GetCourseByIdResponse } from "../../../../../model/admin/response/Course.response";
 import { CourseService } from '../../../../../services/CourseService/course.service';
 import { useParams } from 'react-router-dom';
-
+import UpdateDetailCourse from '../UpdateDetailCourse'; // Import modal Update
 
 const ViewDetailCourse = () => {
   const { id } = useParams<{ id: string }>();
   const [course, setCourse] = useState<GetCourseByIdResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isModalVisible, setIsModalVisible] = useState(false); // State to show/hide modal
+  const [isUpdated, setIsUpdated] = useState(false); // Flag to refresh data after update
   const hasMounted = useRef(false);
+
   const fetchCourseDetails = useCallback(
     async (courseId: string) => {
       try {
@@ -37,14 +40,35 @@ const ViewDetailCourse = () => {
     if (id) {
       fetchCourseDetails(id);
     }
-  }, [id, fetchCourseDetails]);
+  }, [id, fetchCourseDetails, isUpdated]); // Add isUpdated to refetch data after update
+
+  const handleEditClick = () => {
+    setIsModalVisible(true); // Show the modal when edit is clicked
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleUpdateSuccess = () => {
+    setIsUpdated(!isUpdated); // Refresh the course data after successful update
+    setIsModalVisible(false); // Close modal after update
+  };
 
   if (loading) return <Spin tip="Loading course details..." />;
 
   if (!course) return <div>Course not found</div>;
 
   return (
-    <Descriptions title="Course Details" bordered column={1}>
+    <div>
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-xl font-semibold">Course Details</h2> {/* Tiêu đề */}
+      <Button type="primary" onClick={handleEditClick}>
+        Edit
+      </Button> {/* Nút Edit */}
+    </div>
+
+    <Descriptions title={false} bordered column={1}>
       <Descriptions.Item label="Title">{course.name}</Descriptions.Item>
       <Descriptions.Item label="Status">{course.status}</Descriptions.Item>
       <Descriptions.Item label="Price">${course.price}</Descriptions.Item>
@@ -62,6 +86,16 @@ const ViewDetailCourse = () => {
       <Descriptions.Item label="Created At">{new Date(course.created_at).toLocaleDateString()}</Descriptions.Item>
       <Descriptions.Item label="Updated At">{new Date(course.updated_at).toLocaleDateString()}</Descriptions.Item>
     </Descriptions>
+
+    {/* Modal for update */}
+    {isModalVisible && course && (
+      <UpdateDetailCourse
+        course={course}
+        onClose={handleCloseModal}
+        onUpdate={handleUpdateSuccess}
+      />
+    )}
+  </div>
   );
 };
 

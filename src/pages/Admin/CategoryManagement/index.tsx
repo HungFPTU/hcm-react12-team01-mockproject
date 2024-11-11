@@ -98,7 +98,7 @@ const CategoryManagement: React.FC = () => {
       const response = await fetchCategories({
         searchCondition: {
           keyword: searchQuery,
-          is_parent: searchType === "Sub Category",
+          is_parent: false,
           is_delete: false,
         },
         pageInfo: {

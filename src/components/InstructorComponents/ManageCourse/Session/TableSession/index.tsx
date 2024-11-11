@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { Table, Button, Popover, Spin, Modal, message, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import { SessionService } from "../../../../../services/SessionService/session.service";
@@ -8,8 +8,11 @@ const TableSession = () => {
   const navigate = useNavigate();
   const [sessionsData, setSessionsData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const hasMounted = useRef(false);
 
   useEffect(() => {
+    if (hasMounted.current) return;
+    hasMounted.current = true;
     const fetchSessions = async () => {
       try {
         setLoading(true);
