@@ -26,46 +26,44 @@ const CourseTable = () => {
       console.error("Fail to fetch courses:", error);
     }
   };
+  const fetchCoursesData = async () => {
+    try {
+      setLoading(true);
+      const searchCondition = {
+        keyword: searchQuery,
+        category_id: "",
+        status: undefined,
 
+        is_delete: false,
+      };
+
+      const response = await fetchCourse({
+        searchCondition,
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      });
+
+      if (response && response.success) {
+        setLoading(false);
+
+        const data = response.data.pageData;
+        setCoursesData(data);
+        setIsDataEmpty(data.length === 0);
+      }
+    } catch (error) {
+      console.error("Failed to fetch courses:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     if (hasMounted.current) return;
     hasMounted.current = true;
 
-    const fetchCoursesData = async () => {
-      try {
-        setLoading(true);
-        const searchCondition = {
-          keyword: searchQuery,
-          category_id: "",
-          status: undefined,
-
-          is_delete: false,
-        };
-
-        const response = await fetchCourse({
-          searchCondition,
-          pageInfo: {
-            pageNum: 1,
-            pageSize: 10,
-          },
-        });
-
-        if (response && response.success) {
-          setLoading(false);
-
-          const data = response.data.pageData;
-          setCoursesData(data);
-          setIsDataEmpty(data.length === 0);
-        }
-      } catch (error) {
-        console.error("Failed to fetch courses:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCoursesData();
-  }, [searchQuery]);
+  });
 
   const filteredCourses = coursesData.filter((course) =>
     course.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -83,7 +81,6 @@ const CourseTable = () => {
         comment: `Changed status to ${status}`,
       });
       if (response && response.data.success) {
-
         setCoursesData((prevCourses) =>
           prevCourses.map((course) =>
             course._id === id ? { ...course, status } : course
@@ -103,7 +100,11 @@ const CourseTable = () => {
       const course = coursesData.find((course) => course._id === courseId);
       if (!course) return;
 
-      if (![CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(course.status)) {
+      if (
+        ![CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(
+          course.status
+        )
+      ) {
         message.error("Invalid course status for sending.");
         return;
       }
@@ -123,7 +124,6 @@ const CourseTable = () => {
         );
         message.success("Course status updated to Waiting for Approval!");
       }
-
     } catch (error) {
       console.error("Error sending course:", error);
     }
@@ -249,9 +249,7 @@ const CourseTable = () => {
       dataIndex: "price",
       key: "price",
       render: (price: number) => (
-        <div className="text-right">
-          {price.toLocaleString()} VND
-        </div>
+        <div className="text-right">{price.toLocaleString()} VND</div>
       ),
     },
     {
@@ -259,9 +257,7 @@ const CourseTable = () => {
       dataIndex: "discount",
       key: "discount",
       render: (discount: number) => (
-        <div className="text-right">
-          {discount}%
-        </div>
+        <div className="text-right">{discount}%</div>
       ),
     },
     {
@@ -269,9 +265,7 @@ const CourseTable = () => {
       dataIndex: "session_count",
       key: "session_count",
       render: (session_count: number) => (
-        <div className="text-right">
-          {session_count}
-        </div>
+        <div className="text-right">{session_count}</div>
       ),
     },
     {
@@ -279,9 +273,7 @@ const CourseTable = () => {
       dataIndex: "lesson_count",
       key: "lesson_count",
       render: (lesson_count: number) => (
-        <div className="text-right">
-          {lesson_count}
-        </div>
+        <div className="text-right">{lesson_count}</div>
       ),
     },
     {
@@ -320,10 +312,11 @@ const CourseTable = () => {
                     onChangeStatus(record._id, newStatus);
                   }}
                   disabled={!canChangeStatus}
-                  className={`transition-all duration-300 ${record.status === CourseStatusEnum.Active
-                    ? "bg-blue-500"
-                    : "bg-gray-500"
-                    }`}
+                  className={`transition-all duration-300 ${
+                    record.status === CourseStatusEnum.Active
+                      ? "bg-blue-500"
+                      : "bg-gray-500"
+                  }`}
                 />
               </Popover>
             )}
@@ -354,7 +347,9 @@ const CourseTable = () => {
             </Button>
           </Popover>
 
-          {([CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(record.status)) && (
+          {[CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(
+            record.status
+          ) && (
             <Popover content="Send course to admin">
               <Button
                 className="bg-green-400 hover:bg-green-600 text-white"
