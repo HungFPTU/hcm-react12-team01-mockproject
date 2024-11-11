@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback,useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Table, Button, Popover, Modal, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LessonService } from "../../../../../services/LessonService/lesson.service";
@@ -9,7 +9,6 @@ const TableLesson = () => {
   const navigate = useNavigate();
   const [lessonsData, setLessonsData] = useState<Lesson["pageData"]>([]);
   const hasMounted = useRef(false);
-
 
   const fetchLesson = useCallback(async () => {
     const response = await LessonService.getLesson({
@@ -22,7 +21,9 @@ const TableLesson = () => {
       pageInfo: { pageNum: 1, pageSize: 100 },
     });
     if (response.data) {
-      const lessons = Array.isArray(response.data.data.pageData) ? response.data.data.pageData : [response.data.data.pageData];
+      const lessons = Array.isArray(response.data.data.pageData)
+        ? response.data.data.pageData
+        : [response.data.data.pageData];
       setLessonsData(lessons);
     }
   }, []);
@@ -31,8 +32,7 @@ const TableLesson = () => {
     if (hasMounted.current) return;
     hasMounted.current = true;
     fetchLesson();
-  }, [fetchLesson])
-
+  }, [fetchLesson]);
 
   const handleDeleteCourse = async (lessonId: string) => {
     try {
@@ -93,18 +93,9 @@ const TableLesson = () => {
       render: (created_at: string) => new Date(created_at).toLocaleDateString(),
     },
     {
-      title: "Media",
-      dataIndex: "video_url",
-      key: "video_url",
-      render: (video_url: string) =>
-        video_url ? (
-          <video width="200" controls style={{ borderRadius: "7px" }}>
-            <source src={video_url} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        ) : (
-          "No video available"
-        ),
+      title: "Lesson Type",
+      dataIndex: "lesson_type",
+      key: "lesson_type",
     },
     {
       title: "Action",

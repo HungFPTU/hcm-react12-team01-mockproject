@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Button, Modal, Form, Input, Select, Radio, message } from "antd";
 import { CreateCourseRequest } from "../../../../../model/admin/request/Course.request";
@@ -10,7 +11,7 @@ const { Option } = Select;
 const ButtonCourse = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [categoryData, setCategoryData] = useState<Category[]>([]);
-  const [courseType, setCourseType] = useState("paid"); // State để điều chỉnh hiển thị trường Price và Discount
+  const [courseType, setCourseType] = useState("free"); // State để điều chỉnh hiển thị trường Price và Discount
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -153,7 +154,19 @@ const ButtonCourse = () => {
               style={{ width: "100%" }}
             />
           </Form.Item>
-
+          <Form.Item
+            name="courseType"
+            label="Course Type"
+            labelCol={{ span: 24 }}
+          >
+            <Radio.Group
+              onChange={(e) => setCourseType(e.target.value)}
+              defaultValue="free"
+            >
+              <Radio value="free">Free</Radio>
+              <Radio value="paid">Paid</Radio>
+            </Radio.Group>
+          </Form.Item>
           {courseType === "paid" && (
             <Form.Item
               name="price"
@@ -195,17 +208,6 @@ const ButtonCourse = () => {
               />
             </Form.Item>
           )}
-
-          <Form.Item
-            name="courseType"
-            label="Course Type"
-            labelCol={{ span: 24 }}
-          >
-            <Radio.Group onChange={(e) => setCourseType(e.target.value)}>
-              <Radio value="free">Free</Radio>
-              <Radio value="paid">Paid</Radio>
-            </Radio.Group>
-          </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
