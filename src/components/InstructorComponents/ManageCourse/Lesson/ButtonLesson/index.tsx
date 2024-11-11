@@ -1,5 +1,14 @@
 import { useEffect, useState, useRef } from "react";
-import { Button, Modal, Form, Input, Select, InputNumber, message, Spin } from "antd";
+import {
+  Button,
+  Modal,
+  Form,
+  Input,
+  Select,
+  InputNumber,
+  message,
+  Spin,
+} from "antd";
 import { Editor } from "@tinymce/tinymce-react";
 import { LessonService } from "../../../../../services/LessonService/LessionService";
 import { CourseService } from "../../../../../services/CourseService/course.service";
@@ -69,7 +78,6 @@ const ButtonLesson = () => {
 
           const data = response.data.pageData;
           setCoursesData(data);
-
         }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
@@ -98,6 +106,8 @@ const ButtonLesson = () => {
       const description = editorRef.current
         ? editorRef.current.getContent()
         : ""; // Lấy nội dung từ editor
+       
+          
 
       // Tạo đối tượng bài học dựa vào loại bài học
       const newLesson: CreateLessonRequest = {
@@ -122,7 +132,6 @@ const ButtonLesson = () => {
       if (response && response.data.success) {
         console.log("API Response:", response);
         message.success("Bài học đã được tạo thành công!");
-
       }
 
       setIsModalVisible(false);
@@ -142,6 +151,7 @@ const ButtonLesson = () => {
   const handleLessonTypeChange = (value: string) => {
     setLessonType(value);
   };
+
   if (loading) return <Spin tip="Loading course details..." />;
 
   return (
@@ -212,48 +222,50 @@ const ButtonLesson = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name="description"
-            label="Description"
-            labelCol={{ span: 24 }}
-          >
-            <Editor
-              onInit={(_evt, editor) => (editorRef.current = editor)}
-              apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
-              init={{
-                width: "100%",
-                height: 300,
-                plugins: [
-                  "advlist",
-                  "autolink",
-                  "link",
-                  "image",
-                  "lists",
-                  "charmap",
-                  "preview",
-                  "anchor",
-                  "pagebreak",
-                  "searchreplace",
-                  "wordcount",
-                  "visualblocks",
-                  "code",
-                  "fullscreen",
-                  "insertdatetime",
-                  "media",
-                  "table",
-                  "emoticons",
-                  "help",
-                ],
-                toolbar:
-                  "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | " +
-                  "bullist numlist outdent indent | link image | print preview media fullscreen | " +
-                  "forecolor backcolor emoticons | help",
-                menubar: "file edit view insert format tools table help",
-                content_style:
-                  "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
-              }}
-            />
-          </Form.Item>
+          {lessonType === "text" && (
+            <Form.Item
+              name="description"
+              label="Description"
+              labelCol={{ span: 24 }}
+            >
+              <Editor
+                onInit={(_evt, editor) => (editorRef.current = editor)}
+                apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
+                init={{
+                  width: "100%",
+                  height: 300,
+                  plugins: [
+                    "advlist",
+                    "autolink",
+                    "link",
+                    "image",
+                    "lists",
+                    "charmap",
+                    "preview",
+                    "anchor",
+                    "pagebreak",
+                    "searchreplace",
+                    "wordcount",
+                    "visualblocks",
+                    "code",
+                    "fullscreen",
+                    "insertdatetime",
+                    "media",
+                    "table",
+                    "emoticons",
+                    "help",
+                  ],
+                  toolbar:
+                    "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | " +
+                    "bullist numlist outdent indent | link image | print preview media fullscreen | " +
+                    "forecolor backcolor emoticons | help",
+                  menubar: "file edit view insert format tools table help",
+                  content_style:
+                    "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
+                }}
+              />
+            </Form.Item>
+          )}
 
           {lessonType === "video" && (
             <Form.Item
@@ -268,7 +280,7 @@ const ButtonLesson = () => {
             </Form.Item>
           )}
 
-          {(lessonType === "text" || lessonType === "image") && (
+          {lessonType === "image" && (
             <Form.Item
               name="image_url"
               label="Image URL"
@@ -292,8 +304,16 @@ const ButtonLesson = () => {
             name="position_order"
             label="Position Order"
             labelCol={{ span: 24 }}
+            initialValue={1} // Giá trị mặc định là 1 nếu không nhập
+            rules={[
+              {
+                type: "number",
+                min: 0,
+                message: "Position order must be a non-negative number",
+              },
+            ]}
           >
-            <InputNumber style={{ width: "100%" }} />
+            <InputNumber style={{ width: "100%" }} min={0} />
           </Form.Item>
 
           <Form.Item>
