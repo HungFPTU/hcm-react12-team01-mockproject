@@ -116,6 +116,7 @@ const ButtonCourse = () => {
             name="description"
             label="Description"
             labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
           >
             <Input.TextArea placeholder="Nhập mô tả khóa học" />
           </Form.Item>
@@ -129,11 +130,11 @@ const ButtonCourse = () => {
             <Input.TextArea placeholder="Nhập nội dung khóa học" />
           </Form.Item>
 
-          <Form.Item name="image_url" label="Image URL">
+          <Form.Item name="image_url" label="Image URL" rules={[{ required: true }]}>
             <Input placeholder="Nhập đường dẫn hình ảnh" />
           </Form.Item>
 
-          <Form.Item name="video_url" label="Video URL">
+          <Form.Item name="video_url" label="Video URL" >
             <Input placeholder="Nhập đường dẫn video" />
           </Form.Item>
 
@@ -163,7 +164,7 @@ const ButtonCourse = () => {
             />
           </Form.Item>
 
-          <Form.Item name="discount" label="Discount" labelCol={{ span: 24 }}>
+          <Form.Item name="discount" label="Discount" labelCol={{ span: 24 }} rules={[{ required: true }]}>
             <Input
               type="number"
               placeholder="Nhập phần trăm giảm giá (nếu có)"
