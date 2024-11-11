@@ -1,10 +1,11 @@
-import React, { useState,useRef } from 'react';
-import { Modal, Input, Form, Button, message, Select } from 'antd';
+import React, { useEffect, useState, useRef } from 'react';
+import { Modal, Input, Form, Button, message, Select, Spin } from 'antd';
 import { LessonService } from '../../../../../services/LessonService/lesson.service';
+import { CourseService } from '../../../../../services/CourseService/course.service';
+import { SessionService } from '../../../../../services/SessionService/session.service';
 import { LessonDetailsResponse } from '../../../../../model/admin/response/Lesson.response';
 import { UpdateLessonRequest } from '../../../../../model/admin/request/Lesson.request';
-import { LessonTypeEnum } from '../../../../../model/Lesson'; // Đảm bảo rằng bạn import enum này đúng
-import { useNavigate } from 'react-router-dom';
+import { LessonTypeEnum } from '../../../../../model/Lesson';
 
 const { Option } = Select;
 
@@ -16,12 +17,63 @@ interface UpdateDetailLessonProps {
 
 const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose, onUpdate }) => {
     const [formData, setFormData] = useState<LessonDetailsResponse>(lesson);
-    const navigate = useNavigate();
+    const [coursesData, setCoursesData] = useState<any[]>([]);
+    const [sessionsData, setSessionsData] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [courseName, setCourseName] = useState('');
+    const [sessionName, setSessionName] = useState('');
     const hasMounted = useRef(false);
-    const handleSave = async () => {
+
+    const fetchCourses = async () => {
+        try {
+            const response = await CourseService.getCourse({
+                searchCondition: { keyword: '', category_id: '', status: undefined, is_delete: false },
+                pageInfo: { pageNum: 1, pageSize: 10 },
+            });
+            if (response?.data?.success) {
+                setCoursesData(response.data.data.pageData);
+            }
+        } catch (error) {
+            console.error("Failed to fetch courses:", error);
+        }
+    };
+
+    const fetchSessions = async () => {
+        try {
+            const response = await SessionService.getSessions();
+            if (response.data?.success && response.data.data?.pageData) {
+                setSessionsData(response.data.data.pageData);
+            }
+        } catch (error) {
+            console.error("Failed to fetch sessions:", error);
+        }
+    };
+
+    useEffect(() => {
         if (hasMounted.current) return;
-         hasMounted.current = true;
-        const lessonId = lesson._id; 
+        hasMounted.current = true;
+
+        const fetchData = async () => {
+            setLoading(true);
+            await Promise.all([fetchCourses(), fetchSessions()]);
+            setLoading(false);
+        };
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        if (coursesData.length) {
+            const matchedCourse = coursesData.find(course => course._id === formData.course_id);
+            setCourseName(matchedCourse ? matchedCourse.name : '');
+        }
+        if (sessionsData.length) {
+            const matchedSession = sessionsData.find(session => session._id === formData.session_id);
+            setSessionName(matchedSession ? matchedSession.name : '');
+        }
+    }, [coursesData, sessionsData, formData.course_id, formData.session_id]);
+
+    const handleSave = async () => {
+        const lessonId = lesson._id;
         try {
             const updateData: UpdateLessonRequest = {
                 name: formData.name,
@@ -32,25 +84,22 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                 video_url: formData.video_url || null,
                 image_url: formData.image_url || null,
                 full_time: formData.full_time,
-                position_order: formData.position_order !== null && !isNaN(formData.position_order) ? formData.position_order : 0,
+                position_order: formData.position_order || 0,
             };
-    
-            console.log("Data being sent to API:", updateData);
-    
-            // Gọi API để cập nhật bài học
+
             await LessonService.updateLesson(lessonId, updateData);
             message.success("Lesson updated successfully!");
-            navigate('/instructor/manage-course');
-            onUpdate();  // Refresh lesson data sau khi update
-            onClose();   // Đóng modal sau khi update
+            onUpdate();
+            onClose();
         } catch (error) {
             console.error("Error updating lesson:", error);
             message.error("Failed to update lesson. Please try again.");
         }
     };
-    
-    
 
+    if (loading) {
+        return <Spin tip="Loading..." />;
+    }
 
     return (
         <Modal
@@ -73,17 +122,29 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
                 </Form.Item>
-                <Form.Item label="Course Name">
-                    <Input
-                        value={formData.course_name}
-                        onChange={(e) => setFormData({ ...formData, course_name: e.target.value })}
-                    />
+                <Form.Item label="Course">
+                    <Select
+                        value={formData.course_id}
+                        onChange={(value) => setFormData({ ...formData, course_id: value })}
+                    >
+                        {coursesData.map((course) => (
+                            <Option key={course._id} value={course._id}>
+                                {course.name}
+                            </Option>
+                        ))}
+                    </Select>
                 </Form.Item>
-                <Form.Item label="Session Name">
-                    <Input
-                        value={formData.session_name}
-                        onChange={(e) => setFormData({ ...formData, session_name: e.target.value })}
-                    />
+                <Form.Item label="Session">
+                    <Select
+                        value={formData.session_id}
+                        onChange={(value) => setFormData({ ...formData, session_id: value })}
+                    >
+                        {sessionsData.map((session) => (
+                            <Option key={session._id} value={session._id}>
+                                {session.name}
+                            </Option>
+                        ))}
+                    </Select>
                 </Form.Item>
                 <Form.Item label="Lesson Type">
                     <Select
@@ -117,21 +178,18 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                 </Form.Item>
                 <Form.Item label="Time">
                     <Input
+                        type="number"
                         value={formData.full_time}
                         onChange={(e) => setFormData({ ...formData, full_time: Number(e.target.value) })}
                     />
                 </Form.Item>
                 <Form.Item label="Position Order">
                     <Input
-                        value={formData.position_order === null ? "" : formData.position_order} // Hiển thị rỗng nếu position_order là null
-                        onChange={(e) => {
-                            const value = e.target.value ? Number(e.target.value) : 0; // Nếu không nhập gì thì gán là 0
-                            setFormData({ ...formData, position_order: value });
-                        }}
+                        type="number"
+                        value={formData.position_order || 0}
+                        onChange={(e) => setFormData({ ...formData, position_order: Number(e.target.value) })}
                     />
                 </Form.Item>
-
-
             </Form>
         </Modal>
     );
