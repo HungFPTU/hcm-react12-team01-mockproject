@@ -129,7 +129,7 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                     >
                         {coursesData.map((course) => (
                             <Option key={course._id} value={course._id}>
-                                {course.name}
+                                {courseName}
                             </Option>
                         ))}
                     </Select>
@@ -141,7 +141,7 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                     >
                         {sessionsData.map((session) => (
                             <Option key={session._id} value={session._id}>
-                                {session.name}
+                                {sessionName}
                             </Option>
                         ))}
                     </Select>
