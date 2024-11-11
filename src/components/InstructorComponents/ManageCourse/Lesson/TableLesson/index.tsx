@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback,useRef } from "react";
 import { Table, Button, Popover, Modal, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LessonService } from "../../../../../services/LessonService/lesson.service";
@@ -8,7 +8,7 @@ import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 const TableLesson = () => {
   const navigate = useNavigate();
   const [lessonsData, setLessonsData] = useState<Lesson["pageData"]>([]);
-
+  const hasMounted = useRef(false);
 
 
   const fetchLesson = useCallback(async () => {
@@ -28,6 +28,8 @@ const TableLesson = () => {
   }, []);
 
   useEffect(() => {
+    if (hasMounted.current) return;
+    hasMounted.current = true;
     fetchLesson();
   }, [fetchLesson])
 

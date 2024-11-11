@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Descriptions, message, Spin, Image, Button } from 'antd';
+import { Descriptions, Spin, Image, Button } from 'antd';
 import { LessonService } from "../../../../../services/LessonService/lesson.service";
 import { LessonDetailsResponse } from "../../../../../model/admin/response/Lesson.response";
-import UpdateDetailLesson from '../UpdateDetailLession/index'; // Import modal Update
+import UpdateDetailLesson from '../UpdateDetailLesson'; 
 
 const ViewDetailLesson = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,14 +19,15 @@ const ViewDetailLesson = () => {
         setLoading(true);
         const response = await LessonService.getLessonDetails(lessonId);
         const lessonData = response.data?.data as LessonDetailsResponse;
-
+        console.log("Data", lessonData);
+        console.log("data", response)
         if (lessonData) {
           setLesson(lessonData);
         } else {
-          message.error("No lesson data available.");
+          console.error("No lesson data available.");
         }
       } catch {
-        message.error("Failed to fetch lesson details. Please try again.");
+        console.error("Failed to fetch lesson details. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -43,7 +44,7 @@ const ViewDetailLesson = () => {
   }, [id, fetchLessonDetails, isUpdated]);
 
   const handleEditClick = () => {
-    setIsModalVisible(true); // Show the modal when edit is clicked
+    setIsModalVisible(true); 
   };
 
   const handleCloseModal = () => {
@@ -72,7 +73,7 @@ const ViewDetailLesson = () => {
         <Descriptions.Item label="Name">{lesson.name}</Descriptions.Item>
         <Descriptions.Item label="Course Name">{lesson.course_name}</Descriptions.Item>
         <Descriptions.Item label="Session Name">{lesson.session_name}</Descriptions.Item>
-        <Descriptions.Item label="Lession Type">{lesson.lesson_type}</Descriptions.Item>
+        <Descriptions.Item label="Lesson Type">{lesson.lesson_type}</Descriptions.Item>
         <Descriptions.Item label="Video URL">
           <a href={lesson.video_url} target="_blank" rel="noopener noreferrer">
             Watch Video

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useRef } from 'react';
 import { Modal, Input, Form, Button, message, Select } from 'antd';
 import { LessonService } from '../../../../../services/LessonService/lesson.service';
 import { LessonDetailsResponse } from '../../../../../model/admin/response/Lesson.response';
@@ -17,9 +17,11 @@ interface UpdateDetailLessonProps {
 const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose, onUpdate }) => {
     const [formData, setFormData] = useState<LessonDetailsResponse>(lesson);
     const navigate = useNavigate();
-
+    const hasMounted = useRef(false);
     const handleSave = async () => {
-        const lessonId = lesson._id;  // ID bài học hiện tại
+        if (hasMounted.current) return;
+         hasMounted.current = true;
+        const lessonId = lesson._id; 
         try {
             const updateData: UpdateLessonRequest = {
                 name: formData.name,

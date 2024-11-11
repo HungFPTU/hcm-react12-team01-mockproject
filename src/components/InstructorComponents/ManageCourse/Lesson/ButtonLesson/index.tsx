@@ -82,7 +82,7 @@ const ButtonLesson = () => {
   }, [searchQuery]);
 
   useEffect(() => {
-    SessionService.getSessons()
+    SessionService.getSessions()
       .then((response) => {
         if (response && response.data && response.data.data) {
           setSessionData(response.data.data.pageData);
