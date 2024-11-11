@@ -20,8 +20,6 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
     const [coursesData, setCoursesData] = useState<any[]>([]);
     const [sessionsData, setSessionsData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [courseName, setCourseName] = useState('');
-    const [sessionName, setSessionName] = useState('');
     const hasMounted = useRef(false);
 
     const fetchCourses = async () => {
@@ -60,17 +58,6 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
         };
         fetchData();
     }, []);
-
-    useEffect(() => {
-        if (coursesData.length) {
-            const matchedCourse = coursesData.find(course => course._id === formData.course_id);
-            setCourseName(matchedCourse ? matchedCourse.name : '');
-        }
-        if (sessionsData.length) {
-            const matchedSession = sessionsData.find(session => session._id === formData.session_id);
-            setSessionName(matchedSession ? matchedSession.name : '');
-        }
-    }, [coursesData, sessionsData, formData.course_id, formData.session_id]);
 
     const handleSave = async () => {
         const lessonId = lesson._id;
@@ -129,7 +116,7 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                     >
                         {coursesData.map((course) => (
                             <Option key={course._id} value={course._id}>
-                                {courseName}
+                                {course.name}
                             </Option>
                         ))}
                     </Select>
@@ -141,7 +128,7 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                     >
                         {sessionsData.map((session) => (
                             <Option key={session._id} value={session._id}>
-                                {sessionName}
+                                {session.name}
                             </Option>
                         ))}
                     </Select>
