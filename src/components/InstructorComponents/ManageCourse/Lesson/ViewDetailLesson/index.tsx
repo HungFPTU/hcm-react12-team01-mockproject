@@ -19,8 +19,6 @@ const ViewDetailLesson = () => {
         setLoading(true);
         const response = await LessonService.getLessonDetails(lessonId);
         const lessonData = response.data?.data as LessonDetailsResponse;
-        console.log("Data", lessonData);
-        console.log("data", response)
         if (lessonData) {
           setLesson(lessonData);
         } else {
