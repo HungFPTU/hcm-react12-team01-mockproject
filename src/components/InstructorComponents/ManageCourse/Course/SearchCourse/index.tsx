@@ -1,5 +1,5 @@
-import { Input } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { Input } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 
 const { Search } = Input;
 
@@ -15,7 +15,7 @@ const SearchCourse = ({ onSearch }: SearchCourseProps): JSX.Element => {
   return (
     <div className="mb-4">
       <Search
-        placeholder="Tìm kiếm khóa học..."
+        placeholder="Find course..."
         allowClear
         enterButton={<SearchOutlined />}
         size="large"
