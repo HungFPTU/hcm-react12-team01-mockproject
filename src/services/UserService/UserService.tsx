@@ -77,12 +77,20 @@ export const UserService = {
       isLoading: true,
     });
   },
-  reviewProfileInstructor(userId: string, status: string) {
+  reviewProfileInstructor(userId: string, status: string, comment?: string) {
+    const payload: any = {
+      user_id: userId,
+      status: status,
+    };
+    // Nếu có lý do từ chối, thêm vào payload
+    if (status === "reject") {
+      payload.reject_reason = comment;
+    }
     return BaseService.put<ApiResponse<any>>({
       url: `/api/users/review-profile-instructor`,
-      payload: {
-        user_id: userId,
-        status: status,
+      payload: payload,
+      headers: {
+        Authorization: token ? `Bearer ${String(token)}` : "",
       },
       isLoading: true,
     });

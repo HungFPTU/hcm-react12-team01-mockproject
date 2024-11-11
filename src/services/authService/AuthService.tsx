@@ -1,4 +1,3 @@
-// import { LoginUser } from "../../model/LoginUser";
 import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
 import { API } from "../../const/path.api";

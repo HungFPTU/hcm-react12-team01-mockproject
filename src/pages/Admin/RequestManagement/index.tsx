@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Table, message } from "antd";
+import { Table, message, Modal, Input, Button, Form } from "antd";
 import AvatarRenderer from "./AvatarRenderer";
-
 import SearchBar from "./SearchBar";
 import { UserService } from "../../../services/UserService/UserService";
 import ActionsRenderer from "./ActionsRenderer";
@@ -19,6 +18,11 @@ interface Request {
 const RequestManagement: React.FC = () => {
   const [requests, setRequests] = useState<Request[]>([]);
   const [filteredRequests, setFilteredRequests] = useState<Request[]>([]);
+
+  // State cho modal và lý do từ chối
+  const [isRejectModalVisible, setIsRejectModalVisible] = useState<boolean>(false);
+  const [rejectReason, setRejectReason] = useState<string>(''); // Lý do từ chối
+  const [currentRequestKey, setCurrentRequestKey] = useState<string>('');
 
   useEffect(() => {
     UserService.getUsersWatingManager()
@@ -75,17 +79,24 @@ const RequestManagement: React.FC = () => {
       });
   };
 
-  const handleReject = (key: string) => {
-    UserService.reviewProfileInstructor(key, "reject")
+  const handleReject = () => {
+    if (!rejectReason) {
+      message.error("Please provide a reason for rejection.");
+      return;
+    }
+  
+    // Gọi API với lý do từ chối
+    UserService.reviewProfileInstructor(currentRequestKey, "reject", rejectReason)
       .then((response) => {
         if (response.data.success) {
-          message.success(`Request with key ${key} rejected.`);
+          message.success(`Request with key ${currentRequestKey} rejected.`);
           setRequests((prevRequests) =>
-            prevRequests.filter((request) => request.key !== key)
+            prevRequests.filter((request) => request.key !== currentRequestKey)
           );
           setFilteredRequests((prevFilteredRequests) =>
-            prevFilteredRequests.filter((request) => request.key !== key)
+            prevFilteredRequests.filter((request) => request.key !== currentRequestKey)
           );
+          setIsRejectModalVisible(false); // Đóng modal sau khi từ chối
         } else {
           message.error("Failed to reject request.");
         }
@@ -93,6 +104,12 @@ const RequestManagement: React.FC = () => {
       .catch(() => {
         message.error("Error rejecting request.");
       });
+  };
+  
+
+  const showRejectModal = (key: string) => {
+    setCurrentRequestKey(key);  // Set the current request key
+    setIsRejectModalVisible(true);  // Show the modal
   };
 
   const columns = [
@@ -112,7 +129,6 @@ const RequestManagement: React.FC = () => {
       dataIndex: "email",
       key: "email",
     },
-
     {
       title: "Role",
       dataIndex: "role",
@@ -131,7 +147,7 @@ const RequestManagement: React.FC = () => {
         <ActionsRenderer
           requestKey={record.key}
           onApprove={() => handleApprove(record.key)}
-          onReject={() => handleReject(record.key)}
+          onReject={() => showRejectModal(record.key)} // Show the reject modal
         />
       ),
     },
@@ -151,6 +167,33 @@ const RequestManagement: React.FC = () => {
         }}
         rowKey="key"
       />
+
+      {/* Modal Reject */}
+      <Modal
+        title="Reject Request"
+        visible={isRejectModalVisible}
+        onCancel={() => setIsRejectModalVisible(false)}
+        footer={[
+          <Button key="back" onClick={() => setIsRejectModalVisible(false)}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleReject}>
+            Confirm
+          </Button>,
+        ]}
+      >
+        <Form>
+        <Form.Item label="Reason for rejection">
+        <Input.TextArea
+          value={rejectReason} // Gán giá trị từ rejectReason
+          onChange={(e) => setRejectReason(e.target.value)}  // Cập nhật state rejectReason khi thay đổi
+          placeholder="Please provide a reason for rejection"
+          rows={4}
+        />
+        </Form.Item>
+        </Form>
+      </Modal>
+
     </div>
   );
 };

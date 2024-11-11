@@ -66,7 +66,7 @@ const UserManagement: React.FC = () => {
     } else if (activeTab === "unverified") {
       fetchUsers(true, false);
     }
-  }, [activeTab]);
+  }, [fetchUsers]);
 
   const toggleStatus = (record: User) => {
     const newStatus = !record.status;

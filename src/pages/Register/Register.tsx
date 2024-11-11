@@ -48,9 +48,9 @@ const Register = () => {
         description: '',
         avatar_url: '',
         video_url: '',
-        bank_name: 'VCB',
-        bank_account_no: '123456789',
-        bank_account_name: 'InstructorName',
+        bank_name: '',
+        bank_account_no: '',
+        bank_account_name: '',
     };
 
     const handleRegister = useCallback(async (values: FormValues) => {
