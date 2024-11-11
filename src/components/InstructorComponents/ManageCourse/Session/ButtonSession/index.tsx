@@ -59,7 +59,6 @@ const ButtonSession = () => {
 
           const data = response.data.pageData;
           setCoursesData(data);
-
         }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
@@ -73,7 +72,9 @@ const ButtonSession = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      const positionOrder = Number(values.positionOrder);
+      const positionOrder = values.positionOrder
+        ? Number(values.positionOrder)
+        : 1;
       const description = values.description || "";
       const { sessionName, courseId } = values;
 
@@ -148,28 +149,8 @@ const ButtonSession = () => {
             name="positionOrder"
             label="Position Order"
             labelCol={{ span: 24 }}
-            rules={[
-              { required: true, message: "Vui lòng nhập thứ tự vị trí" },
-              {
-                validator: (_, value) => {
-                  if (value && !isNaN(value) && Number(value) >= 0) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error("Thứ tự vị trí phải là số không âm")
-                  );
-                },
-              },
-            ]}
           >
-            <Input
-              type="number"
-              placeholder="Nhập thứ tự vị trí"
-              onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9]/g, "");
-                e.target.value = value;
-              }}
-            />
+            <Input type="number" placeholder="Nhập thứ tự vị trí " />
           </Form.Item>
 
           <Form.Item>
