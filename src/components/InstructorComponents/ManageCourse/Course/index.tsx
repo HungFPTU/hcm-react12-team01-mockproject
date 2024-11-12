@@ -1,8 +1,11 @@
-import CourseTable from './CourseTable';
-import ButtonCourse from './ButtonCourse';
-import SearchCourse from './SearchCourse';
-import FilterCourse from './FilterCourse';
-//fasdas
+
+import { lazy } from 'react';
+const FilterCourse = lazy(() => import("./FilterCourse"));
+const SearchCourse = lazy(() => import("./SearchCourse"));
+const ButtonCourse = lazy(() => import("./ButtonCourse"));
+const CourseTable = lazy(() => import("./CourseTable"));  
+
+
 const Course = () => {
   return (
     <div className="manage-course-container max-w-full mx-auto px-4">
