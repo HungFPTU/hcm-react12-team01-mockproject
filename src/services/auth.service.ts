@@ -3,7 +3,7 @@ import { User, UserRole } from "../model/User";
 
 // Dữ liệu người dùng giả
 const dummyUser: User = {
-  id: "123456",
+  _id: "123456",
   email: "johndoe@example.com",
   password: "password123",
   name: "John Doe",

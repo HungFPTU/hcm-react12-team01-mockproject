@@ -43,7 +43,8 @@ export const ROUTER_URL = {
   COMMON: {
     HOME: "/",
     COURSE_DETAIL: "/course/:id",
-    ALL_COURSES: "/all"
+    ALL_COURSES: "/all",
+    CART: "/cart",
   },
   UNAUTHORIZED: "/unauthorize"
 };

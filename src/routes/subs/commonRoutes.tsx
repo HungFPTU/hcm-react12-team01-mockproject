@@ -1,15 +1,16 @@
 import { RouteObject } from "react-router-dom";
-import { DefaultLayout, homeRoute, coureseDetail, allCourses} from "../../const/constCommon"
+import { DefaultLayout, homeRoute, coureseDetail, allCourses, cart } from "../../const/constCommon"
 
 const commonRoutes: RouteObject[] = [
-    {
-      path: "/",
-      element: <DefaultLayout />,
-      children: [
-        homeRoute,
-        coureseDetail,
-        allCourses,
-      ],
-    },
-  ];
-  export default commonRoutes;  
+  {
+    path: "/",
+    element: <DefaultLayout />,
+    children: [
+      homeRoute,
+      coureseDetail,
+      allCourses,
+      cart
+    ],
+  },
+];
+export default commonRoutes;  

@@ -12,47 +12,52 @@ const ForgotPasswordPage = lazy(() => import("../../pages/ForgotPassword"));
 const Register = lazy(() => import("../../pages/Register/Register"));
 const VerifyEmail = lazy(() => import("../../pages/Verifycaion"));
 const ResendVerification = lazy(() => import("../../pages/ResendToken"));
+const CartPage = lazy(() => import("../../pages/cart"))
 
 export const pathPublic: Record<string, RouteObject[]> = {
-    [ROUTER_URL.COMMON.HOME]: [
+  [ROUTER_URL.COMMON.HOME]: [
     {
-        element: <DefaultLayout/>,
-        children: [
-            {
-                path:ROUTER_URL.COMMON.HOME,
-                element: <HomePage/>,
-            },
-            {
-                path:ROUTER_URL.COMMON.ALL_COURSES,
-                element: <AllCourses/>,
-            },
-            {
-                path:ROUTER_URL.COMMON.COURSE_DETAIL,
-                element: <CoursesDetail/>,
-            }
-        ]
-    }
-    ],
-    [ROUTER_URL.LOGIN]: [
+      element: <DefaultLayout />,
+      children: [
         {
-          path: ROUTER_URL.LOGIN,
-          element: <LoginPage />
+          path: ROUTER_URL.COMMON.HOME,
+          element: <HomePage />,
         },
         {
-          path: ROUTER_URL.REGISTER,
-          element: <Register />
+          path: ROUTER_URL.COMMON.ALL_COURSES,
+          element: <AllCourses />,
         },
         {
-          path: ROUTER_URL.VERIFY_EMAIL,
-          element: <VerifyEmail />
+          path: ROUTER_URL.COMMON.COURSE_DETAIL,
+          element: <CoursesDetail />,
         },
         {
-          path: ROUTER_URL.FORGOT_PASSWORD,
-          element: <ForgotPasswordPage />
-        },
-        {
-          path: ROUTER_URL.RESEND_TOKEN,
-          element: <ResendVerification />
-        },
+          path: ROUTER_URL.COMMON.CART,
+          element: <CartPage />,
+        }
       ]
+    }
+  ],
+  [ROUTER_URL.LOGIN]: [
+    {
+      path: ROUTER_URL.LOGIN,
+      element: <LoginPage />
+    },
+    {
+      path: ROUTER_URL.REGISTER,
+      element: <Register />
+    },
+    {
+      path: ROUTER_URL.VERIFY_EMAIL,
+      element: <VerifyEmail />
+    },
+    {
+      path: ROUTER_URL.FORGOT_PASSWORD,
+      element: <ForgotPasswordPage />
+    },
+    {
+      path: ROUTER_URL.RESEND_TOKEN,
+      element: <ResendVerification />
+    },
+  ]
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Empty, notification } from "antd";
-import CartItem from "../../../../components/StudentComponents/cart/item";
-import {cartCourses} from "../../../../components/StudentComponents/cart/mockCartData.ts";
+import CartItem from "../../../components/StudentComponents/cart/item/index.tsx";
+import { cartCourses } from "../../../components/StudentComponents/cart/mockCartData.ts";
 
 const RejectedPage = () => {
     const [rejectedCourses, setRejectedCourses] = useState(cartCourses); // Initialize with mock data

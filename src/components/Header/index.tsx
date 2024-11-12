@@ -7,6 +7,7 @@ import { AuthService } from "../../services/authService/AuthService";
 import { useAuth } from "../../context/AuthContent";
 import { ROUTER_URL } from "../../const/router.const";
 import { UserRole } from "../../model/User";
+import { useCart } from "../../context/CartContext";
 
 const { Header } = Layout;
 
@@ -38,6 +39,7 @@ const items = [
 ];
 
 export default function Home() {
+  const { cartItems } = useCart();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   // const token = localStorage.getItem("token");
@@ -81,7 +83,7 @@ export default function Home() {
 
   const userMenuItems = [
     { key: "1", label: `Dashboard`, onClick: () => navigate(getDashboardLink()) },
-    { key: "2", label: "Logout", onClick: handleLogOut }, 
+    { key: "2", label: "Logout", onClick: handleLogOut },
   ];
 
   return (
@@ -126,8 +128,9 @@ export default function Home() {
                   <Button
                     icon={<ShoppingCartOutlined style={{ fontSize: "24px" }} />}
                     type="text"
-                    onClick={() => navigate("/student/cart")}
+                    onClick={() => navigate("/cart")}
                   />
+                  {cartItems.length > 0 && <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">{cartItems.length}</span>}
                 </Badge>
                 <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
                   <Avatar

@@ -2,7 +2,6 @@ import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 import { StudentLayout } from "../../layout/StudentLayout";
 const LearningPage = lazy(() => import("../../pages/Student/learning"));
-const CartPage = lazy(() => import("../../pages/Student/cart"));
 const StudentDashboard = lazy(() => import("../../pages/Student/dashboard"));
 const OrderPage = lazy(() => import("../../pages/Student/order"));
 const SettingPage = lazy(() => import("../../pages/Student/setting"));
@@ -12,16 +11,15 @@ const CheckoutPage = lazy(() => import("../../pages/Student/order/checkout"));
 const studentRoutes: RouteObject[] = [
     {
         path: "/student",
-        element: <StudentLayout/>,
+        element: <StudentLayout />,
         children: [
-            { index: true , element:<StudentDashboard/>},
-            { path: "order", element:<OrderPage/>},
-            { path: "setting", element: <SettingPage/>},
-            { path: "subscription", element: <SubscriptionPage/>},
-            { path: "checkout", element: <CheckoutPage/>},
-            { path: "cart", element: <CartPage />},
-            { path: "my-learning", element: <LearningPage />},
+            { index: true, element: <StudentDashboard /> },
+            { path: "order", element: <OrderPage /> },
+            { path: "setting", element: <SettingPage /> },
+            { path: "subscription", element: <SubscriptionPage /> },
+            { path: "checkout", element: <CheckoutPage /> },
+            { path: "my-learning", element: <LearningPage /> },
         ],
     },
-    ]
-    export default studentRoutes;
+]
+export default studentRoutes;
