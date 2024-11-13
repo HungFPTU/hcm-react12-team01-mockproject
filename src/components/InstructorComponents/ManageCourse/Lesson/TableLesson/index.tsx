@@ -18,7 +18,7 @@ const TableLesson = () => {
         is_delete: false,
         is_position_order: false,
       },
-      pageInfo: { pageNum: 1, pageSize: 100 },
+      pageInfo: { pageNum: 1, pageSize: 1000 },
     });
     if (response.data) {
       const lessons = Array.isArray(response.data.data.pageData)
@@ -130,9 +130,10 @@ const TableLesson = () => {
       rowKey="key"
       className="w-full shadow-md rounded-lg overflow-hidden"
       pagination={{
-        pageSize: 10,
+        defaultPageSize: 10,
         showSizeChanger: true,
-        showQuickJumper: true,
+        pageSizeOptions: ["15", "20"],
+        position: ["bottomRight"],
       }}
     />
   );
