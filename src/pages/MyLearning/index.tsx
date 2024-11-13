@@ -1,66 +1,49 @@
-import { Button, Card, Col, List, Row, Tabs, Typography } from "antd";
-
+import { Button, Card, Col, List, Row, Spin, Typography } from "antd";
 import { Link } from "react-router-dom";
-import { useCart } from "../../context/CartContext";
 import { CartStatusEnum } from "../../model/Cart";
 import { helpers } from "../../utils";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { CartService } from "../../services/cart/cart.service";
+import { CartResponse } from "../../model/admin/response/Cart.response";
 const { Title, Text } = Typography;
 
 const MyLearning = () => {
-  const { cartItems, updateCartItems } = useCart();
-  const [activeTab, setActiveTab] = useState<CartStatusEnum>(
-    CartStatusEnum.completed
-  );
-  const handleTabChange = (key: string) => {
-    const status = key as CartStatusEnum;
-    if (Object.values(CartStatusEnum).includes(status)) {
-      setActiveTab(status);
-      updateCartItemsByStatus(status);
-    } else {
-      console.error("Invalid tab status:", status);
-    }
-  };
-  const updateCartItemsByStatus = async (status: CartStatusEnum) => {
+  const [cartItems, setCartItems] = useState<CartResponse[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const hasMounted = useRef(false);
+
+  const fetchCompletedCartItems = async () => {
     try {
-      await updateCartItems(status); // Pass the status to updateCartItems
+      setLoading(true);
+      const response = await CartService.getCarts({
+        searchCondition: {
+          status: CartStatusEnum.completed,
+          is_delete: false,
+        },
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 20,
+        },
+      });
+      const items = Array.isArray(response.data.data.pageData)
+        ? response.data.data.pageData
+        : [response.data.data.pageData];
+      setCartItems(items);
     } catch (error) {
-      console.error("Error fetching cart items by status:", error);
+      console.error("Error fetching cart items:", error);
+    } finally {
+      setLoading(false);
     }
   };
-  console.log(cartItems);
-  const tabItems = [
-    {
-      key: String(CartStatusEnum.completed),
-      label: "Completed",
-    },
-  ];
+  useEffect(() => {
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+    fetchCompletedCartItems();
+  }, []);
+  if (loading) return <Spin tip="Loading course details..." />;
+
   return (
     <>
-      <Tabs
-        activeKey={String(activeTab)}
-        onChange={handleTabChange}
-        items={tabItems}
-        className="custom-tabs mb-10 mt-10 transform "
-        // type="line"
-        size="large"
-        style={{ display: "none" }}
-        tabBarStyle={{
-          marginBottom: "2rem",
-          background: "linear-gradient(to bottom, #fff, #fafafa)",
-          boxShadow: "0 4px 12px rgba(26, 35, 126, 0.15)",
-          padding: "0.5rem 1rem",
-          borderRadius: "12px 12px 0 0",
-          backdropFilter: "blur(8px)",
-        }}
-        tabBarGutter={32}
-        animated={{
-          inkBar: true,
-          tabPane: true,
-        }}
-        tabPosition="top"
-        centered={true}
-      />
       <Row gutter={32} justify="center">
         {" "}
         <Col xs={24} sm={20} md={16} lg={14} xl={12}>
