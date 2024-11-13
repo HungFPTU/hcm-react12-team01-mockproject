@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Button, Modal, Form, Input, Select, message, Spin } from "antd";
-import { SessionService } from "../../../../../services/SessionService/SessionService";
+import { SessionService } from "../../../../../services/SessionService/session.service";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
+import { CreateSessionRequest } from "../../../../../model/admin/request/Sesson.request";
 
 const { Option } = Select;
 
@@ -59,7 +60,6 @@ const ButtonSession = () => {
 
           const data = response.data.pageData;
           setCoursesData(data);
-
         }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
@@ -73,27 +73,35 @@ const ButtonSession = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      const positionOrder = Number(values.positionOrder);
+      const positionOrder = values.positionOrder
+        ? Number(values.positionOrder)
+        : 1;
       const description = values.description || "";
-      const { sessionName, courseId } = values;
-
-      const response = await SessionService.createSession(
-        sessionName,
-        courseId,
+      const { sessionName: name, course_id } = values;
+  
+      // Create an object that matches CreateSessionRequest
+      const params: CreateSessionRequest = {
+        name,
+        course_id,
         description,
-        positionOrder
-      );
+        positionOrder,
+      };
+  
+      // Call the createSession method with the params object
+      const response = await SessionService.createSession(params);
+  
       if (response && response.data.success) {
-        console.log("API Response:", response); // Kiểm tra phản hồi từ API
+        console.log("API Response:", response); // Check API response
         message.success("Session đã được tạo thành công!");
       }
-
+  
       setIsModalVisible(false);
     } catch (error) {
       message.error("Có lỗi xảy ra khi tạo session!");
       console.error("Error creating session:", error);
     }
   };
+  
   if (loading) return <Spin tip="Loading course details..." />;
 
   return (
@@ -119,7 +127,7 @@ const ButtonSession = () => {
           </Form.Item>
 
           <Form.Item
-            name="courseId"
+            name="course_id"
             label="Course "
             labelCol={{ span: 24 }}
             rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}
@@ -148,28 +156,8 @@ const ButtonSession = () => {
             name="positionOrder"
             label="Position Order"
             labelCol={{ span: 24 }}
-            rules={[
-              { required: true, message: "Vui lòng nhập thứ tự vị trí" },
-              {
-                validator: (_, value) => {
-                  if (value && !isNaN(value) && Number(value) >= 0) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error("Thứ tự vị trí phải là số không âm")
-                  );
-                },
-              },
-            ]}
           >
-            <Input
-              type="number"
-              placeholder="Nhập thứ tự vị trí"
-              onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9]/g, "");
-                e.target.value = value;
-              }}
-            />
+            <Input type="number" placeholder="Nhập thứ tự vị trí " />
           </Form.Item>
 
           <Form.Item>

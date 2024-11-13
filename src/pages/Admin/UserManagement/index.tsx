@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Table,
   Avatar,
@@ -41,7 +41,26 @@ const UserManagement: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
   const [form] = Form.useForm();
-  const fetchUsers = (status: boolean, isVerified: boolean) => {
+
+  const fetchParams = useMemo(() => {
+    let status = true;
+    let isVerified = true;
+
+    if (activeTab === "all") {
+      status = true;
+      isVerified = true;
+    } else if (activeTab === "blocked") {
+      status = false;
+      isVerified = true;
+    } else if (activeTab === "unverified") {
+      status = true;
+      isVerified = false;
+    }
+
+    return { status, isVerified };
+  }, [activeTab]);
+
+  const fetchUsersData = (status: boolean, isVerified: boolean) => {
     UserService.getUsers(status, isVerified)
       .then((response) => {
         if (response.data.success) {
@@ -56,32 +75,16 @@ const UserManagement: React.FC = () => {
         message.error("Error fetching user data.");
       });
   };
-
   useEffect(() => {
-    if (activeTab === "all") {
-      fetchUsers(true, true);
-    } else if (activeTab === "blocked") {
-      fetchUsers(false, true);
-    } else if (activeTab === "unverified") {
-      fetchUsers(true, false);
-    }
-  }, [activeTab]);
+    fetchUsersData(fetchParams.status, fetchParams.isVerified);
+  }, [fetchParams]);
 
   const toggleStatus = (record: User) => {
     const newStatus = !record.status;
     UserService.changeStatus(record._id, newStatus)
       .then((response) => {
         if (response.data.success) {
-          setUsers((prevUsers) =>
-            prevUsers.map((user) =>
-              user._id === record._id ? { ...user, status: newStatus } : user
-            )
-          );
-          setFilteredUsers((prevUsers) =>
-            prevUsers.map((user) =>
-              user._id === record._id ? { ...user, status: newStatus } : user
-            )
-          );
+          fetchUsersData(fetchParams.status, fetchParams.isVerified); // Reload the user data after status change
           message.success("Cập nhật trạng thái thành công!");
         } else {
           message.error("Cập nhật trạng thái thất bại.");
@@ -95,18 +98,8 @@ const UserManagement: React.FC = () => {
   const changeUserRole = (userId: string, newRole: string) => {
     UserService.changeRole(userId, newRole)
       .then((response) => {
-        console.log("API Response:", response);
         if (response && response.data && response.data.success) {
-          setUsers((prevUsers) =>
-            prevUsers.map((user) =>
-              user._id === userId ? { ...user, role: newRole } : user
-            )
-          );
-          setFilteredUsers((prevUsers) =>
-            prevUsers.map((user) =>
-              user._id === userId ? { ...user, role: newRole } : user
-            )
-          );
+          fetchUsersData(fetchParams.status, fetchParams.isVerified); // Reload after changing role
           message.success("Cập nhật vai trò thành công!");
         } else {
           message.error("Cập nhật vai trò thất bại.");
@@ -149,20 +142,7 @@ const UserManagement: React.FC = () => {
       bank_account_no,
       bank_account_name,
     } = values;
-    // if (!name.match(/^[a-zA-Z0-9 ]+$/)) {
-    //   message.error("Tên không được chứa ký tự đặc biệt!");
-    //   return;
-    // }
-    const newUser: User = {
-      _id: Date.now().toString(),
-      name,
-      email,
-      password,
-      role,
-      status: true,
-      is_verified: true,
-    };
-
+  
     UserService.createUser(
       name,
       email,
@@ -176,14 +156,16 @@ const UserManagement: React.FC = () => {
       bank_name,
       bank_account_no,
       bank_account_name
-    );
-
-    setUsers([...users, newUser]);
-    setFilteredUsers([...users, newUser]);
-    setIsModalVisible(false);
-    message.success("Tạo người dùng thành công!");
-    form.resetFields();
+    ).then(() => {
+      fetchUsersData(fetchParams.status, fetchParams.isVerified); // Reload data from server
+      setIsModalVisible(false);
+      message.success("Tạo người dùng thành công!");
+      form.resetFields();
+    }).catch(() => {
+      message.error("Tạo người dùng thất bại.");
+    });
   };
+  
 
   const confirmDeleteUser = (id: string) => {
     confirm({
@@ -202,10 +184,7 @@ const UserManagement: React.FC = () => {
     UserService.deleteUser(id)
       .then((response) => {
         if (response.data.success) {
-          setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
-          setFilteredUsers((prevFilteredUsers) =>
-            prevFilteredUsers.filter((user) => user._id !== id)
-          );
+          fetchUsersData(fetchParams.status, fetchParams.isVerified); // Reload data after deleting user
           message.success("Xóa người dùng thành công!");
         } else {
           message.error("Xóa người dùng thất bại.");
@@ -337,6 +316,7 @@ const UserManagement: React.FC = () => {
             ),
           },
         ]),
+
   ];
 
   return (

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from "react";
 import { Button, Modal, Form, Input, Select, Radio, message } from "antd";
-
 import { CreateCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { CategoryService } from "../../../../../services/category/category.service";
@@ -11,9 +11,35 @@ const { Option } = Select;
 const ButtonCourse = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [categoryData, setCategoryData] = useState<Category[]>([]);
+  const [courseType, setCourseType] = useState("free"); // State để điều chỉnh hiển thị trường Price và Discount
 
   const showModal = () => {
     setIsModalVisible(true);
+
+    // Fetch categories only if they haven't been loaded already
+    if (categoryData.length === 0) {
+      const params = {
+        searchCondition: {
+          keyword: "",
+          is_parent: true,
+          is_delete: false,
+        },
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      };
+
+      CategoryService.getCategory(params)
+        .then((response) => {
+          if (response && response.data && response.data.data) {
+            setCategoryData(response.data.data.pageData);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching categories:", error);
+        });
+    }
   };
 
   const handleCancel = () => {
@@ -22,7 +48,7 @@ const ButtonCourse = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      const content = values.content || ""; // Lấy nội dung từ TextArea
+      const content = values.content || "";
       console.log(">>>>>>>>>>>values", values);
       const price = Number(values.price);
       const discount = Number(values.discount);
@@ -35,13 +61,12 @@ const ButtonCourse = () => {
         content,
         video_url,
         image_url,
-        price,
-        discount,
+        price: courseType === "paid" ? price : 0,
+        discount: courseType === "paid" ? discount : 0, // Nếu là Free, discount sẽ là 0
       };
 
       const response = await CourseService.createCourse(newCourse);
       if (response && response.data.success) {
-
         message.success("Khóa học đã được tạo thành công!");
         console.log("API Response:", response);
       }
@@ -51,30 +76,6 @@ const ButtonCourse = () => {
     }
   };
 
-  useEffect(() => {
-    const params = {
-      searchCondition: {
-        keyword: "",
-        is_parent: true,
-        is_delete: false,
-      },
-      pageInfo: {
-        pageNum: 1,
-        pageSize: 10,
-      },
-    };
-
-    CategoryService.getCategory(params)
-      .then((response) => {
-        if (response && response.data && response.data.data) {
-          setCategoryData(response.data.data.pageData);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-      });
-  }, []);
-
   return (
     <>
       <Button onClick={showModal} style={{ marginRight: "10px" }}>
@@ -82,7 +83,7 @@ const ButtonCourse = () => {
       </Button>
 
       <Modal
-        title="Tạo khóa học mới"
+        title="Create Course"
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
@@ -130,57 +131,83 @@ const ButtonCourse = () => {
             <Input.TextArea placeholder="Nhập nội dung khóa học" />
           </Form.Item>
 
-          <Form.Item name="image_url" label="Image URL" rules={[{ required: true }]}>
-            <Input placeholder="Nhập đường dẫn hình ảnh" />
-          </Form.Item>
-
-          <Form.Item name="video_url" label="Video URL" >
-            <Input placeholder="Nhập đường dẫn video" />
+          <Form.Item
+            name="image_url"
+            label="Image URL"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
+          >
+            <Input
+              placeholder="Nhập đường dẫn hình ảnh"
+              style={{ width: "100%" }}
+            />
           </Form.Item>
 
           <Form.Item
-            name="price"
-            label="Price"
+            name="video_url"
+            label="Video URL"
             labelCol={{ span: 24 }}
-            rules={[
-              { required: true, message: "Giá là trường bắt buộc" },
-              {
-                validator: (_, value) => {
-                  if (value && !isNaN(value) && Number(value) >= 0) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error("Giá phải là số không âm"));
-                },
-              },
-            ]}
+            rules={[{ required: true }]}
           >
             <Input
-              type="number"
-              placeholder="Nhập giá khóa học"
-              onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9]/g, ""); // Loại bỏ ký tự không phải số
-                e.target.value = value;
-              }}
+              placeholder="Nhập đường dẫn video"
+              style={{ width: "100%" }}
             />
           </Form.Item>
-
-          <Form.Item name="discount" label="Discount" labelCol={{ span: 24 }} rules={[{ required: true }]}>
-            <Input
-              type="number"
-              placeholder="Nhập phần trăm giảm giá (nếu có)"
-            />
-          </Form.Item>
-
           <Form.Item
             name="courseType"
-            label="CourseType"
+            label="Course Type"
             labelCol={{ span: 24 }}
           >
-            <Radio.Group>
+            <Radio.Group
+              onChange={(e) => setCourseType(e.target.value)}
+              defaultValue="free"
+            >
               <Radio value="free">Free</Radio>
               <Radio value="paid">Paid</Radio>
             </Radio.Group>
           </Form.Item>
+          {courseType === "paid" && (
+            <Form.Item
+              name="price"
+              label="Price"
+              labelCol={{ span: 24 }}
+              rules={[
+                { required: true, message: "Giá là trường bắt buộc" },
+                {
+                  validator: (_, value) => {
+                    if (value && !isNaN(value) && Number(value) >= 0) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error("Giá phải là số không âm"));
+                  },
+                },
+              ]}
+            >
+              <Input
+                type="number"
+                placeholder="Nhập giá khóa học"
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, "");
+                  e.target.value = value;
+                }}
+              />
+            </Form.Item>
+          )}
+
+          {courseType === "paid" && (
+            <Form.Item
+              name="discount"
+              label="Discount"
+              labelCol={{ span: 24 }}
+              rules={[{ required: true }]}
+            >
+              <Input
+                type="number"
+                placeholder="Nhập phần trăm giảm giá (nếu có)"
+              />
+            </Form.Item>
+          )}
 
           <Form.Item>
             <Button type="primary" htmlType="submit">

@@ -12,14 +12,14 @@ export interface GetSessionRequest {
 
 export interface CreateSessionRequest {
     name: string,
-    courseId: string,
+    course_id: string,
     description: string,
     positionOrder: number
 }
 
 export interface UpdateSessionRequest {
     name: string,
-    courseId: string,
+    course_id: string,
     description: string,
     positionOrder: number
 }

@@ -1,6 +1,6 @@
 import { Input, Pagination } from "antd";
-import { completedOrders } from "../../../../components/StudentComponents/order/completed-order/completedMockData.ts";
-import CompletedList from "../../../../components/StudentComponents/order/completed-order/lists";
+import { completedOrders } from "../../../components/StudentComponents/order/completed-order/completedMockData.ts";
+import CompletedList from "../../../components/StudentComponents/order/completed-order/lists/index.tsx";
 
 const { Search } = Input;
 

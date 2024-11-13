@@ -1,15 +1,20 @@
 import { RouteObject } from "react-router-dom";
-import { DefaultLayout, homeRoute, coureseDetail, allCourses} from "../../const/constCommon"
-
+import { DefaultLayout, homeRoute, coureseDetail, allCourses, cart } from "../../const/constCommon"
+import Loading from "../../app/Loading";
+import { Suspense } from "react";
 const commonRoutes: RouteObject[] = [
-    {
-      path: "/",
-      element: <DefaultLayout />,
-      children: [
-        homeRoute,
-        coureseDetail,
-        allCourses,
-      ],
-    },
-  ];
-  export default commonRoutes;  
+  {
+    path: "/",
+    element: 
+    <Suspense fallback={<Loading />} >
+      <DefaultLayout />
+    </Suspense>,
+    children: [
+      homeRoute,
+      coureseDetail,
+      allCourses,
+      cart
+    ],
+  },
+];
+export default commonRoutes;

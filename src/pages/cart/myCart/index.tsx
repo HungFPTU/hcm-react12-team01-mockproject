@@ -1,8 +1,8 @@
 import { notification } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CartList from "../../../../components/StudentComponents/cart/list";
-import OrderSummary from "../../../../components/StudentComponents/order/summary";
+import CartList from "../../../components/StudentComponents/cart/list";
+import OrderSummary from "../../../components/StudentComponents/order/summary";
 
 const mockCartItems = [
   {
@@ -56,7 +56,7 @@ const MyCartPage = () => {
 
   const handleCheckout = () => {
     const selectedItemsData = cartItems.filter((item) =>
-        selectedItems.includes(item.id)
+      selectedItems.includes(item.id)
     );
 
     if (selectedItemsData.length > 0) {
@@ -82,28 +82,28 @@ const MyCartPage = () => {
   }, 0);
 
   return (
-      <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-6 mt-5">
-        <div className="md:col-span-2">
-          <h2 className="text-xl font-bold mb-4">My Cart</h2>
-          <CartList
-              items={cartItems}
-              selectedItems={selectedItems}
-              onSelectItem={handleSelectItem}
-              onSelectAll={handleSelectAll}
-              onDeleteItem={handleDeleteItem}
-          />
-        </div>
-
-        <div className="md:col-span-1">
-          <OrderSummary
-              subtotal={subtotal}
-              totalDiscount={totalDiscount}
-              total={subtotal - totalDiscount}
-              hasSelectedOrders={selectedItems.length > 0}
-              onCheckout={handleCheckout}
-          />
-        </div>
+    <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-6 mt-5">
+      <div className="md:col-span-2">
+        <h2 className="text-xl font-bold mb-4">My Cart</h2>
+        <CartList
+          items={cartItems}
+          selectedItems={selectedItems}
+          onSelectItem={handleSelectItem}
+          onSelectAll={handleSelectAll}
+          onDeleteItem={handleDeleteItem}
+        />
       </div>
+
+      <div className="md:col-span-1">
+        <OrderSummary
+          subtotal={subtotal}
+          totalDiscount={totalDiscount}
+          total={subtotal - totalDiscount}
+          hasSelectedOrders={selectedItems.length > 0}
+          onCheckout={handleCheckout}
+        />
+      </div>
+    </div>
   );
 };
 

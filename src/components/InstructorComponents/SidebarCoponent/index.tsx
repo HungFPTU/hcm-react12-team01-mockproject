@@ -7,6 +7,7 @@ import {
   StarOutlined,
   DollarOutlined,
   SettingOutlined,
+  FileDoneOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +28,7 @@ function SidebarComponents() {
           },
           {
             key: "/instructor/manage-course",
-            icon: <BookOutlined />,
+            icon: <FileDoneOutlined />,
             label: "Manage Course",
           },
           {
@@ -44,6 +45,11 @@ function SidebarComponents() {
             key: "/instructor/payouts",
             icon: <DollarOutlined />,
             label: "Payout",
+          },
+          {
+            key: "/instructor/my-learning",
+            icon: <BookOutlined />,
+            label: "My Learning",
           },
           {
             key: "/instructor/subscriptions",

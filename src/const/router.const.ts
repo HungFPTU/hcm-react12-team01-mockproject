@@ -31,6 +31,8 @@ export const ROUTER_URL = {
     INSTRUCTOR_SUB: "/instructor/subscriptions",
     PAYOUT_INSTRUCTOR_PAGE: "/instructor/payouts",
     PURCHASE_LOG: "/instructor/purchase-log",
+    MY_LEARNING: "/instructor/my-learning"
+
     // SETTING: "/student/setting",
   },
   STUDENT: {
@@ -39,11 +41,13 @@ export const ROUTER_URL = {
     SETTING_PAGE: "/student/setting",
     SUBSCRIPTION_PAGE: "/student/subscription",
     CHECKOUT_PAGE: "/student/order/checkout",
+    MY_LEARNING: "/student/my-learning"
   },
   COMMON: {
     HOME: "/",
     COURSE_DETAIL: "/course/:id",
-    ALL_COURSES: "/all"
+    ALL_COURSES: "/all",
+    CART: "/cart",
   },
   UNAUTHORIZED: "/unauthorize"
 };

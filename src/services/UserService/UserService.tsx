@@ -1,3 +1,4 @@
+import { API } from "../../const/path.api";
 import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
 
@@ -65,7 +66,7 @@ export const UserService = {
 
   changeStatus(userId: string, status: boolean) {
     return BaseService.put<ApiResponse<any>>({
-      url: "/api/users/change-status",
+      url: API.ADMIN.CHANGE_STATUS,
       payload: {
         user_id: userId,
         status: status,
@@ -77,16 +78,36 @@ export const UserService = {
       isLoading: true,
     });
   },
-  reviewProfileInstructor(userId: string, status: string) {
-    return BaseService.put<ApiResponse<any>>({
-      url: `/api/users/review-profile-instructor`,
-      payload: {
+
+  reviewProfileInstructor({
+    userId,
+    status,
+    comment,
+  }: {
+    userId: string;
+    status: string;
+    comment?: string;
+  }) {
+      const payload: any = {
         user_id: userId,
         status: status,
-      },
-      isLoading: true,
-    });
+      };
+
+      if (status === "reject" && comment) {
+        payload.comment = comment
+      }
+
+      return BaseService.put<ApiResponse<any>>({
+        url: API.ADMIN.REVIEW_PROFILE_INSTRUCTOR,
+        payload: payload,
+        headers: {
+          Authorization: token ? `Bearer ${String(token)}` : "",
+        },
+          isLoading: true,
+      });
   },
+
+
 
   changeRole(userId: string, role: string) {
     const token = localStorage.getItem("token");
