@@ -132,7 +132,7 @@ export default function Home() {
                   />
                   {cartItems.length > 0 && <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">{cartItems.length}</span>}
                 </Badge>
-                <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+                <Dropdown menu={{ items: userMenuItems }} placement="bottomLeft">
                   <Avatar
                     size={40}
                     src={userInfo.avatar_url || null}
