@@ -17,4 +17,4 @@ const commonRoutes: RouteObject[] = [
     ],
   },
 ];
-export default commonRoutes;  
+export default commonRoutes;
