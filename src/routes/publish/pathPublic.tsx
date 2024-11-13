@@ -1,7 +1,7 @@
-import { lazy } from "react";
+import { lazy,Suspense } from "react";
 import { ROUTER_URL } from "../../const/router.const"
 import { RouteObject } from "react-router-dom";
-
+import Loading from "../../app/Loading";
 
 const DefaultLayout = lazy(() => import("../../layout/DefaultLayout"));
 const HomePage = lazy(() => import("../../pages/Home"));
@@ -17,7 +17,10 @@ const CartPage = lazy(() => import("../../pages/cart"))
 export const pathPublic: Record<string, RouteObject[]> = {
   [ROUTER_URL.COMMON.HOME]: [
     {
-      element: <DefaultLayout />,
+      element:
+      <Suspense fallback={<Loading/>}>
+        <DefaultLayout />
+      </Suspense> ,
       children: [
         {
           path: ROUTER_URL.COMMON.HOME,

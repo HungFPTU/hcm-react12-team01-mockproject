@@ -1,7 +1,7 @@
 import { RouteObject,Navigate } from "react-router-dom";
 import { useState,useEffect, Suspense } from "react";
 
-import Loading from "../../components/Loading";
+import Loading from "../../app/Loading";
 import adminRoutes from "../subs/adminRoutes";
 import instructorRoutes from "../subs/instrucstorRoutes";
 import studentRoutes from "../subs/studentRoutes";

@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import { lazy,Suspense } from "react";
 import { RouteObject } from "react-router-dom";
 import { InstructorLayout } from "../../layout/InstructorLayout";
 
@@ -45,10 +45,13 @@ const PayoutInstructorPage = lazy(
 );
 const PurchaseLog = lazy(() => import("../../pages/Admin/purchaselog"));
 const SettingPage = lazy(() => import("../../pages/Student/setting"));
+import Loading from "../../app/Loading";
 const instructorRoute: RouteObject[] = [
   {
     path: "/instructor",
-    element: <InstructorLayout />,
+    element: <Suspense fallback={<Loading />} >
+    <InstructorLayout/>
+    </Suspense>,
     children: [
       { index: true, element: <InstructorDashboard /> },
       { path: "manage-course", element: <ManageCourse /> },
