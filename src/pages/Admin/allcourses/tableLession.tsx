@@ -59,20 +59,7 @@ const TableLesson = () => {
       key: "created_at",
       render: (created_at: string) => new Date(created_at).toLocaleDateString(),
     },
-    {
-      title: "Media",
-      dataIndex: "video_url",
-      key: "video_url",
-      render: (video_url: string) =>
-        video_url ? (
-          <video width="200" controls style={{ borderRadius: "7px" }}>
-            <source src={video_url} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        ) : (
-          "No video available"
-        ),
-    },
+    
 
   ];
 
