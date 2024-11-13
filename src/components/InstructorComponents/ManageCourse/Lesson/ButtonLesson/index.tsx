@@ -7,7 +7,6 @@ import {
   Select,
   InputNumber,
   message,
-  Spin,
 } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
 import { LessonService } from "../../../../../services/LessonService/LessionService";
@@ -31,7 +30,6 @@ const ButtonLesson = () => {
   const [lessonType, setLessonType] = useState<string>(""); // Theo dõi loại bài học
   const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
   const hasMounted = useRef(false);
-  const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery] = useState("");
 
   const showModal = () => {
@@ -57,7 +55,6 @@ const ButtonLesson = () => {
 
     const fetchCoursesData = async () => {
       try {
-        setLoading(true);
         const searchCondition = {
           keyword: searchQuery,
           category_id: "",
@@ -74,15 +71,11 @@ const ButtonLesson = () => {
         });
 
         if (response && response.success) {
-          setLoading(false);
-
           const data = response.data.pageData;
           setCoursesData(data);
         }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -152,7 +145,6 @@ const ButtonLesson = () => {
     setLessonType(value);
   };
 
-  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
     <>

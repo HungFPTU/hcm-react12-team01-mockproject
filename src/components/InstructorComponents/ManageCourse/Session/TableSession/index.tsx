@@ -7,7 +7,7 @@ import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 const TableSession = () => {
   const navigate = useNavigate();
   const [sessionsData, setSessionsData] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+
   const hasMounted = useRef(false);
 
   useEffect(() => {
@@ -15,7 +15,6 @@ const TableSession = () => {
     hasMounted.current = true;
     const fetchSessions = async () => {
       try {
-        setLoading(true);
 
         const response = await SessionService.getSessions();
 
@@ -35,8 +34,6 @@ const TableSession = () => {
         }
       } catch (error) {
         console.error("Error fetching sessions:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -122,7 +119,6 @@ const TableSession = () => {
       ),
     },
   ];
-  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
     <Table

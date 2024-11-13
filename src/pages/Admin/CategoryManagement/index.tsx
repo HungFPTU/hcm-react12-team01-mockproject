@@ -3,20 +3,20 @@ import { Table, Modal, message, Empty } from "antd";
 import { GetCategoryRequest } from "../../../model/admin/request/Category.request";
 import { CategoryService } from "../../../services/category/category.service";
 import { Category } from "../../../model/admin/response/Category.response";
-import { useNavigate } from "react-router-dom";
 
 const SearchBar = lazy(() => import("./SearchBar"));
 const ActionButtons = lazy(() => import("./ActionButtons"));
 const AddCategoryButton = lazy(() => import("./AddCategoryButton"));
+const EditCategory = lazy(() => import("./EditCategory"));
 
 const CategoryManagement: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchType, setSearchType] = useState("Sub Category");
-  const [isDataEmpty, setIsDataEmpty] = useState(false); // Track if data is empty
+  const [isDataEmpty, setIsDataEmpty] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const hasMounted = useRef(false);
-  const navigate = useNavigate();
-  // Function to fetch categories from API
+
   const fetchCategories = async (params: GetCategoryRequest) => {
     try {
       const response = await CategoryService.getCategory(params);
@@ -28,8 +28,9 @@ const CategoryManagement: React.FC = () => {
   };
 
   useEffect(() => {
-    if (hasMounted.current) return; // Trả về nếu đã mount
+    if (hasMounted.current) return;
     hasMounted.current = true;
+
     const fetchCategoriesData = async () => {
       try {
         const searchCondition = {
@@ -47,12 +48,10 @@ const CategoryManagement: React.FC = () => {
         });
 
         if (response && response.success) {
-          console.log("Fetched data:", response.data.pageData); // Log the data here
           const data = response.data.pageData;
           setCategories(data);
           setIsDataEmpty(data.length === 0);
         }
-        
       } catch (error) {
         console.error("Failed to fetch categories:", error);
       }
@@ -61,12 +60,10 @@ const CategoryManagement: React.FC = () => {
     fetchCategoriesData();
   }, [searchQuery, searchType]);
 
-  // Handle search functionality
   const handleSearch = async (query: string, type: string) => {
     setSearchQuery(query);
     setSearchType(type);
   
-    // Update the search condition based on the latest query and type
     const searchCondition = {
       keyword: query,
       is_parent: false,
@@ -92,7 +89,6 @@ const CategoryManagement: React.FC = () => {
     }
   };
   
-  // Handle adding a new category
   const handleAddCategory = async () => {
     try {
       const response = await fetchCategories({
@@ -117,8 +113,6 @@ const CategoryManagement: React.FC = () => {
     }
   };
   
-
-
   const handleDeleteCategory = useCallback(
     (categoryId: string) => {
       Modal.confirm({
@@ -146,7 +140,14 @@ const CategoryManagement: React.FC = () => {
     []
   );
 
-  // Columns for the table
+  const handleEditCategory = (categoryId: string) => {
+    setSelectedCategoryId(categoryId);
+  };
+
+  const closeModal = () => {
+    setSelectedCategoryId(null);
+  };
+
   const columns = [
     {
       title: "Category Name",
@@ -170,7 +171,7 @@ const CategoryManagement: React.FC = () => {
       render: (record: Category) => (
         <ActionButtons
           recordKey={record._id}
-          onEdit={() => navigate(`/Admin/category-management/${record._id}`)}
+          onEdit={() => handleEditCategory(record._id)}
           onDelete={() => handleDeleteCategory(record._id)}
         />
       ),
@@ -208,6 +209,21 @@ const CategoryManagement: React.FC = () => {
           ),
         }}
       />
+
+      {selectedCategoryId && (
+        <Modal
+          title="Edit Category"
+          open={!!selectedCategoryId}
+          onCancel={closeModal}
+          footer={null}
+        >
+          <EditCategory 
+            id={selectedCategoryId} 
+            onClose={closeModal} 
+            onUpdate={handleAddCategory} // Pass the refresh function as callback
+          />
+        </Modal>
+      )}
     </div>
   );
 };

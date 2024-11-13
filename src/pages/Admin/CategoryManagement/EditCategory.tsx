@@ -1,17 +1,18 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { Button, Form, Input, Row, Col, message, Modal } from "antd";
+import { Button, Form, Input, Row, Col, message } from "antd";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { CategoryService } from "../../../services/category/category.service";
 import { UpdateCategoryRequest } from "../../../model/admin/request/Category.request";
 import { Category } from "../../../model/admin/response/Category.response";
-import { ROUTER_URL } from "../../../const/router.const";
 import { ApiResponse } from "../../../model/ApiResponse";
 
-const EditCategory = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+interface EditCategoryProps {
+  id: string;
+  onClose: () => void;
+  onUpdate: () => void; // New prop for update callback
+}
+
+const EditCategory: React.FC<EditCategoryProps> = ({ id, onClose, onUpdate }) => {
   const [form] = Form.useForm();
-  const [isModalOpen, setModalOpen] = useState(false);
   const [state, setState] = useState<{
     category: ApiResponse<Category> | null;
     categoryData: Category | null;
@@ -43,9 +44,9 @@ const EditCategory = () => {
           }));
           form.setFieldsValue(categoryData);
         } else {
-          message.error("No page data available for this category.");
+          message.error("No data available for this category.");
         }
-      } catch (error) {
+      } catch {
         message.error("Failed to fetch category details. Please try again.");
       }
     },
@@ -53,93 +54,56 @@ const EditCategory = () => {
   );
 
   useEffect(() => {
-    if (id) {
-      fetchCategoryDetails(id);
-    }
+    fetchCategoryDetails(id);
   }, [id, fetchCategoryDetails]);
 
   const handleFormSubmit = useCallback(
     async (values: UpdateCategoryRequest) => {
       setState((prev) => ({ ...prev, loading: true }));
       try {
-        await CategoryService.updateCategory(id as string, values);
+        await CategoryService.updateCategory(id, values);
         form.resetFields();
-        navigate(ROUTER_URL.ADMIN.CATEGORY);
         message.success("Category updated successfully");
-      } catch (error) {
+        onClose(); // Close the modal on successful update
+        onUpdate(); // Trigger the update callback to refresh categories
+      } catch {
         message.error("Failed to update category. Please try again.");
       } finally {
         setState((prev) => ({ ...prev, loading: false }));
       }
     },
-    [id, navigate, form]
+    [id, onClose, onUpdate, form]
   );
 
-  const handleOpenModal = () => {
-    setModalOpen(true);
-  };
-
-  const handleModalConfirm = () => {
-    setModalOpen(false);
-    form.submit();
-  };
-
-  const handleModalCancel = () => {
-    setModalOpen(false);
-  };
-
   if (!state.category) {
-    return <div>Category not found.</div>;
+    return <div>Loading category data...</div>;
   }
 
   return (
-    <>
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleFormSubmit}
-        initialValues={state.categoryData || undefined}
-      >
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label="Name" name="name" rules={validationRules.name}>
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={24}>
-            <Form.Item
-              label={<span className="font-medium text-[#1a237e]">Description</span>}
-              name="description"
-            >
-              <Input.TextArea rows={4} />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Form.Item>
-          <Button
-            type="primary"
-            onClick={handleOpenModal}
-            loading={state.loading}
-            className="bg-gradient-tone"
-          >
-            Save
-          </Button>
-          <Link to={ROUTER_URL.ADMIN.CATEGORY}>
-            <Button className="ml-3">Back</Button>
-          </Link>
-        </Form.Item>
-      </Form>
-
-      <Modal
-        title="Confirm Update"
-        open={isModalOpen} // Use `open` instead of `visible`
-        onOk={handleModalConfirm}
-        onCancel={handleModalCancel}
-        confirmLoading={state.loading}
-      >
-        <p>Are you sure you want to save the changes to this category?</p>
-      </Modal>
-    </>
+    <Form
+      form={form}
+      layout="vertical"
+      onFinish={handleFormSubmit}
+      initialValues={state.categoryData || undefined}
+    >
+      <Row gutter={16}>
+        <Col span={12}>
+          <Form.Item label="Name" name="name" rules={validationRules.name}>
+            <Input />
+          </Form.Item>
+        </Col>
+        <Col span={24}>
+          <Form.Item label="Description" name="description">
+            <Input.TextArea rows={4} />
+          </Form.Item>
+        </Col>
+      </Row>
+      <Form.Item>
+        <Button type="primary" htmlType="submit" loading={state.loading}>
+          Save
+        </Button>
+      </Form.Item>
+    </Form>
   );
 };
 

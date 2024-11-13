@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Switch, message, Popover, Spin, Modal } from "antd";
+import { Table, Button, Switch, message, Popover, Modal } from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
 
 import { CourseService } from "../../../../../services/CourseService/course.service";
@@ -14,7 +14,7 @@ const CourseTable = () => {
   );
   const [searchQuery] = useState("");
   const [isDataEmpty, setIsDataEmpty] = useState(false);
-  const [loading, setLoading] = useState<boolean>(true);
+
 
   const hasMounted = useRef(false);
   const navigate = useNavigate();
@@ -28,7 +28,6 @@ const CourseTable = () => {
   };
   const fetchCoursesData = async () => {
     try {
-      setLoading(true);
       const searchCondition = {
         keyword: searchQuery,
         category_id: "",
@@ -46,7 +45,6 @@ const CourseTable = () => {
       });
 
       if (response && response.success) {
-        setLoading(false);
 
         const data = response.data.pageData;
         setCoursesData(data);
@@ -54,8 +52,6 @@ const CourseTable = () => {
       }
     } catch (error) {
       console.error("Failed to fetch courses:", error);
-    } finally {
-      setLoading(false);
     }
   };
   useEffect(() => {
@@ -363,7 +359,7 @@ const CourseTable = () => {
       ),
     },
   ];
-  if (loading) return <Spin tip="Loading course details..." />;
+
 
   return (
     <div className="w-full">
