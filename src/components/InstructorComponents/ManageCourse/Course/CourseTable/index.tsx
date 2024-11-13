@@ -41,7 +41,7 @@ const CourseTable = () => {
         searchCondition,
         pageInfo: {
           pageNum: 1,
-          pageSize: 10,
+          pageSize: 1000,
         },
       });
 
@@ -376,11 +376,10 @@ const CourseTable = () => {
           rowKey="_id"
           className="w-full shadow-md rounded-lg overflow-hidden"
           pagination={{
-            pageSize: 10,
+            defaultPageSize: 10,
             showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total, range) =>
-              `${range[0]}-${range[1]} of ${total} courses`,
+            pageSizeOptions: ["15", "20"],
+            position: ["bottomRight"],
           }}
         />
       )}

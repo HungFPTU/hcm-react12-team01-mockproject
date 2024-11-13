@@ -26,7 +26,7 @@ export const SessionService = {
         },
         pageInfo: {
           pageNum: 1,
-          pageSize: 10,
+          pageSize: 1000,
         },
       },
       isLoading: true,
