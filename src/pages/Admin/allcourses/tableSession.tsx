@@ -12,7 +12,10 @@ const TableSession = () => {
       try {
         setLoading(true);
 
-        const response = await SessionService.getSessions();
+        const response = await SessionService.getSessions({
+          searchCondition: { keyword: '', is_position_order: false, is_delete: false },
+          pageInfo: { pageNum: 1, pageSize: 10 },
+        });
 
         if (response.data?.success && response.data.data?.pageData) {
           const sessionsWithKey = response.data.data.pageData.map(

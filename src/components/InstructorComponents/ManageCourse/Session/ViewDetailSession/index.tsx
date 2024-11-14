@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { message, Spin, Descriptions } from 'antd';
 // import { useNavigate } from 'react-router-dom';
-import { Session } from '../../../../../model/admin/response/Sesson.resonse';
+import { Session } from '../../../../../model/admin/response/Sesson.response';
 import { SessionService } from '../../../../../services/SessionService/session.service';
 
 
@@ -28,6 +28,7 @@ const ViewDetailSession = () => {
           message.error("No page data available for this session.");
         }
       } catch (error) {
+        console.log("error>>>>", error)
         message.error("Failed to fetch session details. Please try again.");
       } finally {
         setLoading(false);

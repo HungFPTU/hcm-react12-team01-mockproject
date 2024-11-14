@@ -1,9 +1,10 @@
 import { API } from "../../const/path.api";
-import { CreateSessionRequest } from "../../model/admin/request/Sesson.request";
+import { CreateSessionRequest, GetSessionRequest } from "../../model/admin/request/Sesson.request";
 import {
   CreateSessionResponse,
+  GetSessionsResponse,
   Session,
-} from "../../model/admin/response/Sesson.resonse";
+} from "../../model/admin/response/Sesson.response";
 import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
 
@@ -12,33 +13,11 @@ const token = localStorage.getItem("token");
 console.log("Token:", token); // Log token để kiểm tra
 
 export const SessionService = {
-  getSessions() {
-    return BaseService.post<ApiResponse<any>>({
-      url: "/api/session/search",
-      payload: {
-        searchCondition: {
-          keyword: "",
-          course_id: "",
-          session_id: "",
-          lesson_type: "",
-          is_position_order: false,
-          is_deleted: false,
-        },
-        pageInfo: {
-          pageNum: 1,
-          pageSize: 1000,
-        },
-      },
-      isLoading: true,
-    })
-      .then((response) => {
-        console.log("API Response:", response);
-        return response;
-      })
-      .catch((error) => {
-        console.error("Error fetching sessions:", error);
-        throw error;
-      });
+  getSessions(params: GetSessionRequest) {
+    return BaseService.post<ApiResponse<GetSessionsResponse>>({
+      url: API.SESSION.GET_SESSIONS,
+      payload: params
+    });
   },
   createSession(params: CreateSessionRequest) {
     return BaseService.post<ApiResponse<CreateSessionResponse>>({

@@ -4,7 +4,6 @@ import TableCourses from "./tableCourses";
 import TableSession from "./tableSession";
 import TableLession from "./tableLession";
 import SearchCourse from "../../../components/InstructorComponents/ManageCourse/Course/SearchCourse";
-import FilterCourse from "../../../components/InstructorComponents/ManageCourse/Course/FilterCourse";
 import SearchSession from "../../../components/InstructorComponents/ManageCourse/Session/SearchSession";
 import SearchLesson from "../../../components/InstructorComponents/ManageCourse/Lesson/SearchLesson";
 
@@ -21,10 +20,6 @@ const items: TabsProps["items"] = [
           <div className="flex gap-2">
             <div className="flex-1 max-w-full ">
               <SearchCourse onSearch={() => { }} />
-            </div>
-
-            <div className="flex-1">
-              <FilterCourse onChange={() => { }} />
             </div>
           </div>
         </div>

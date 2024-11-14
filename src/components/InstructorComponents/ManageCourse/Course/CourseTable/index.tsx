@@ -339,6 +339,7 @@ const CourseTable = () => {
             placeholder="Search courses..."
             value={searchQuery}
             onSearch={handleSearch}
+            onPressEnter={handleSearch}
             onChange={(e) => setSearchQuery(e.target.value)}
             enterButton
           />
