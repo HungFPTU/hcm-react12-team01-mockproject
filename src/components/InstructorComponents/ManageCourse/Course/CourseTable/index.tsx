@@ -7,6 +7,7 @@ import { GetCourseRequest } from "../../../../../model/admin/request/Course.requ
 import { EyeOutlined, SendOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../../../utils/helper";
+import ButtonCourse from "../ButtonCourse";
 
 const { Option } = Select;
 
@@ -332,27 +333,32 @@ const CourseTable = () => {
 
   return (
     <div className="w-full">
-      <Input.Search
-        placeholder="Search courses..."
-        value={searchQuery}
-        onSearch={handleSearch}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        enterButton
-      />
-      <Select
-        placeholder="Filter by status"
-        value={filterValue}
-        onChange={(value) => setFilterValue(value)}
-        style={{ width: 200, marginLeft: 10 }}
-      >
-        <Option value="">All Status</Option>
-        <Option value={CourseStatusEnum.New}>New</Option>
-        <Option value={CourseStatusEnum.WaitingApprove}>Waiting for Approval</Option>
-        <Option value={CourseStatusEnum.Approved}>Approved</Option>
-        <Option value={CourseStatusEnum.Rejected}>Rejected</Option>
-        <Option value={CourseStatusEnum.Active}>Active</Option>
-        <Option value={CourseStatusEnum.Inactive}>Inactive</Option>
-      </Select>
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center">
+          <Input.Search
+            placeholder="Search courses..."
+            value={searchQuery}
+            onSearch={handleSearch}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            enterButton
+          />
+          <Select
+            placeholder="Filter by status"
+            value={filterValue}
+            onChange={(value) => setFilterValue(value)}
+            style={{ width: 200, marginLeft: 10 }}
+          >
+            <Option value="">All Status</Option>
+            <Option value={CourseStatusEnum.New}>New</Option>
+            <Option value={CourseStatusEnum.WaitingApprove}>Waiting for Approval</Option>
+            <Option value={CourseStatusEnum.Approved}>Approved</Option>
+            <Option value={CourseStatusEnum.Rejected}>Rejected</Option>
+            <Option value={CourseStatusEnum.Active}>Active</Option>
+            <Option value={CourseStatusEnum.Inactive}>Inactive</Option>
+          </Select>
+        </div>
+        <ButtonCourse />
+      </div>
       {isDataEmpty ? (
         <div className="text-center text-red-500">No courses found.</div>
       ) : (
