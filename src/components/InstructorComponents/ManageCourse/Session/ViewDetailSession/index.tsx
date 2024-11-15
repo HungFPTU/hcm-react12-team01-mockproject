@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { message, Spin, Descriptions } from 'antd';
 // import { useNavigate } from 'react-router-dom';
-import { Session } from '../../../../../model/admin/response/Sesson.response';
+import { Session } from '../../../../../model/admin/response/Session.response';
 import { SessionService } from '../../../../../services/SessionService/session.service';
 
 

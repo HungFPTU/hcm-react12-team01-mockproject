@@ -1,7 +1,7 @@
 import { lazy, useState } from 'react';
 const CourseTable = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Course/CourseTable"));
 const SessionTable = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Session/TableSession"));
-const Lesson = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Lesson"));
+const LessonTable = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Lesson/TableLesson"));
 
 import { Tabs } from 'antd';
 
@@ -24,7 +24,7 @@ const ManageCourse = () => {
     {
       key: '3',
       label: 'Lesson',
-      children: <Lesson key={`${activeTabKey}-lesson-${refreshKey}`} />,
+      children: <LessonTable key={`${activeTabKey}-lesson-${refreshKey}`} />,
     },
   ];
 

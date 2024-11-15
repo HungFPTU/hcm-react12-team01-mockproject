@@ -74,12 +74,14 @@ const ViewDetailLesson = () => {
         <Descriptions.Item label="Session Name">{lesson.session_id}</Descriptions.Item>
         <Descriptions.Item label="Lession Type">{lesson.lesson_type}</Descriptions.Item>
         <Descriptions.Item label="Video URL">
-          <a href={lesson.video_url} target="_blank" rel="noopener noreferrer">
-            Watch Video
-          </a>
+          {lesson.video_url && (
+            <a href={lesson.video_url} target="_blank" rel="noopener noreferrer">
+              Watch Video
+            </a>
+          )}
         </Descriptions.Item>
         <Descriptions.Item label="Image">
-          <Image src={lesson.image_url} alt={lesson.name} width={200} />
+          {lesson.image_url && <Image src={lesson.image_url} alt={lesson.name} width={200} />}
         </Descriptions.Item>
         <Descriptions.Item label="Description">{lesson.description}</Descriptions.Item>
         <Descriptions.Item label="Time">{lesson.full_time}</Descriptions.Item>

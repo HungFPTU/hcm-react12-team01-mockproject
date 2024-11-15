@@ -3,8 +3,8 @@ import { Table, Button, Popover, Modal, message, Space, Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import { SessionService } from "../../../../../services/SessionService/session.service";
 import { EyeOutlined, DeleteOutlined} from "@ant-design/icons";
-import { GetSessionResponsePageData } from "../../../../../model/admin/response/Sesson.response"
-import { GetSessionRequest } from "../../../../../model/admin/request/Sesson.request";
+import { GetSessionResponsePageData } from "../../../../../model/admin/response/Session.response"
+import { GetSessionRequest } from "../../../../../model/admin/request/Session.request";
 import ButtonSession from "../ButtonSession";
 
 const TableSession = () => {

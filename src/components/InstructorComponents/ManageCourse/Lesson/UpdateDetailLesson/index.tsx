@@ -150,19 +150,19 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                 </Form.Item>
                 <Form.Item label="Video URL">
                     <Input
-                        value={formData.video_url}
+                        value={formData.video_url || ''}
                         onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
                     />
                 </Form.Item>
                 <Form.Item label="Image URL">
                     <Input
-                        value={formData.image_url}
+                        value={formData.image_url || ''}
                         onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                     />
                 </Form.Item>
                 <Form.Item label="Description">
                     <Input.TextArea
-                        value={formData.description}
+                        value={formData.description || ''}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     />
                 </Form.Item>

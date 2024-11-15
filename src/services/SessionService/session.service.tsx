@@ -1,10 +1,10 @@
 import { API } from "../../const/path.api";
-import { CreateSessionRequest, GetSessionRequest } from "../../model/admin/request/Sesson.request";
+import { CreateSessionRequest, GetSessionRequest } from "../../model/admin/request/Session.request";
 import {
   CreateSessionResponse,
   GetSessionsResponse,
   Session,
-} from "../../model/admin/response/Sesson.response";
+} from "../../model/admin/response/Session.response";
 import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
 
