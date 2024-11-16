@@ -1,4 +1,4 @@
-import assets from "../../assets/assets"; // Ensure correct import
+import assets from "../../../assets/assets"; // Ensure correct import
 import { Card, Button, Rate, Tooltip, Col, Row } from "antd";
 import { Link } from "react-router-dom";
 
@@ -18,7 +18,7 @@ const courses: Course[] = [
   {
     id: 1,
     title: "Java Tutorials For Busy People",
-    image: assets.python, // Ensure assets are correct
+    image: assets.music_logo, // Ensure assets are correct
     price: 350000,
     rating: 4,
     session_count: 15,
@@ -28,7 +28,7 @@ const courses: Course[] = [
   {
     id: 2,
     title: "React for Beginners",
-    image: assets.react,
+    image: assets.music_logo1,
     price: 450000,
     rating: 5,
     session_count: 10,
@@ -38,7 +38,7 @@ const courses: Course[] = [
   {
     id: 3,
     title: "React for Beginners",
-    image: assets.react,
+    image: assets.music_logo1,
     price: 450000,
     rating: 5,
     session_count: 10,
@@ -48,7 +48,7 @@ const courses: Course[] = [
 
 ];
 
-const Teaching = () => {
+const Music = () => {
   const formatPrice = (price: number) => {
     return price.toLocaleString("vi-VN") + "₫"; // Format for Vietnamese dong (₫)
   };
@@ -62,17 +62,17 @@ const Teaching = () => {
   return (
 <div className="w-full mb-14">
       <Row style={{ marginLeft: "5%" }}>
-        <Col span={8}>
-          <h3 className="heading3 text-4xl md:text-5xl font-bold">Teaching</h3>
+        <Col xs={24} md={8}>
+          <h3 className="heading3 text-4xl md:text-5xl font-bold">Music</h3>
           <div className="body text-xl w-full">
             <div className="titleText block mt-4 m-0 w-full font-normal">
               <span>
-              Become an effective educational leader and confidently empower future generations with our rich portfolio of online teaching courses, covering everything from curriculum design to inclusive teaching.   
-                </span>    
-                 </div>
+              After playing with these boxes for a while, you'll discover certain combinations that you like. Many types of music are created in exactly this way — by mixing and matching small musical ideas to make interesting combinations, and then changing those combinations over time.
+              </span>
+            </div>
             <div className="titleText block mt-4 m-0 w-full font-normal">
               <span>
-              As education experts ourselves, we’ll help you master essential skills and teaching pedagogies. Start putting your professional development goals first..        
+              In these lessons, you'll learn the basics of music making. No prior experience or equipment is required; you'll do everything right here in your browser.             
                </span>
             </div>
           </div>
@@ -170,4 +170,4 @@ const Teaching = () => {
   );
 };
 
-export default Teaching;
+export default Music;

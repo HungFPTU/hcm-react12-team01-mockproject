@@ -68,6 +68,8 @@ export interface GetPublicCourseDetailResponse {
   instructor_name: string;
   category_name: string;
   price_paid: number;
+  average_rating: number;
+  review_count: number;
   full_time: number;
   session_list: [
     {

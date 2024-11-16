@@ -1,109 +1,84 @@
-import { Button, Form, Input, Row, Col, message } from "antd";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useEffect, useCallback, useState, useRef } from "react";
+import { Modal, Button, Form, Input, message, Spin } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
 import { CategoryService } from "../../../services/category/category.service";
-import { UpdateCategoryRequest } from "../../../model/admin/request/Category.request";
 import { Category } from "../../../model/admin/response/Category.response";
-import { ApiResponse } from "../../../model/ApiResponse";
 
-interface EditCategoryProps {
-  id: string;
-  onClose: () => void;
-  onUpdate: () => void; // New prop for update callback
-}
-
-const EditCategory: React.FC<EditCategoryProps> = ({ id, onClose, onUpdate }) => {
+const EditCategory: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [form] = Form.useForm();
-  const [state, setState] = useState<{
-    category: ApiResponse<Category> | null;
-    categoryData: Category | null;
-    loading: boolean;
-  }>({
-    category: null,
-    categoryData: null,
-    loading: false,
-  });
+  const [loading, setLoading] = useState(false);  
+  const navigate = useNavigate();
+  const hasMounted = useRef(false);
 
-  const validationRules = useMemo(
-    () => ({
-      name: [{ required: true, message: "Please enter the category name" }],
-    }),
-    []
-  );
 
-  const fetchCategoryDetails = useCallback(
-    async (id: string) => {
-      try {
-        const res = await CategoryService.getCategoryDetails(id);
-        const categoryData = res.data?.data as Category;
-
-        if (categoryData) {
-          setState((prev) => ({
-            ...prev,
-            category: res.data as ApiResponse<Category>,
-            categoryData,
-          }));
-          form.setFieldsValue(categoryData);
-        } else {
-          message.error("No data available for this category.");
-        }
-      } catch {
-        message.error("Failed to fetch category details. Please try again.");
-      }
-    },
-    [form]
-  );
+  const fetchCategoryDetails = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await CategoryService.getCategoryDetails(id as string);
+      form.setFieldsValue(res.data?.data);  // Set the form values directly
+    } catch {
+      message.error("Failed to load category details.");
+    } finally {
+      setLoading(false);
+    }
+  }, [id, form]);
 
   useEffect(() => {
-    fetchCategoryDetails(id);
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+    if (id) fetchCategoryDetails();
   }, [id, fetchCategoryDetails]);
 
-  const handleFormSubmit = useCallback(
-    async (values: UpdateCategoryRequest) => {
-      setState((prev) => ({ ...prev, loading: true }));
-      try {
-        await CategoryService.updateCategory(id, values);
-        form.resetFields();
-        message.success("Category updated successfully");
-        onClose(); // Close the modal on successful update
-        onUpdate(); // Trigger the update callback to refresh categories
-      } catch {
-        message.error("Failed to update category. Please try again.");
-      } finally {
-        setState((prev) => ({ ...prev, loading: false }));
-      }
-    },
-    [id, onClose, onUpdate, form]
-  );
-
-  if (!state.category) {
-    return <div>Loading category data...</div>;
-  }
+  const handleSave = async (values: Category) => {
+    setLoading(true);
+    try {
+      await CategoryService.updateCategory(id as string, values);
+      message.success("Category updated successfully");
+      navigate(-1);
+    } catch {
+      message.error("Failed to update category.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={handleFormSubmit}
-      initialValues={state.categoryData || undefined}
+    <Modal
+      title="Edit Category"
+      visible={true}
+      onCancel={() => navigate(-1)}
+      footer={[
+        <Button key="cancel" onClick={() => navigate(-1)}>
+          Cancel
+        </Button>,
+        <Button
+          key="save"
+          type="primary"
+          onClick={() => form.submit()}
+          loading={loading}
+        >
+          Save
+        </Button>,
+      ]}
     >
-      <Row gutter={16}>
-        <Col span={12}>
-          <Form.Item label="Name" name="name" rules={validationRules.name}>
+      {loading ? (
+        <Spin />
+      ) : (
+        <Form form={form} onFinish={handleSave} layout="vertical">
+          <Form.Item
+            label="Category Name"
+            name="name"
+            rules={[{ required: true, message: "Please enter the category name" }]}
+          >
             <Input />
           </Form.Item>
-        </Col>
-        <Col span={24}>
           <Form.Item label="Description" name="description">
             <Input.TextArea rows={4} />
           </Form.Item>
-        </Col>
-      </Row>
-      <Form.Item>
-        <Button type="primary" htmlType="submit" loading={state.loading}>
-          Save
-        </Button>
-      </Form.Item>
-    </Form>
+        </Form>
+      )}
+    </Modal>  
   );
 };
 

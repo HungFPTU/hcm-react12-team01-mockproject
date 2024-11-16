@@ -1,21 +1,20 @@
-import React, { useState, useEffect, useCallback, lazy, useRef } from "react";
+import React, { useState, useEffect, useCallback, lazy, useRef, Suspense } from "react";
 import { Table, Modal, message, Empty } from "antd";
 import { GetCategoryRequest } from "../../../model/admin/request/Category.request";
 import { CategoryService } from "../../../services/category/category.service";
 import { Category } from "../../../model/admin/response/Category.response";
+import { useNavigate } from "react-router-dom";
 
 const SearchBar = lazy(() => import("./SearchBar"));
 const ActionButtons = lazy(() => import("./ActionButtons"));
 const AddCategoryButton = lazy(() => import("./AddCategoryButton"));
-const EditCategory = lazy(() => import("./EditCategory"));
 
 const CategoryManagement: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchType, setSearchType] = useState("Sub Category");
   const [isDataEmpty, setIsDataEmpty] = useState(false);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const hasMounted = useRef(false);
+  const  navigate  = useNavigate();
 
   const fetchCategories = async (params: GetCategoryRequest) => {
     try {
@@ -27,92 +26,48 @@ const CategoryManagement: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (hasMounted.current) return;
-    hasMounted.current = true;
-
-    const fetchCategoriesData = async () => {
-      try {
-        const searchCondition = {
-          keyword: searchQuery,
-          is_parent: false,
-          is_delete: false,
-        };
-
-        const response = await fetchCategories({
-          searchCondition,
-          pageInfo: {
-            pageNum: 1,
-            pageSize: 10,
-          },
-        });
-
-        if (response && response.success) {
-          const data = response.data.pageData;
-          setCategories(data);
-          setIsDataEmpty(data.length === 0);
-        }
-      } catch (error) {
-        console.error("Failed to fetch categories:", error);
-      }
-    };
-
-    fetchCategoriesData();
-  }, [searchQuery, searchType]);
-
-  const handleSearch = async (query: string, type: string) => {
-    setSearchQuery(query);
-    setSearchType(type);
-  
+  const loadCategories = useCallback(async () => {
     const searchCondition = {
-      keyword: query,
-      is_parent: false,
+      keyword: searchQuery,
+      is_parent: true,
       is_delete: false,
     };
-  
+
     try {
       const response = await fetchCategories({
         searchCondition,
-        pageInfo: {
-          pageNum: 1,
-          pageSize: 10,
-        },
+        pageInfo: { pageNum: 1, pageSize: 10 },
       });
-  
+
       if (response && response.success) {
-        const data = response.data.pageData;
-        setCategories(data);
-        setIsDataEmpty(data.length === 0);
+        setCategories(response.data.pageData);
+        setIsDataEmpty(response.data.pageData.length === 0);
       }
     } catch (error) {
       console.error("Failed to fetch categories:", error);
     }
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+    loadCategories();
+  }, [loadCategories]);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    loadCategories();
   };
-  
+
   const handleAddCategory = async () => {
-    try {
-      const response = await fetchCategories({
-        searchCondition: {
-          keyword: searchQuery,
-          is_parent: false,
-          is_delete: false,
-        },
-        pageInfo: {
-          pageNum: 1,
-          pageSize: 10,
-        },
-      });
-  
-      if (response && response.success) {
-        setCategories(response.data.pageData);
-        setIsDataEmpty(response.data.pageData.length === 0);
-        message.success("Categories updated successfully.");
-      }
-    } catch (error) {
-      console.error("Failed to refresh categories:", error);
-    }
+    await loadCategories();
+    message.success("Categories updated successfully.");
   };
-  
+
+  const handleEditCategory = (categoryId: string) => {
+    navigate(`/admin/category-management/${categoryId}`);
+  };  
+
   const handleDeleteCategory = useCallback(
     (categoryId: string) => {
       Modal.confirm({
@@ -121,18 +76,13 @@ const CategoryManagement: React.FC = () => {
           try {
             const response = await CategoryService.deleteCategory(categoryId);
             if (response.data.success) {
-              setCategories((prevCategories) =>
-                prevCategories.filter((category) => category._id !== categoryId)
+              setCategories((prev) =>
+                prev.filter((category) => category._id !== categoryId)
               );
               message.success("Category deleted successfully.");
             }
-          } catch (error) {
-            message.error(
-              error instanceof Error
-                ? error.message
-                : "An error occurred while deleting the category"
-            );
-            console.error("Failed to delete category:", error);
+          } catch {
+            message.error("An error occurred while deleting the category");
           }
         },
       });
@@ -140,13 +90,6 @@ const CategoryManagement: React.FC = () => {
     []
   );
 
-  const handleEditCategory = (categoryId: string) => {
-    setSelectedCategoryId(categoryId);
-  };
-
-  const closeModal = () => {
-    setSelectedCategoryId(null);
-  };
 
   const columns = [
     {
@@ -180,50 +123,20 @@ const CategoryManagement: React.FC = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "20px",
-        }}
-      >
-        <SearchBar onSearch={handleSearch} />
-        <AddCategoryButton onAdd={handleAddCategory} />
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+        <Suspense>
+          <SearchBar onSearch={handleSearch} />
+          <AddCategoryButton onAdd={handleAddCategory} />
+        </Suspense>
       </div>
 
       <Table
         columns={columns}
         dataSource={categories}
         rowKey="_id"
-        pagination={{
-          defaultPageSize: 5,
-          showSizeChanger: true,
-          pageSizeOptions: ["4", "8"],
-          position: ["bottomRight"],
-        }}
-        locale={{
-          emptyText: isDataEmpty ? (
-            <Empty description="No categories found." />
-          ) : (
-            <Empty />
-          ),
-        }}
+        pagination={{ defaultPageSize: 5, showSizeChanger: true, pageSizeOptions: ["4", "8"], position: ["bottomRight"] }}
+        locale={{ emptyText: isDataEmpty ? <Empty description="No categories found." /> : <Empty /> }}
       />
-
-      {selectedCategoryId && (
-        <Modal
-          title="Edit Category"
-          open={!!selectedCategoryId}
-          onCancel={closeModal}
-          footer={null}
-        >
-          <EditCategory 
-            id={selectedCategoryId} 
-            onClose={closeModal} 
-            onUpdate={handleAddCategory} // Pass the refresh function as callback
-          />
-        </Modal>
-      )}
     </div>
   );
 };

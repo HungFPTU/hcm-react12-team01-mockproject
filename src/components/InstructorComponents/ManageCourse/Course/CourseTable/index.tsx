@@ -9,9 +9,7 @@ import { EyeOutlined, SendOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
 const CourseTable = () => {
-  const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>(
-    []
-  );
+  const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
   const [searchQuery] = useState("");
   const [isDataEmpty, setIsDataEmpty] = useState(false);
 
@@ -32,7 +30,6 @@ const CourseTable = () => {
         keyword: searchQuery,
         category_id: "",
         status: undefined,
-
         is_delete: false,
       };
 
