@@ -1,4 +1,4 @@
-
+import {CourseStatusEnum} from "../../Course";
 
 export interface SearchCondition {
   keyword: string;
@@ -53,15 +53,15 @@ export interface GetPublicCourseRequest {
 }
 
 //===========COURSE LOG================================
-// export interface SearchConditionLog {
-//   keyword: string;
-//   course_id: string;
-//   old_status: CourseStatusEnum | undefined;
-//   new_status: CourseStatusEnum | undefined;
-//   is_delete: boolean;
-// }
+export interface SearchConditionLog {
+  keyword: string;
+  course_id: string;
+  old_status: CourseStatusEnum | undefined;
+  new_status: CourseStatusEnum | undefined;
+  is_delete: boolean;
+}
 
-// export interface GetCourseLogRequest {
-//   searchCondition: SearchConditionLog;
-//   pageInfo: PageInfo;
-// }
+export interface GetCourseLogRequest {
+  searchCondition: SearchConditionLog;
+  pageInfo: PageInfo;
+}

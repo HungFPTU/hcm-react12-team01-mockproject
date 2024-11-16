@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import bannerImage from "../../assets/bgrCourseDetail.jpg";
 import {  Row, Col, Collapse } from "antd";
@@ -131,7 +131,7 @@ const renderLessons = (lessonList: GetPublicCourseDetailResponse["session_list"]
                             <h1 className="text-3xl text-left font-bold pl-12 mt-6">Course Content</h1>
                             <div className="courseContent ml-9 mt-5 ">
                             <Collapse accordion>
-                                {course?.session_list.map((session) => (
+                                {course?.session_list.map((session: { position_order: any; name: any; full_time: any; _id: string | number; lesson_list: [{ _id: string; name: string; lesson_type: string; full_time: number; position_order: number; }]; }) => (
                                     <Panel
                                     header={`${session.position_order}. ${session.name} (${session.full_time} minutes)`}
                                     key={session._id}

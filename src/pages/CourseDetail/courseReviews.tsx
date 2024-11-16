@@ -21,7 +21,7 @@ import { useAuth } from "../../context/AuthContent";
 
 const { Title } = Typography;
 
-const CourseReviews: React.FC<any & { courseId: string, course: any, averageRating: number, reviewCount: number }> = ({ reviews, courseId, course, averageRating, reviewCount }) => {
+const CourseReviews: React.FC<any & { courseId: string, course: any, averageRating: number, reviewCount: number }> = ({ reviews, courseId, reviewCount }) => {
   const [comment, setComment] = useState("");
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [fetchedReviews, setFetchedReviews] = useState(reviews);
@@ -76,12 +76,12 @@ const CourseReviews: React.FC<any & { courseId: string, course: any, averageRati
   
     if (key.includes("quantity")) {
       // Sorting based on review counts for each rating
-      sortedFilteredReviews = fetchedReviews.sort((a, b) =>
+      sortedFilteredReviews = fetchedReviews.sort((a: { rating: number; }, b: { rating: number; }) =>
         key === "quantity-increase" ? a.rating - b.rating : b.rating - a.rating
       );
     } else if (key.includes("date")) {
       // Sorting based on created_at or updated_at
-      sortedFilteredReviews = fetchedReviews.sort((a, b) => {
+      sortedFilteredReviews = fetchedReviews.sort((a: { created_at: string | number | Date; updated_at: string | number | Date; }, b: { created_at: string | number | Date; updated_at: string | number | Date; }) => {
         const dateA = new Date(key === "date-newest" ? a.created_at : a.updated_at);
         const dateB = new Date(key === "date-newest" ? b.created_at : b.updated_at);
         return key === "date-newest" ? dateB.getTime() - dateA.getTime() : dateA.getTime() - dateB.getTime();
