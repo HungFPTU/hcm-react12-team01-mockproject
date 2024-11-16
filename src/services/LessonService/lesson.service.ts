@@ -1,12 +1,12 @@
 import { BaseService } from "../config/base.service";
 import { API } from "../../const/path.api";
-import { CreateLessonRequest, GetLessonParams, UpdateLessonRequest } from "../../model/admin/request/Lesson.request";
+import { CreateLessonRequest, GetLessonRequest, UpdateLessonRequest } from "../../model/admin/request/Lesson.request";
 import { ApiResponse } from "../../model/ApiResponse";
-import { CreateLessonResponse, LessonDetailsResponse } from "../../model/admin/response/Lesson.response";
+import { CreateLessonResponse, GetLessonsResponse, LessonDetailsResponse } from "../../model/admin/response/Lesson.response";
 
 export const LessonService = {
-  getLesson(params: GetLessonParams) {
-    return BaseService.post<ApiResponse<CreateLessonResponse>>({
+  getLesson(params: GetLessonRequest) {
+    return BaseService.post<ApiResponse<GetLessonsResponse>>({
       url: API.LESSON.GET_LESSONS,
       payload: params
     });

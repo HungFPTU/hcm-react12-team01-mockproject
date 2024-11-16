@@ -1,9 +1,10 @@
 import { lazy, useState } from 'react';
-const Course = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Course"));
-const Session = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Session"));
-const Lesson = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Lesson"));
+const CourseTable = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Course/CourseTable"));
+const SessionTable = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Session/TableSession"));
+const LessonTable = lazy(() => import("../../../components/InstructorComponents/ManageCourse/Lesson/TableLesson"));
 
 import { Tabs } from 'antd';
+
 
 const ManageCourse = () => {
   const [activeTabKey, setActiveTabKey] = useState('1');
@@ -13,17 +14,17 @@ const ManageCourse = () => {
     {
       key: '1',
       label: 'Course',
-      children: <Course key={`${activeTabKey}-course-${refreshKey}`} />,
+      children: <CourseTable key={`${activeTabKey}-course-${refreshKey}`} />,
     },
     {
       key: '2',
       label: 'Session',
-      children: <Session key={`${activeTabKey}-session-${refreshKey}`} />,
+      children: <SessionTable key={`${activeTabKey}-session-${refreshKey}`} />,
     },
     {
       key: '3',
       label: 'Lesson',
-      children: <Lesson key={`${activeTabKey}-lesson-${refreshKey}`} />,
+      children: <LessonTable key={`${activeTabKey}-lesson-${refreshKey}`} />,
     },
   ];
 

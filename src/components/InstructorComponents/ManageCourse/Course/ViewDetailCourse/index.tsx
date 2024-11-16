@@ -26,6 +26,7 @@ const ViewDetailCourse = () => {
           message.error("No course data available.");
         }
       } catch (error) {
+        console.error("Failed to fetch course details. Please try again.", error);
         message.error("Failed to fetch course details. Please try again.");
       } finally {
         setLoading(false);

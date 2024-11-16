@@ -13,9 +13,10 @@ import { LessonService } from "../../../../../services/LessonService/LessionServ
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { SessionService } from "../../../../../services/SessionService/session.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
-import { Session } from "../../../../../model/admin/response/Sesson.resonse";
+import { Session } from "../../../../../model/admin/response/Session.response";
 import { CreateLessonRequest } from "../../../../../model/admin/request/Lesson.request";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
+import { LessonTypeEnum } from "../../../../../model/Lesson";
 
 const { Option } = Select;
 
@@ -83,7 +84,10 @@ const ButtonLesson = () => {
   }, [searchQuery]);
 
   useEffect(() => {
-    SessionService.getSessions()
+    SessionService.getSessions({
+      searchCondition: { keyword: '', is_position_order: false, is_delete: false },
+      pageInfo: { pageNum: 1, pageSize: 10 },
+    })
       .then((response) => {
         if (response && response.data && response.data.data) {
           setSessionData(response.data.data.pageData);
@@ -94,7 +98,7 @@ const ButtonLesson = () => {
       });
   }, []);
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: CreateLessonRequest) => {
     try {
       const description = editorRef.current
         ? editorRef.current.getContent()
@@ -115,7 +119,7 @@ const ButtonLesson = () => {
         position_order: values.position_order,
       };
 
-      if (values.lesson_type === "video") {
+      if (values.lesson_type === LessonTypeEnum.Video) {
         newLesson.video_url = values.video_url;
       } else {
         newLesson.image_url = values.image_url;

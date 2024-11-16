@@ -4,7 +4,7 @@ import { SessionService } from "../../../../../services/SessionService/session.s
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
-import { CreateSessionRequest } from "../../../../../model/admin/request/Sesson.request";
+import { CreateSessionRequest } from "../../../../../model/admin/request/Session.request";
 
 const { Option } = Select;
 

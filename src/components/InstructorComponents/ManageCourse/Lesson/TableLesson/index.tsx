@@ -1,38 +1,72 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { Table, Button, Popover, Modal, message } from "antd";
+import { useState, useEffect, useRef } from "react";
+import { Table, Button, Popover, Modal, message, Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LessonService } from "../../../../../services/LessonService/lesson.service";
-import { Lesson } from "../../../../../model/admin/response/Lesson.response";
 import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
+import { GetLessonRequest } from "../../../../../model/admin/request/Lesson.request";
+import { GetLessonsResponsePageData } from "../../../../../model/admin/response/Lesson.response";
+import ButtonLesson from "../ButtonLesson";
 
 const TableLesson = () => {
   const navigate = useNavigate();
-  const [lessonsData, setLessonsData] = useState<Lesson["pageData"]>([]);
+  const [lessonsData, setLessonsData] = useState<GetLessonsResponsePageData[]>([]);
+  const [filteredLessons, setFilteredLessons] = useState<GetLessonsResponsePageData[]>([]);
+  const [isDataEmpty, setIsDataEmpty] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const hasMounted = useRef(false);
 
-  const fetchLesson = useCallback(async () => {
-    const response = await LessonService.getLesson({
-      searchCondition: {
-        keyword: "",
-        course_id: "",
-        is_delete: false,
-        is_position_order: false,
-      },
-      pageInfo: { pageNum: 1, pageSize: 1000 },
-    });
-    if (response.data) {
-      const lessons = Array.isArray(response.data.data.pageData)
-        ? response.data.data.pageData
-        : [response.data.data.pageData];
-      setLessonsData(lessons);
+  const fetchLesson = async (params: GetLessonRequest) => {
+    try {
+      const response = await LessonService.getLesson(params);
+      return response.data;
+    } catch (error) {
+      console.error("Fail to fetch lessons:", error);
     }
-  }, []);
+  };
+
+  const fetchLessonsData = async () => {
+    try {
+      const searchCondition = {
+        keyword: searchQuery.trim(),
+        is_position_order: false,
+        is_deleted: false,
+      };
+      const response = await fetchLesson({
+        searchCondition: {
+          ...searchCondition,
+          _id: "",
+          course_id: "",
+          is_deleted: false,
+        },
+        pageInfo: {
+          pageNum: 1, 
+          pageSize: 1000,
+        },
+      });
+      if (response && response.success) {
+        const data: GetLessonsResponsePageData[] = response.data.pageData;
+        setLessonsData(data);
+        setFilteredLessons(data);
+        setIsDataEmpty(data.length === 0);
+      } else {
+        message.error("Không tìm thấy khóa học nào.");
+      }
+    } catch (error) {
+      console.error("Failed to fetch lessons:", error);
+    }
+  };
 
   useEffect(() => {
     if (hasMounted.current) return;
     hasMounted.current = true;
-    fetchLesson();
-  }, [fetchLesson]);
+    fetchLessonsData();
+  }, []);
+
+  useEffect(() => {
+    if (lessonsData.length > 0) {
+      console.log("Có khóa học trong lessonsData:", lessonsData);
+    }
+  }, [lessonsData]);
 
   const handleDeleteCourse = async (lessonId: string) => {
     try {
@@ -59,6 +93,10 @@ const TableLesson = () => {
         handleDeleteCourse(courseId);
       },
     });
+  };
+
+  const handleSearch = () => {
+    fetchLessonsData();
   };
 
   const handleViewDetails = (id: string) => {
@@ -95,7 +133,7 @@ const TableLesson = () => {
     {
       title: "Action",
       key: "action",
-      render: (_: unknown, record: Lesson["pageData"][0]) => (
+      render: (_: unknown, record: GetLessonsResponsePageData) => (
         <>
           <Popover content="View Course Detail">
             <Button
@@ -117,10 +155,26 @@ const TableLesson = () => {
       ),
     },
   ];
-
   return (
-    <Table
-      dataSource={lessonsData}
+    <div className="w-full">
+      <div className="flex mb-4 justify-between items-center">
+        <Input.Search
+          placeholder="Search lessons..."
+          value={searchQuery}
+          onPressEnter={handleSearch}
+          onSearch={handleSearch}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          enterButton
+          style={{ width: '20%' }}
+        />
+        <ButtonLesson />
+      </div>
+      <div>
+      {isDataEmpty ? (
+        <div className="text-center text-red-500">No lessons found.</div>
+      ) : (
+        <Table
+      dataSource={filteredLessons}
       columns={columns}
       rowKey="key"
       className="w-full shadow-md rounded-lg overflow-hidden"
@@ -130,7 +184,10 @@ const TableLesson = () => {
         pageSizeOptions: ["15", "20"],
         position: ["bottomRight"],
       }}
-    />
+      />
+      )}
+    </div>
+    </div>
   );
 };
 
