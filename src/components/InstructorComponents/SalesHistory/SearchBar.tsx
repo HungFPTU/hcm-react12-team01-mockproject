@@ -9,31 +9,28 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [searchType, setSearchType] = useState<string | undefined>(undefined);
+  const [searchType, setSearchType] = useState("");
 
   const handleTypeChange = (value: string) => {
     setSearchType(value);
   };
 
-  const handleSearch = (value: string) => {
-    onSearch(value, searchType || "Sub Category"); // Pass current searchType directly
-  };
-
   return (
     <div style={{ display: "flex", marginBottom: "20px" }}>
       <Select
-        placeholder="Select Category Type"
+        defaultValue=""
         style={{ width: 150, marginRight: 8 }}
         onChange={handleTypeChange}
-        value={searchType}
       >
-        <Option value="Sub Category">Sub Category</Option>
-        <Option value="Parent Category">Parent Category</Option>
+        <Option value="">--Choose Status--</Option>
+        <Option value="new">New</Option>
+        <Option value="request_paid">Request Paid</Option>
+        <Option value="completed">Completed</Option>
       </Select>
       <Search
         enterButton
-        placeholder={`Search by ${searchType ? searchType.toLowerCase() : "category"} name`}
-        onSearch={handleSearch} // Use the handleSearch function here
+        placeholder={`Search by ${searchType.toLowerCase()} name`}
+        onSearch={(value) => onSearch(value, searchType)}
         style={{ width: 300 }}
       />
     </div>

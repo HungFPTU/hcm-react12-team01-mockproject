@@ -4,7 +4,7 @@ import { Payout } from '../../../model/admin/response/Payout.response';
 import { GetPayoutRequest } from '../../../model/admin/request/Payout.request';
 import { PurchaseService } from '../../../services/PurchaseService/purcase.service';
 import SearchBar from './SearchBar';
-const RequestPayoutTable: React.FC = () => {
+const CompletedPayoutTable: React.FC = () => {
 
     const hasMounted = useRef(false);
     const [payouts, setPayouts] = useState<Payout[]>([]);
@@ -12,6 +12,7 @@ const RequestPayoutTable: React.FC = () => {
     const [isDataEmpty, setIsDataEmpty] = useState(false); // Track if data is empty
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedTransactions, setSelectedTransactions] = useState<any[]>([]);
+
 
     const showModal = (transactions: any[]) => {
         setSelectedTransactions(transactions);
@@ -38,7 +39,7 @@ const RequestPayoutTable: React.FC = () => {
             const searchCondition = {
                 payout_no: "",
                 instructor_id: "",
-                status: "request_payout",
+                status: "completed",
                 is_delete: false,
             };
 
@@ -75,7 +76,7 @@ const RequestPayoutTable: React.FC = () => {
         const searchCondition = {
             payout_no: query,
             instructor_id: "",
-            status: "request_payout",
+            status: "completed",
             is_delete: false,
         };
 
@@ -104,6 +105,11 @@ const RequestPayoutTable: React.FC = () => {
             key: "payout_no",
         },
         {
+            title: "Instructor name",
+            dataIndex: "instructor_name",
+            key: "instructor_name",
+        },
+        {
             title: "Status",
             dataIndex: "status",
             key: "status",
@@ -120,8 +126,8 @@ const RequestPayoutTable: React.FC = () => {
                         borderColor = "border-blue-500";
                         popoverContent = "You can send approval request to admin";
                         break;
-                    case "request_payout":
-                        statusText = " Request payout";
+                    case "request_paid":
+                        statusText = " Request Paid";
                         statusColor = "text-orange-300";
                         borderColor = "border-orange-300";
                         popoverContent = "Please watting for the approval from admin";
@@ -271,4 +277,4 @@ const RequestPayoutTable: React.FC = () => {
     );
 }
 
-export default RequestPayoutTable;
+export default CompletedPayoutTable;

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef } from "react";
 import { Table, Button, Switch, message, Popover, Modal, Input, Select } from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
 import { CourseService } from "../../../../../services/CourseService/course.service";
@@ -267,7 +267,7 @@ const CourseTable = () => {
         return (
           <div>
             {canChangeStatus && (
-              <Popover 
+              <Popover
                 content={<div>Click to activate your course</div>}
                 title="Status Update"
                 trigger="hover"
@@ -279,11 +279,10 @@ const CourseTable = () => {
                   checked={record.status === CourseStatusEnum.Active}
                   onChange={() => onChangeStatus(record._id, record.status)}
                   disabled={!canChangeStatus}
-                  className={`transition-all duration-300 ${
-                    record.status === CourseStatusEnum.Active 
-                    ? "bg-purple-500" 
-                    : "bg-gray-500"
-                  }`}
+                  className={`transition-all duration-300 ${record.status === CourseStatusEnum.Active
+                      ? "bg-purple-500"
+                      : "bg-gray-500"
+                    }`}
                 />
               </Popover>
             )}
@@ -315,17 +314,17 @@ const CourseTable = () => {
           </Popover>
 
           {/* Điều kiện hiển thị nút "Send" */}
-          {([CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(record.status) 
-          && record.session_count > 0 && record.lesson_count > 0) && (
-            <Popover content="Send course to admin">
-              <Button
-                className="bg-green-500 hover:bg-green-600 text-white"
-                onClick={() => onChangeStatus(record._id, CourseStatusEnum.WaitingApprove)}
-              >
-                <SendOutlined />
-              </Button>
-            </Popover>
-          )}
+          {([CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(record.status)
+            && record.session_count > 0 && record.lesson_count > 0) && (
+              <Popover content="Send course to admin">
+                <Button
+                  className="bg-green-500 hover:bg-green-600 text-white"
+                  onClick={() => onChangeStatus(record._id, CourseStatusEnum.WaitingApprove)}
+                >
+                  <SendOutlined />
+                </Button>
+              </Popover>
+            )}
         </div>
       ),
     },

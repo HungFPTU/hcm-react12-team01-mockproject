@@ -131,11 +131,6 @@ const TableLesson = () => {
       render: (created_at: string) => new Date(created_at).toLocaleDateString(),
     },
     {
-      title: "Lesson Type",
-      dataIndex: "lesson_type",
-      key: "lesson_type",
-    },
-    {
       title: "Action",
       key: "action",
       render: (_: unknown, record: GetLessonsResponsePageData) => (

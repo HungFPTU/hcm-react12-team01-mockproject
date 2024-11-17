@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Table, Popover, Empty, Modal, Button, } from 'antd';
+import { Table, Popover, Empty, Modal, Button, Space, message, Input, } from 'antd';
 import { Payout } from '../../../model/admin/response/Payout.response';
 import { GetPayoutRequest } from '../../../model/admin/request/Payout.request';
 import { PurchaseService } from '../../../services/PurchaseService/purcase.service';
 import SearchBar from './SearchBar';
-const RequestPayoutTable: React.FC = () => {
+const RequestPayout: React.FC = () => {
 
     const hasMounted = useRef(false);
     const [payouts, setPayouts] = useState<Payout[]>([]);
@@ -12,7 +12,40 @@ const RequestPayoutTable: React.FC = () => {
     const [isDataEmpty, setIsDataEmpty] = useState(false); // Track if data is empty
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedTransactions, setSelectedTransactions] = useState<any[]>([]);
+    const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
+    const [rejectComment, setRejectComment] = useState("");
+    const [payoutToReject, setPayoutToReject] = useState<string | null>(null);
 
+    const showRejectModal = (id: string) => {
+        setPayoutToReject(id);
+        setIsRejectModalVisible(true);
+    };
+
+    const handleRejectOk = async () => {
+        if (payoutToReject) {
+            try {
+                const response = await PurchaseService.updatePayout(payoutToReject, {
+                    status: "rejected",
+                    comment: rejectComment,
+                });
+                if (response && response.data.success) {
+                    message.success(`Payout ${payoutToReject} rejected successfully!`);
+                    fetchPurchaseData();
+                    setIsRejectModalVisible(false);
+                    setRejectComment("");
+                } else {
+                    message.error(`Failed to reject payout ${payoutToReject}`);
+                }
+            } catch (error) {
+                console.error("Error rejecting payout:", error);
+            }
+        }
+    };
+
+    const handleRejectCancel = () => {
+        setIsRejectModalVisible(false);
+        setRejectComment("");
+    };
     const showModal = (transactions: any[]) => {
         setSelectedTransactions(transactions);
         setIsModalVisible(true);
@@ -68,6 +101,24 @@ const RequestPayoutTable: React.FC = () => {
         fetchPurchaseData();
     }, [searchQuery]);
 
+
+    const handleApprove = async (id: string) => {
+        try {
+            const response = await PurchaseService.updatePayout(id, {
+                status: "completed",
+                comment: "",
+            });
+            if (response && response.data.success) {
+                message.success(`Payout ${id} approved successfully!`);
+                fetchPurchaseData();
+            } else {
+                message.error(`Failed to approve payout ${id}`);
+            }
+        } catch (error) {
+            console.error("Error approving payout:", error);
+        }
+    };
+
     const handleSearch = async (query: string) => {
         setSearchQuery(query);
 
@@ -102,6 +153,11 @@ const RequestPayoutTable: React.FC = () => {
             title: "Payout_No",
             dataIndex: "payout_no",
             key: "payout_no",
+        },
+        {
+            title: "Instructor name",
+            dataIndex: "instructor_name",
+            key: "instructor_name",
         },
         {
             title: "Status",
@@ -203,6 +259,20 @@ const RequestPayoutTable: React.FC = () => {
             key: "created_at",
             render: (created_at: string) => new Date(created_at).toLocaleDateString(),
         },
+        {
+            title: "Action",
+            key: "action",
+            render: (record: Payout) => (
+                <Space size="middle">
+                    <Button type="primary" onClick={() => handleApprove(record._id)}>
+                        Approve
+                    </Button>
+                    <Button type="dashed" onClick={() => showRejectModal(record._id)}>
+                        Reject
+                    </Button>
+                </Space>
+            ),
+        },
     ];
     return (
         <div style={{ padding: "20px" }}>
@@ -239,6 +309,18 @@ const RequestPayoutTable: React.FC = () => {
                     <p>No transactions found.</p>
                 )}
             </Modal>
+            <Modal
+                title="Reject Payout"
+                visible={isRejectModalVisible}
+                onOk={handleRejectOk}
+                onCancel={handleRejectCancel}
+            >
+                <p>Reason for rejection:</p>
+                <Input.TextArea
+                    value={rejectComment}
+                    onChange={(e) => setRejectComment(e.target.value)}
+                />
+            </Modal>
             <div
                 style={{
                     display: "flex",
@@ -271,4 +353,4 @@ const RequestPayoutTable: React.FC = () => {
     );
 }
 
-export default RequestPayoutTable;
+export default RequestPayout;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Button, Modal, Form, Input, Select, message, Spin } from "antd";
+import { Button, Modal, Form, Input, Select, message } from "antd";
 import { SessionService } from "../../../../../services/SessionService/session.service";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
@@ -14,7 +14,6 @@ const ButtonSession = () => {
     []
   );
   const hasMounted = useRef(false);
-  const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery] = useState("");
   const showModal = () => {
     setIsModalVisible(true);
@@ -39,7 +38,6 @@ const ButtonSession = () => {
 
     const fetchCoursesData = async () => {
       try {
-        setLoading(true);
         const searchCondition = {
           keyword: searchQuery,
           category_id: "",
@@ -56,15 +54,12 @@ const ButtonSession = () => {
         });
 
         if (response && response.success) {
-          setLoading(false);
 
           const data = response.data.pageData;
           setCoursesData(data);
         }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -101,8 +96,7 @@ const ButtonSession = () => {
       console.error("Error creating session:", error);
     }
   };
-  
-  if (loading) return <Spin tip="Loading course details..." />;
+
 
   return (
     <>

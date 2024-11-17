@@ -6,7 +6,7 @@ import { Button, Form, Input, Space, message } from "antd";
 import { useForm } from "antd/es/form/Form";
 import LOGO from "../../assets/LogoCourseApp.png";
 import YOUR_IMAGE from "../../assets/Login&Register.jpg";
-import { AuthService } from "../../services/authService/AuthService";
+import { AuthService } from "../../services/authService/auth.service";
 
 // Xác định kiểu của form values
 interface FormValues {

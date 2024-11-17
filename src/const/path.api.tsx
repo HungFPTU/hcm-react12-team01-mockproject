@@ -38,6 +38,8 @@ export const API = {
     GET_COURSE_LOG: "/api/course/log/search",
     GET_SESSIONS: "/api/session/search",
     GET_LESSONS: "/api/lesson/search",
+    GET_PURCHASE: "/api/purchase/search",
+
   },
   INSTRUCTOR: {
     GET_USER_DETAILS: "api/users/:id",
@@ -47,12 +49,16 @@ export const API = {
     GET_CATEGORIES: "/api/category/search",
 
     CREATE_REVIEW: "/api/review",
+    GET_PURCHASE: "/api/purchase/search-for-instructor",
+
   },
   STUDENT: {
     GET_USER_DETAILS: "api/users/:id",
     UPDATE_USER: "api/users/:id",
     CHANGE_PASSWORD: "api/users/change-password",
     CREATE_REVIEW: "/api/review",
+    GET_PURCHASE: "/api/purchase/search-for-student",
+
   },
   COURSE: {
     CREATE_COURSE: "/api/course",
@@ -85,5 +91,12 @@ export const API = {
     CREATE_CART: "/api/cart",
     UPDATE_STATUS_CART: "/api/cart/update-status",
     DELETE_CART: "/api/cart/:id"
+  },
+  REVIEW:{
+    GET_REVIEW: "api/review/search",
+    GET_REVIEW_BY_ID: "api/review/:id",
+    CREATE_REVIEW: "api/review",
+    UPDATE_REVIEW: "api/review/:id",
+    DELETE_REVIEW: "api/review/:id"
   }
 };

@@ -9,7 +9,7 @@ export const App = () => {
   return (
     <>
       {isLoading && <Loading />}
-      <Suspense fallback={<Loading />}>
+      <Suspense >
         <RunRoutes />
       </Suspense>
     </>
