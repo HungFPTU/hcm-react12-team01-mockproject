@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Switch, message, Popover, Spin, Modal } from "antd";
+import { Table, Button, Switch, message, Popover, Modal } from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
-
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
@@ -14,7 +13,6 @@ const CourseTable = () => {
   );
   const [searchQuery] = useState("");
   const [isDataEmpty, setIsDataEmpty] = useState(false);
-  const [loading, setLoading] = useState<boolean>(true);
 
   const hasMounted = useRef(false);
   const navigate = useNavigate();
@@ -28,7 +26,7 @@ const CourseTable = () => {
   };
   const fetchCoursesData = async () => {
     try {
-      setLoading(true);
+
       const searchCondition = {
         keyword: searchQuery,
         category_id: "",
@@ -46,7 +44,7 @@ const CourseTable = () => {
       });
 
       if (response && response.success) {
-        setLoading(false);
+
 
         const data = response.data.pageData;
         setCoursesData(data);
@@ -55,7 +53,7 @@ const CourseTable = () => {
     } catch (error) {
       console.error("Failed to fetch courses:", error);
     } finally {
-      setLoading(false);
+
     }
   };
   useEffect(() => {
@@ -312,11 +310,10 @@ const CourseTable = () => {
                     onChangeStatus(record._id, newStatus);
                   }}
                   disabled={!canChangeStatus}
-                  className={`transition-all duration-300 ${
-                    record.status === CourseStatusEnum.Active
-                      ? "bg-blue-500"
-                      : "bg-gray-500"
-                  }`}
+                  className={`transition-all duration-300 ${record.status === CourseStatusEnum.Active
+                    ? "bg-blue-500"
+                    : "bg-gray-500"
+                    }`}
                 />
               </Popover>
             )}
@@ -350,20 +347,19 @@ const CourseTable = () => {
           {[CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(
             record.status
           ) && (
-            <Popover content="Send course to admin">
-              <Button
-                className="bg-green-400 hover:bg-green-600 text-white"
-                onClick={() => handleSendClick(record._id)}
-              >
-                <SendOutlined />
-              </Button>
-            </Popover>
-          )}
+              <Popover content="Send course to admin">
+                <Button
+                  className="bg-green-400 hover:bg-green-600 text-white"
+                  onClick={() => handleSendClick(record._id)}
+                >
+                  <SendOutlined />
+                </Button>
+              </Popover>
+            )}
         </div>
       ),
     },
   ];
-  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
     <div className="w-full">
