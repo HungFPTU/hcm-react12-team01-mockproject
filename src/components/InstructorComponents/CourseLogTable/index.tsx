@@ -112,9 +112,9 @@ const CoursesLogTable = () => {
                         popoverContent = "You can send approval request to admin";
                         break;
                     case CourseStatusEnum.WaitingApprove:
-                        statusText = "Waiting for Appr  oval";
+                        statusText = "Waiting for Approval";
                         statusColor = "text-orange-300";
-                        borderColor = "border-orange-300";
+                        borderColor = "border-orange-300"
                         popoverContent = "Please watting for the approval from admin";
 
                         break;
