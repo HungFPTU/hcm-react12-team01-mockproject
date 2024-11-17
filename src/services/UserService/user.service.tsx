@@ -1,7 +1,7 @@
 import { API } from "../../const/path.api";
 import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
-
+import { User } from "../../model/User";
 // Lấy token từ localStorage
 const token = localStorage.getItem("token");
 console.log("Token:", token); // Log token để kiểm tra
@@ -167,6 +167,11 @@ export const UserService = {
         bank_account_name: bank_account_name,
       },
       isLoading: true,
+    });
+  },
+  getUserDetails(userId: string) {
+    return BaseService.getById<ApiResponse<User>>({
+      url: API.ADMIN.GET_USER_DETAILS.replace(":id", userId)
     });
   },
 };

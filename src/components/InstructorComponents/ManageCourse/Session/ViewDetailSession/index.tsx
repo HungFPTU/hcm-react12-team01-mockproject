@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { message, Spin, Descriptions } from 'antd';
+import { message, Descriptions } from 'antd';
 // import { useNavigate } from 'react-router-dom';
-import { Session } from '../../../../../model/admin/response/Sesson.resonse';
+import { Session } from '../../../../../model/admin/response/Session.response';
 import { SessionService } from '../../../../../services/SessionService/session.service';
 
 
 
 const ViewDetailSession = () => {
   const { id } = useParams<{ id: string }>();
-  const [loading, setLoading] = useState<boolean>(true);
+
   const [session, setSession] = useState<Session | null>(null);
   // const navigate = useNavigate();
   const hasMounted = useRef(false);
@@ -17,7 +17,6 @@ const ViewDetailSession = () => {
   const fetchSessionDetails = useCallback(
     async (id: string) => {
       try {
-        setLoading(true);
         const res = await SessionService.getSessionById(id)
         const sessionData = res.data?.data as Session;
         console.log(res)
@@ -28,9 +27,8 @@ const ViewDetailSession = () => {
           message.error("No page data available for this session.");
         }
       } catch (error) {
+        console.log("error>>>>", error)
         message.error("Failed to fetch session details. Please try again.");
-      } finally {
-        setLoading(false);
       }
     },
     []
@@ -45,7 +43,6 @@ const ViewDetailSession = () => {
     }
   }, [id, fetchSessionDetails]);
 
-  if (loading) return <Spin tip="Loading course details..." />;
 
   if (!session) return <div>Session not found</div>;
 

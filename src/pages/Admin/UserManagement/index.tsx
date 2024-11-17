@@ -19,7 +19,7 @@ import {
   UserOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { UserService } from "../../../services/UserService/UserService";
+import { UserService } from "../../../services/UserService/user.service";
 import AddUserModal from "./AddUserModal";
 
 const { Search } = Input;

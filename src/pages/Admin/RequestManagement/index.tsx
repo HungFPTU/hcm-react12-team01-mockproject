@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, message, Modal, Input, Button, Form } from "antd";
 import AvatarRenderer from "./AvatarRenderer";
 import SearchBar from "./SearchBar";
-import { UserService } from "../../../services/UserService/UserService";
+import { UserService } from "../../../services/UserService/user.service";
 import ActionsRenderer from "./ActionsRenderer";
 
 interface Request {

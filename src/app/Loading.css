@@ -10,7 +10,7 @@
   justify-content: center;
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(5px); /* Apply blur to the background */
-  z-index: 1000; /* Ensure it's on top of other elements */
+  z-index: 9999; /* Ensure it's on top of other elements */
 }
 
 .wheel-and-hamster {

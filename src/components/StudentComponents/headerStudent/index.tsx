@@ -3,7 +3,7 @@ import { Avatar, Badge, Button, Dropdown, Input, Layout, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import assets from "../../../assets/assets";
 import "./index.css";
-import { AuthService } from "../../../services/authService/AuthService";
+import { AuthService } from "../../../services/authService/auth.service";
 const { Header } = Layout;
 const { Search } = Input;
 

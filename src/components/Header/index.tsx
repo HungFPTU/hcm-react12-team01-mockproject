@@ -3,7 +3,7 @@ import { Layout, Menu, Dropdown, Button, Avatar, Badge } from "antd";
 import { ShoppingCartOutlined, UserOutlined, MenuOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import assets from "../../assets/assets";
-import { AuthService } from "../../services/authService/AuthService";
+import { AuthService } from "../../services/authService/auth.service";
 import { useAuth } from "../../context/AuthContent";
 import { ROUTER_URL } from "../../const/router.const";
 import { UserRole } from "../../model/User";
@@ -57,6 +57,7 @@ export default function Home() {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       localStorage.removeItem("role");
+      localStorage.removeItem("userInfo");
       navigate("/login");
     } catch (error) {
       console.error("Error logging out:", error);
@@ -132,7 +133,7 @@ export default function Home() {
                   />
                   {cartItems.length > 0 && <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">{cartItems.length}</span>}
                 </Badge>
-                <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+                <Dropdown menu={{ items: userMenuItems }} placement="bottomLeft">
                   <Avatar
                     size={40}
                     src={userInfo.avatar_url || null}
