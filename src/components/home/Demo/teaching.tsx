@@ -1,4 +1,4 @@
-import assets from "../../assets/assets"; // Ensure correct import
+import assets from "../../../assets/assets"; // Ensure correct import
 import { Card, Button, Rate, Tooltip, Col, Row } from "antd";
 import { Link } from "react-router-dom";
 
@@ -45,9 +45,10 @@ const courses: Course[] = [
     lession_count: 20,
     fulltime: 60,
   },
+
 ];
 
-const Design = () => {
+const Teaching = () => {
   const formatPrice = (price: number) => {
     return price.toLocaleString("vi-VN") + "₫"; // Format for Vietnamese dong (₫)
   };
@@ -62,15 +63,17 @@ const Design = () => {
 <div className="w-full mb-14">
       <Row style={{ marginLeft: "5%" }}>
         <Col span={8}>
-          <h3 className="heading3 text-4xl md:text-5xl font-bold">Graphic Design</h3>
+          <h3 className="heading3 text-4xl md:text-5xl font-bold">Teaching</h3>
           <div className="body text-xl w-full">
             <div className="titleText block mt-4 m-0 w-full font-normal">
               <span>
-              Graphic design courses teach fundamental principles such as typography, color theory, and composition, enabling designers to create engaging visuals for branding, marketing, and digital media.              </span>
-            </div>
+              Become an effective educational leader and confidently empower future generations with our rich portfolio of online teaching courses, covering everything from curriculum design to inclusive teaching.   
+                </span>    
+                 </div>
             <div className="titleText block mt-4 m-0 w-full font-normal">
               <span>
-              Learn the #1 most important building block of all art, Drawing. This course will teach you how to draw like a pro!             </span>
+              As education experts ourselves, we’ll help you master essential skills and teaching pedagogies. Start putting your professional development goals first..        
+               </span>
             </div>
           </div>
         </Col>
@@ -167,4 +170,4 @@ const Design = () => {
   );
 };
 
-export default Design;
+export default Teaching;

@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { signInWithEmailAndPassword } from "../../firebase-config";
 import { FirebaseError } from "firebase/app";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthService } from "../../services/authService/AuthService";
+import { AuthService } from "../../services/authService/auth.service";
 import { useAuth } from "../../context/AuthContent"; // Import useAuth for context
 
 const validationSchema = Yup.object({

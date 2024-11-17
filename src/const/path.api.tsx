@@ -91,5 +91,12 @@ export const API = {
     CREATE_CART: "/api/cart",
     UPDATE_STATUS_CART: "/api/cart/update-status",
     DELETE_CART: "/api/cart/:id"
+  },
+  REVIEW:{
+    GET_REVIEW: "api/review/search",
+    GET_REVIEW_BY_ID: "api/review/:id",
+    CREATE_REVIEW: "api/review",
+    UPDATE_REVIEW: "api/review/:id",
+    DELETE_REVIEW: "api/review/:id"
   }
 };

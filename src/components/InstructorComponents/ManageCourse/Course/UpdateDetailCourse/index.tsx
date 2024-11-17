@@ -36,10 +36,10 @@ const UpdateDetailCourse: React.FC<UpdateDetailCourseProps> = ({ course, onClose
       message.success("Course updated successfully!");
       navigate('/instructor/manage-course');
     } catch (error) {
+      console.error("Failed to update course. Please try again.", error);
       message.error("Failed to update course. Please try again.");
     }
   };
-  
 
   return (
     <Modal

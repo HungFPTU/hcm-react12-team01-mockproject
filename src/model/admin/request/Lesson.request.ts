@@ -24,18 +24,19 @@ export interface UpdateLessonRequest {
   position_order: number | null;
 }
 
-export interface GetLessonParams {
-  searchCondition: SearchLessonCondition;
-  pageInfo: LessonPageInfo;
+export interface GetLessonRequest {
+  searchCondition: SearchCondition;
+  pageInfo: PageInfo;
 }
 
-export interface SearchLessonCondition {
+export interface SearchCondition {
+  _id: string;
   keyword: string;
   course_id: string;
   is_position_order: boolean;
-  is_delete: boolean;
+  is_deleted: boolean;
 }
-export interface LessonPageInfo {
+export interface PageInfo {
   pageNum: number;
   pageSize: number;
 }

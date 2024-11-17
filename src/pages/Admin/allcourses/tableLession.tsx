@@ -1,31 +1,68 @@
-import { useState, useEffect, useCallback } from "react";
-import { Table } from "antd";
+import { useState, useEffect, useRef } from "react";
+import { message, Table } from "antd";
 import { LessonService } from "../../../services/LessonService/lesson.service";
-import { Lesson } from "../../../model/admin/response/Lesson.response";
+import { GetLessonsResponsePageData } from "../../../model/admin/response/Lesson.response";
+import { GetLessonRequest } from "../../../model/admin/request/Lesson.request";
 
 const TableLesson = () => {
-  const [lessonsData, setLessonsData] = useState<Lesson["pageData"]>([]);
+  const [lessonsData, setLessonsData] = useState<GetLessonsResponsePageData[]>([]);
+  const [filteredLessons, setFilteredLessons] = useState<GetLessonsResponsePageData[]>([]);
+  const [isDataEmpty, setIsDataEmpty] = useState(false);
+  const [searchQuery] = useState("");
+  const hasMounted = useRef(false);
 
-  const fetchLesson = useCallback(async () => {
-    const response = await LessonService.getLesson({
-      searchCondition: {
-        keyword: "",
-        course_id: "",
-        is_delete: false,
-        is_position_order: false,
-      },
-      pageInfo: { pageNum: 1, pageSize: 100 },
-    });
-    if (response.data) {
-      const lessons = Array.isArray(response.data.data.pageData) ? response.data.data.pageData : [response.data.data.pageData];
-      setLessonsData(lessons);
+  const fetchLesson = async (params: GetLessonRequest) => {
+    try {
+      const response = await LessonService.getLesson(params);
+      return response.data;
+    } catch (error) {
+      console.error("Fail to fetch lessons:", error);
     }
+  };
+
+  const fetchLessonsData = async () => {
+    try {
+      const searchCondition = {
+        keyword: searchQuery.trim(),
+        is_position_order: false,
+        is_deleted: false,
+      };
+      const response = await fetchLesson({
+        searchCondition: {
+          ...searchCondition,
+          _id: "",
+          course_id: "",
+          is_deleted: false,
+        },
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 1000,
+        },
+      });
+      if (response && response.success) {
+        const data: GetLessonsResponsePageData[] = response.data.pageData;
+        setLessonsData(data);
+        setFilteredLessons(data);
+        setIsDataEmpty(data.length === 0);
+      } else {
+        message.error("Không tìm thấy khóa học nào.");
+      }
+    } catch (error) {
+      console.error("Failed to fetch lessons:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+    fetchLessonsData();
   }, []);
 
   useEffect(() => {
-    fetchLesson();
-  }, [fetchLesson])
-
+    if (lessonsData.length > 0) {
+      console.log("Có khóa học trong lessonsData:", lessonsData);
+    }
+  }, [lessonsData]);
 
   const columns = [
     {
@@ -60,20 +97,27 @@ const TableLesson = () => {
       render: (created_at: string) => new Date(created_at).toLocaleDateString(),
     },
 
+
   ];
 
   return (
-    <Table
-      dataSource={lessonsData}
-      columns={columns}
-      rowKey="key"
-      className="w-full shadow-md rounded-lg overflow-hidden"
-      pagination={{
-        pageSize: 10,
-        showSizeChanger: true,
-        showQuickJumper: true,
-      }}
-    />
+    <div>
+      {isDataEmpty ? (
+        <div className="text-center text-red-500">No lessons found.</div>
+      ) : (
+        <Table
+          dataSource={filteredLessons}
+          columns={columns}
+          rowKey="key"
+          className="w-full shadow-md rounded-lg overflow-hidden"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+          }}
+        />
+      )}
+    </div>
   );
 };
 

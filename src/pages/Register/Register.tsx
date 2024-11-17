@@ -8,7 +8,7 @@ import RegisterInstructor from '../../components/RegisterInstructor/RegisterInst
 import YOUR_IMAGE from '../../assets/Login&Register.jpg';
 import LOGO from '../../assets/logo.png';
 import { FirebaseError } from 'firebase/app';
-import { AuthService } from '../../services/authService/AuthService';
+import { AuthService } from '../../services/authService/auth.service';
 
 interface FormValues {
     name: string;

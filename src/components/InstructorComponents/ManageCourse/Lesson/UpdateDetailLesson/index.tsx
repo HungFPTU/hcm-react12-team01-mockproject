@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Modal, Input, Form, Button, message, Select, Spin } from 'antd';
+import { Modal, Input, Form, Button, message, Select } from 'antd';
 import { LessonService } from '../../../../../services/LessonService/lesson.service';
 import { CourseService } from '../../../../../services/CourseService/course.service';
 import { SessionService } from '../../../../../services/SessionService/session.service';
@@ -19,7 +19,6 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
     const [formData, setFormData] = useState<LessonDetailsResponse>(lesson);
     const [coursesData, setCoursesData] = useState<any[]>([]);
     const [sessionsData, setSessionsData] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
     const hasMounted = useRef(false);
 
     const fetchCourses = async () => {
@@ -38,7 +37,10 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
 
     const fetchSessions = async () => {
         try {
-            const response = await SessionService.getSessions();
+            const response = await SessionService.getSessions({
+                searchCondition: { keyword: '', is_position_order: false, is_delete: false },
+                pageInfo: { pageNum: 1, pageSize: 10 },
+            });
             if (response.data?.success && response.data.data?.pageData) {
                 setSessionsData(response.data.data.pageData);
             }
@@ -52,9 +54,7 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
         hasMounted.current = true;
 
         const fetchData = async () => {
-            setLoading(true);
             await Promise.all([fetchCourses(), fetchSessions()]);
-            setLoading(false);
         };
         fetchData();
     }, []);
@@ -84,9 +84,6 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
         }
     };
 
-    if (loading) {
-        return <Spin tip="Loading..." />;
-    }
 
     return (
         <Modal
@@ -147,19 +144,19 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                 </Form.Item>
                 <Form.Item label="Video URL">
                     <Input
-                        value={formData.video_url}
+                        value={formData.video_url || ''}
                         onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
                     />
                 </Form.Item>
                 <Form.Item label="Image URL">
                     <Input
-                        value={formData.image_url}
+                        value={formData.image_url || ''}
                         onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                     />
                 </Form.Item>
                 <Form.Item label="Description">
                     <Input.TextArea
-                        value={formData.description}
+                        value={formData.description || ''}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     />
                 </Form.Item>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AuthService } from '../../services/authService/AuthService';
+import { AuthService } from '../../services/authService/auth.service';
 
 const ResendVerification = () => {
   const [email, setEmail] = useState('');

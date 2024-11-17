@@ -1,4 +1,4 @@
-import assets from "../../assets/assets"; // Ensure correct import
+import assets from "../../../assets/assets"; // Ensure correct import
 import { Card, Button, Rate, Tooltip, Col, Row } from "antd";
 import { Link } from "react-router-dom";
 

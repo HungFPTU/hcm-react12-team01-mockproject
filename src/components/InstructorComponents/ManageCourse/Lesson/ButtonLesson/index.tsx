@@ -7,16 +7,16 @@ import {
   Select,
   InputNumber,
   message,
-  Spin,
 } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
 import { LessonService } from "../../../../../services/LessonService/LessionService";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { SessionService } from "../../../../../services/SessionService/session.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
-import { Session } from "../../../../../model/admin/response/Sesson.resonse";
+import { Session } from "../../../../../model/admin/response/Session.response";
 import { CreateLessonRequest } from "../../../../../model/admin/request/Lesson.request";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
+import { LessonTypeEnum } from "../../../../../model/Lesson";
 
 const { Option } = Select;
 
@@ -31,7 +31,6 @@ const ButtonLesson = () => {
   const [lessonType, setLessonType] = useState<string>(""); // Theo dõi loại bài học
   const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
   const hasMounted = useRef(false);
-  const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery] = useState("");
 
   const showModal = () => {
@@ -57,7 +56,6 @@ const ButtonLesson = () => {
 
     const fetchCoursesData = async () => {
       try {
-        setLoading(true);
         const searchCondition = {
           keyword: searchQuery,
           category_id: "",
@@ -74,15 +72,11 @@ const ButtonLesson = () => {
         });
 
         if (response && response.success) {
-          setLoading(false);
-
           const data = response.data.pageData;
           setCoursesData(data);
         }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -90,7 +84,10 @@ const ButtonLesson = () => {
   }, [searchQuery]);
 
   useEffect(() => {
-    SessionService.getSessions()
+    SessionService.getSessions({
+      searchCondition: { keyword: '', is_position_order: false, is_delete: false },
+      pageInfo: { pageNum: 1, pageSize: 10 },
+    })
       .then((response) => {
         if (response && response.data && response.data.data) {
           setSessionData(response.data.data.pageData);
@@ -101,7 +98,7 @@ const ButtonLesson = () => {
       });
   }, []);
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: CreateLessonRequest) => {
     try {
       const description = editorRef.current
         ? editorRef.current.getContent()
@@ -122,7 +119,7 @@ const ButtonLesson = () => {
         position_order: values.position_order,
       };
 
-      if (values.lesson_type === "video") {
+      if (values.lesson_type === LessonTypeEnum.Video) {
         newLesson.video_url = values.video_url;
       } else {
         newLesson.image_url = values.image_url;
@@ -152,7 +149,6 @@ const ButtonLesson = () => {
     setLessonType(value);
   };
 
-  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
     <>

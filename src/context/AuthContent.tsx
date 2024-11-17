@@ -1,7 +1,7 @@
 import { createContext, useState,useContext,useEffect } from "react";
 import { User, UserRole } from "../model/User"; 
 import { ReponseSuccess } from "../app/reponse";
-import { AuthService } from "../services/authService/AuthService";
+import { AuthService } from "../services/authService/auth.service";
 import { HTTP_STATUS } from "../app/enums";
 import { HttpException } from "../app/toastException";
 // import { ApiResponse } from "../model/ApiResponse";

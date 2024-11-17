@@ -8,6 +8,7 @@ export interface Session {
     is_deleted: boolean;
     created_at: Date;
     updated_at: Date;
+    lesson_count: number;
 }
 
 export interface PageInfo {
@@ -18,9 +19,22 @@ export interface PageInfo {
 }
 
 export interface GetSessionsResponse {
-    pageData: Session[];
+    pageData: GetSessionResponsePageData[];
     pageInfo: PageInfo;
 }
+
+export type GetSessionResponsePageData = {
+    _id: string;
+    name: string;
+    user_id: string;
+    course_id: string;
+    description: string;
+    is_deleted: boolean;
+    created_at: Date;
+    updated_at: Date;
+    position_order: number;
+    lesson_count: number;
+};
 
 export interface GetSessionResponsePublic {
     pageData: Session;
@@ -36,7 +50,8 @@ export interface CreateSessionResponse {
     is_deleted: boolean,
     created_at: Date;
     updated_at: Date;
-    position_order: number
+    position_order: number;
+    lesson_count: number;
 }
 
 export interface UpdateSessionResponse {
@@ -48,5 +63,6 @@ export interface UpdateSessionResponse {
     is_deleted: boolean,
     created_at: Date;
     updated_at: Date;
-    position_order: number
+    position_order: number;
+    lesson_count: number;
 }
