@@ -265,7 +265,7 @@ const CoursesLogTable = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 enterButton
             />
-            <div className="w-full">
+            <div className="w-full mt-4">
                 {isDataEmpty ? (
                     <div className="text-center text-red-500">No courses found.</div>
                 ) : (
