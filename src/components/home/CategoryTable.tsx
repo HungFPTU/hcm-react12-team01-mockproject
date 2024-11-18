@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { CourseService } from "../../services/CourseService/course.service";
 import { GetPublicCourseResponse } from "../../model/admin/response/Course.response";
 import { CartService } from "../../services/cart/cart.service";
+
+import { toast } from "react-toastify";
 interface CourseProps {
     pageSize?: number;
     pageNum?: number;
@@ -79,13 +81,23 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 10, pageNum = 1 }) =>
             } else {
                 const response = await CartService.CreateCart({ course_id: courses._id });
                 if (response.data.data && response.data.data._id) {
+                    toast.success("Course added to cart successfully!");
                     navigate("/cart");
                 } else {
                     console.error("Failed to add to cart");
+                    toast.error("Failed to add course to cart. Please try again.");
                 }
             }
         } catch (error) {
             console.error("Error handling cart operation:", error);
+        }
+    };
+
+    const handleButtonClick = (course: any) => {
+        if (!isLoggedIn) {
+            toast.warning("Please login to add course to cart");
+        } else {
+            handleAddToCart(course);
         }
     };
 
@@ -216,46 +228,39 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 10, pageNum = 1 }) =>
                                         <p className="price text-lg">{formatPrice(course.price)}</p>
                                     )}
                                 </div>
-                                <div>
-                                    {isLoggedIn ? (
-                                        course?.is_purchased ? (
+                                
+                                    <div>
+                                        {course?.is_purchased ? (
                                             <Link to={`/course/${course._id}`}>
                                                 <Button
-                                                type="primary"
-                                                style={{
-                                                    backgroundColor:
-                                                        "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
-                                                    borderColor:
-                                                        "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
-                                                    color: "white",
-                                                    width: "100%",
-                                                }}
-                                                onClick={() => handleAddToCart(course)}
-                                            >
-                                                Go To Course
-                                            </Button>
+                                                    type="primary"
+                                                    style={{
+                                                        backgroundColor: "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
+                                                        borderColor: "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
+                                                        color: "white",
+                                                        width: "100%",
+                                                    }}
+                                                >   
+                                                    Go To Course
+                                                </Button>
                                             </Link>
-                                            
                                         ) : (
                                             <Button
                                                 type="primary"
                                                 style={{
-                                                    backgroundColor:
-                                                        "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
-                                                    borderColor:
-                                                        "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
+                                                    backgroundColor: "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
+                                                    borderColor: "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
                                                     color: "white",
                                                     width: "100%",
                                                 }}
-                                                onClick={() => handleAddToCart(course)}
+                                                onClick={() => handleButtonClick(course)}
                                             >
-                                               {course.discount && !course.is_in_cart
-                                                    ? `Buy ${formatPrice(course.price_paid)}`
+                                                {course.discount && !course.is_in_cart
+                                                    ? `🛒 Buy ${formatPrice(course.price_paid)}`
                                                     : "View Cart"}
                                             </Button>
-                                        )
-                                    ) : null}
-                                </div>
+                                        )}
+                                    </div>
                             </Card>
                     </Col>
                 ))}
