@@ -49,10 +49,38 @@ const Home: React.FC = () => {
       </div>
        
       <div className="topCourse rounded-[50px] bg-[#f9eded] ml-auto mr-auto mt-9">
-        <h2 className="text-center mb-11 relative text-3xl sm:text-5xl font-bold">Update Latest</h2>
+        <h2 className="text-center mb-11 relative text-3xl sm:text-5xl font-bold">Courses</h2>
         <Course/>
       </div>
-      
+      <section className="w-screen flex flex-col justify-center m-auto items-center sm:w-[90%] md:px-[64px] pt-[64px] pb-[40px] md:pb-[129px] bg-glass h-auto default-spacing-section">
+        <div className="container">
+          <h2 className="heading2 text-7xl inline-block ml-[27px] lg:ml-[115px] relative text-fl-black after:block after:content-[''] after:w-20 after:h-[7px] after:bg-fl-pink-700 after:mt-4 after:ml-0">How does it work?</h2>
+            <div className="mt-[44px] relative">
+              <div className="w-full grid gap-5 px-[24px] md:px-0 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
+                <div className="flex flex-col">
+                  <span className="text-[33px] font-[700] mb-[16px] leading-[41.25px]">1</span>
+                    <h3 className="heading2 text-3xl inline-block text-[22px] mb-[32px] md:mb-[40px] leading-[33px] text-fl-black font-normal">Find your degree</h3>
+                      <p className="text-[16px] leading-[24px] text-fl-black">From undergraduate certificates to full masters degrees, browse our range of subjects and find a degree that can be completed 100% online.</p>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[33px] font-[700] mb-[16px] leading-[41.25px]">2</span>
+                    <h3 className="heading2 text-3xl inline-block text-[22px] mb-[32px] md:mb-[40px] leading-[33px] text-fl-black font-normal">Apply to study with a world-class university</h3>
+                      <p className="text-[16px] leading-[24px] text-fl-black">Like the look of a degree? Request more info by filling in our form or click ‘Apply now’ to apply via the university’s own systems.</p>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[33px] font-[700] mb-[16px] leading-[41.25px]">3</span>
+                    <h3 className="heading2 text-3xl inline-block text-[22px] mb-[32px] md:mb-[40px] leading-[33px] text-fl-black font-normal">Learn flexibly online</h3>
+                      <p className="text-[16px] leading-[24px] text-fl-black">Work through your degree in your own time, whenever and wherever suits you. All you need is access to the internet and a device to learn on.</p>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[33px] font-[700] mb-[16px] leading-[41.25px]">4</span>
+                    <h3 className="heading2 text-3xl inline-block text-[22px] mb-[32px] md:mb-[40px] leading-[33px] text-fl-black font-normal">Gain your degree</h3>
+                      <p className="text-[16px] leading-[24px] text-fl-black"> Complete all the programs, pass the assessments and exams, and you’ll be the proud owner of an internationally recognised qualification.</p>
+                </div>
+              </div>
+            </div>
+        </div>
+      </section>
 
     </div>
   );

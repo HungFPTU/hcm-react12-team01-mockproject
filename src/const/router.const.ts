@@ -5,6 +5,7 @@ export const ROUTER_URL = {
   FORGOT_PASSWORD: "/forgot-password",
   VERIFY_EMAIL: "/verify-email/:token",
   RESEND_TOKEN: "/resend-verification",
+  VIEW_DETAIL_INSTRUCTOR: "/view-detail/:id",
   ADMIN: {
     DASHBOARD: "/admin",
     ALL_COURSES: "/admin/all-courses",
@@ -48,6 +49,7 @@ export const ROUTER_URL = {
     COURSE_DETAIL: "/course/:id",
     ALL_COURSES: "/all",
     CART: "/cart",
+    VIEW_DETAIL_INSTRUCTOR:"/view-detail/:id"
   },
   UNAUTHORIZED: "/unauthorize"
 };
