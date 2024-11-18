@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { message, Table } from "antd";
 import { LessonService } from "../../../services/LessonService/lesson.service";
-import { GetLessonsResponsePageData} from "../../../model/admin/response/Lesson.response";
+import { GetLessonsResponsePageData } from "../../../model/admin/response/Lesson.response";
 import { GetLessonRequest } from "../../../model/admin/request/Lesson.request";
 
 const TableLesson = () => {
@@ -35,7 +35,7 @@ const TableLesson = () => {
           is_deleted: false,
         },
         pageInfo: {
-          pageNum: 1, 
+          pageNum: 1,
           pageSize: 1000,
         },
       });
@@ -96,27 +96,27 @@ const TableLesson = () => {
       key: "created_at",
       render: (created_at: string) => new Date(created_at).toLocaleDateString(),
     },
-    
+
 
   ];
 
   return (
     <div>
-    {isDataEmpty ? (
-      <div className="text-center text-red-500">No lessons found.</div>
-    ) : (
-    <Table
-      dataSource={filteredLessons}
-      columns={columns}
-      rowKey="key"
-      className="w-full shadow-md rounded-lg overflow-hidden"
-      pagination={{
-        pageSize: 10,
-        showSizeChanger: true,
-        showQuickJumper: true,
-      }}
-    />
-    )}
+      {isDataEmpty ? (
+        <div className="text-center text-red-500">No lessons found.</div>
+      ) : (
+        <Table
+          dataSource={filteredLessons}
+          columns={columns}
+          rowKey="key"
+          className="w-full shadow-md rounded-lg overflow-hidden"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+          }}
+        />
+      )}
     </div>
   );
 };

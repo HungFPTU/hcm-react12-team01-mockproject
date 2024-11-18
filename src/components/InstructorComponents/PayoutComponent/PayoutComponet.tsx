@@ -1,15 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Table, Popover, Empty, Modal, Button, } from 'antd';
+import { Table, Popover, Button, Empty, message, Modal, } from 'antd';
 import { Payout } from '../../../model/admin/response/Payout.response';
 import { GetPayoutRequest } from '../../../model/admin/request/Payout.request';
 import { PurchaseService } from '../../../services/PurchaseService/purcase.service';
 import SearchBar from './SearchBar';
-const RequestPayoutTable: React.FC = () => {
+
+// import type { TableProps } from 'antd';
+
+
+
+
+const PayoutTable: React.FC = () => {
 
     const hasMounted = useRef(false);
     const [payouts, setPayouts] = useState<Payout[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [isDataEmpty, setIsDataEmpty] = useState(false); // Track if data is empty
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedTransactions, setSelectedTransactions] = useState<any[]>([]);
 
@@ -38,7 +45,7 @@ const RequestPayoutTable: React.FC = () => {
             const searchCondition = {
                 payout_no: "",
                 instructor_id: "",
-                status: "request_payout",
+                status: "new",
                 is_delete: false,
             };
 
@@ -60,7 +67,15 @@ const RequestPayoutTable: React.FC = () => {
             console.error("Failed to fetch categories:", error);
         }
     };
+    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+        console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+        setSelectedRowKeys(newSelectedRowKeys);
+    };
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
 
+    };
 
     useEffect(() => {
         if (hasMounted.current) return; // Trả về nếu đã mount
@@ -75,7 +90,7 @@ const RequestPayoutTable: React.FC = () => {
         const searchCondition = {
             payout_no: query,
             instructor_id: "",
-            status: "request_payout",
+            status: "new",
             is_delete: false,
         };
 
@@ -95,6 +110,29 @@ const RequestPayoutTable: React.FC = () => {
             }
         } catch (error) {
             console.error("Failed to fetch categories:", error);
+        }
+    };
+    const handleClick = async () => {
+        console.log("Selected _ids:", selectedRowKeys);
+        const status = "request_payout";
+        const comment = ""
+
+        try {
+            // Loop through each selected ID and call the API
+            const updatePromises = selectedRowKeys.map(async (id) => {
+                const response = await PurchaseService.updatePayout(id as string, { status, comment });
+                if (response && response.data.success) {
+                    message.success(`Payout ${id} updated successfully!`);
+                } else {
+                    message.error(`Failed to update payout ${id}`);
+                }
+                return response;
+            });
+            await Promise.all(updatePromises);
+            fetchPurchaseData();
+            setSelectedRowKeys([]);
+        } catch (error) {
+            console.error("Error updating payouts:", error);
         }
     };
     const columns = [
@@ -247,11 +285,16 @@ const RequestPayoutTable: React.FC = () => {
                 }}
             >
                 <SearchBar onSearch={handleSearch} />
+                <Button type="primary" onClick={handleClick}>
+                    Send Payout to admin
+                </Button>
             </div>
 
             <Table
                 columns={columns}
                 dataSource={payouts}
+                rowKey="_id"
+                rowSelection={rowSelection} // Add this line for row selection
                 pagination={{
                     defaultPageSize: 5,
                     showSizeChanger: true,
@@ -271,4 +314,4 @@ const RequestPayoutTable: React.FC = () => {
     );
 }
 
-export default RequestPayoutTable;
+export default PayoutTable;
