@@ -6,9 +6,11 @@ import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const navigate = useNavigate();
-
+  const handleBackHome  = () => {
+    navigate("/");
+  }
   return (
-    <div className="flex items-center justify-center w-full h-screen bg-gradient-to-r from-[#330933] to-white-600 relative">
+      <div className="flex items-center justify-center w-full h-screen bg-gradient-to-r from-[#330933] to-white-600 relative">
       <div className="flex w-full max-w-[1200px] shadow-2xl">
         <div className="hidden md:flex w-1/2 shadow-2xl">
           <img
@@ -43,6 +45,11 @@ const Login = () => {
                 Register
               </span>
             </p>
+          </div>
+          <div className="w-full flex items-center justify-end">
+             <button className='hover:text-red-500' onClick={handleBackHome}>
+             ⭠ Back Home
+             </button>
           </div>
         </div>
       </div>

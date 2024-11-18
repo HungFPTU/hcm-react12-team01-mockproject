@@ -8,35 +8,9 @@ import { useAuth } from "../../context/AuthContent";
 import { ROUTER_URL } from "../../const/router.const";
 import { UserRole } from "../../model/User";
 import { useCart } from "../../context/CartContext";
-
 const { Header } = Layout;
 
-const items = [
-  { label: "HOME", key: "home" },
-  {
-    label: "COURSE",
-    key: "courses",
-    children: [
-      {
-        type: "group",
-        label: "Item 1",
-        children: [
-          { label: "Option 1", key: "setting:1" },
-          { label: "Option 2", key: "setting:2" },
-        ],
-      },
-      {
-        type: "group",
-        label: "Item 2",
-        children: [
-          { label: "Option 3", key: "setting:3" },
-          { label: "Option 4", key: "setting:4" },
-        ],
-      },
-    ],
-  },
-  { label: "ABOUT", key: "about" },
-];
+
 
 export default function Home() {
   const { cartItems } = useCart();
@@ -44,6 +18,25 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   // const token = localStorage.getItem("token");
   const { userInfo } = useAuth();
+  const items = [
+    {
+      label: "HOME",
+      key: "home",
+      onClick: () => navigate("/"), // Navigate to the home route
+    },
+    {
+      label: "COURSE",
+      key: "courses",
+      children: [
+        {
+          label: "All Course",
+          key: "all-courses",
+          onClick: () => navigate("/all"),
+        },
+      ],
+    },
+    { label: "ABOUT", key: "about" },
+  ];
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -114,7 +107,7 @@ export default function Home() {
               <Button icon={<MenuOutlined />} />
             </Dropdown>
           ) : (
-            <Menu
+            <Menu 
               mode="horizontal"
               items={items}
               className="flex-grow flex justify-center"
