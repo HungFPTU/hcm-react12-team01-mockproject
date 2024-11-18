@@ -255,8 +255,9 @@ const CoursesLogTable = () => {
 
     ];
     return (
-        <div className="w-20">
+        <div className="w-5em">
             <Input.Search
+                className="w-1/4"
                 placeholder="Search courses..."
                 value={searchQuery}
                 onSearch={handleSearch}
