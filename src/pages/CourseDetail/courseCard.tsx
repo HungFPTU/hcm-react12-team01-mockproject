@@ -23,7 +23,7 @@ const CourseSidebar: React.FC<CartCourseProps> = ({ course }) => {
       if (course?.is_in_cart) {
         navigate("/cart");
       } else {
-        const response = await CartService.CreateCart(course._id);
+        const response = await CartService.CreateCart({course_id:course._id});
         if (response.data.data && response.data.data._id) {
           navigate("/cart");
         } else {
