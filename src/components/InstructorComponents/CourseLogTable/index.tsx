@@ -257,7 +257,7 @@ const CoursesLogTable = () => {
     return (
         <div className="w-5em">
             <Input.Search
-                className="w-1/4  mb-4"
+                className="w-1/4"
                 placeholder="Search courses..."
                 value={searchQuery}
                 onSearch={handleSearch}
@@ -265,7 +265,7 @@ const CoursesLogTable = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 enterButton
             />
-            <div className="w-full mt-4">
+            <div className="w-full mt-4"> {/* Add margin-top here */}
                 {isDataEmpty ? (
                     <div className="text-center text-red-500">No courses found.</div>
                 ) : (
