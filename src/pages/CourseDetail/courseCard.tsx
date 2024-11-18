@@ -62,48 +62,52 @@ const CourseSidebar: React.FC<CartCourseProps> = ({ course }) => {
         <span className="text-md font-medium">{course?.instructor_name}</span>
       </div>
       <p className="flex items-center gap-4 mt-2">
-        {course?.discount && course?.price_paid ? (
-          <>
-            {course?.price !== undefined && (
-              <p
-                className="original-price text-lg"
-                style={{
-                  textDecoration: "line-through",
-                  opacity: 0.5,
-                }}
-              >
-                {formatPrice(course?.price)}
-              </p>
-            )}
-            <p className="discounted-price text-lg text-red-500">
-              {formatPrice(course?.price_paid)}
-            </p>
-          </>
-        ) : (
-          course?.price !== undefined && (
-            <p className="price text-lg">{formatPrice(course?.price)}</p>
-          )
-        )}
+        {course?.discount ? (
+                                        <>
+                                            <p className="discounted-price text-lg text-red-500">
+                                                -{course?.discount}% Disc. 
+                                            </p>
+                                            <p
+                                                className="original-price text-lg font-medium text-red-700"
+                                                style={{
+                                                    textDecoration: "line-through",
+                                                    opacity: 0.5,
+                                                }}
+                                            >
+                                                {formatPrice(course?.price)}
+                                            </p>
+                                            <p className="discounted-price text-lg text-red-500">
+                                                {formatPrice(course?.price_paid)}
+                                            </p>
+                                            
+                                        </>
+                                    ) : (
+                                        <p className="price text-lg">{formatPrice(course?.price)}</p>
+                                    )}
       </p>
       <div className="flex justify-center mt-4">
         {isLoggedIn ? (
           course?.is_purchased ? (
-            <div className="mb-6 rounded-lg bg-gradient-to-r from-emerald-50 to-teal-50 p-4 text-center shadow-inner">
+            <div className="mb-6 rounded-lg bg-gradient-to-r from-purple-300 to-purple-50 p-4 text-center shadow-inner">
               <p className="text-xl font-semibold tracking-wide text-emerald-700">
-                ✨ Congratulations! You own this course ✨
-              </p>
-              <p className="mt-2 text-sm text-emerald-600">
-                Enjoy unlimited access to all course materials
+                 Congratulations! Learn your coure
               </p>
             </div>
           ) : (
             <Button
-              className="bg-purple-900 text-white text-lg px-10 py-7"
-              type="primary"
-              onClick={handleAddToCart}
-            >
-              {course?.is_in_cart ? "View Cart" : "Add to Cart"}
-            </Button>
+            type="primary"
+            style={{
+                backgroundColor: "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
+                borderColor: "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
+                color: "white",
+                width: "100%",
+            }}
+            onClick={handleAddToCart}
+        >
+            {course?.discount && !course?.is_in_cart
+                ? `🛒 Buy ${formatPrice(course?.price_paid)}`
+                : "View Cart"}
+        </Button>
           )
         ) : (
           <Button

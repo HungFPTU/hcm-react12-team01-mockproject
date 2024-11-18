@@ -169,9 +169,9 @@ export const UserService = {
       isLoading: true,
     });
   },
-  getUserDetails(userId: string) {
+  getUserDetails(instructor_id: string) {
     return BaseService.getById<ApiResponse<User>>({
-      url: API.ADMIN.GET_USER_DETAILS.replace(":id", userId)
+      url: API.ADMIN.GET_USER_DETAILS.replace(":id", instructor_id)
     });
   },
 };

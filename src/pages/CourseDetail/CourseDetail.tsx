@@ -7,7 +7,7 @@ import { GetPublicCourseDetailResponse } from "../../model/admin/response/Course
 import { ReviewService } from "../../services/review/review.service";
 import CourseReviews from "./courseReviews"
 import CourseCard from "./courseCard"
-
+import { useNavigate } from "react-router-dom";
 import {
     UserOutlined,
     StarFilled,
@@ -25,6 +25,8 @@ const CourseDetail =() => {
     const [reviewCount, setReviewCount] = useState<number | null>(null);
     const [courseStatus, setCourseStatus] = useState({ is_in_cart: false, is_purchased: false });
     const [discountedPrice, setDiscountedPrice] = useState<string>("0.00");
+    const navigate = useNavigate();
+
   useEffect(() => {
     const fetchCourseDetails = async () => {
       if (!id) {
@@ -53,6 +55,14 @@ const CourseDetail =() => {
 
     fetchCourseDetails();
   }, [id]);
+
+  const handleInstructorClick = () => {
+    if (course?.instructor_id) {
+      navigate(`/view-detail/${course.instructor_id}`);
+    }
+  };
+
+  
 
 useEffect(() => {
     const fetchReviews = async () => {
@@ -100,16 +110,16 @@ const renderLessons = (lessonList: GetPublicCourseDetailResponse["session_list"]
               <h1 className="text-white text-6xl font-bold">
                 {course?.name || "Course Name"}
               </h1>
-              <p className="text-gray-400 text-xl py-3">
+              <p className="text-slate-300 text-xl py-3">
                 {course?.description || "No description available."}
               </p>
             </Col>
           </Row>
           <div className="mt-auto flex items-center mb-6">
-            <p className="text-white mr-8">
-              <UserOutlined className="mr-2" />
-              Instructor: {course?.instructor_name || "N/A"}
-            </p>
+          <p className="text-white mr-8" onClick={handleInstructorClick} style={{ cursor: "pointer" }}>
+            <UserOutlined className="mr-2" />
+            Instructor: {course?.instructor_name || "N/A"}
+          </p>
             <p className="text-white flex items-center">
               Rating: {course?.average_rating || 0}{" "}
               <StarFilled className="ml-1 text-yellow-500" />
