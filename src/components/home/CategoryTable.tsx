@@ -37,6 +37,8 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 10, pageNum = 1 }) =>
     const hasMounted = useRef(false);
 
     useEffect(() => {
+        if (hasMounted.current) return;
+        hasMounted.current = true;
         const checkLoginStatus = () => {
             const user = localStorage.getItem("user");
             setIsLoggedIn(!!user);
@@ -45,6 +47,8 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 10, pageNum = 1 }) =>
     }, []);
 
     useEffect(() => {
+        if (hasMounted.current) return;
+        hasMounted.current = true;
         const fetchCourses = async () => {
             try {
                 const coursesData = await fetchCoursePublic({}, { pageNum: currentPage, pageSize: pageSizeState });
