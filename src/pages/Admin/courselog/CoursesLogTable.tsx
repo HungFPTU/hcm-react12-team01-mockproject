@@ -1,95 +1,93 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Popover, Spin } from "antd";
+import { Table, Popover, Input } from "antd";
 import { CourseLogResponseData, GetCourseResponsePageData } from "../../../model/admin/response/Course.response";
 import { CourseStatusEnum } from "../../../model/Course";
 import { CourseService } from "../../../services/CourseService/course.service";
 
 const CoursesLogTable = () => {
-    const [coursesLogData, setCoursesLogData] = useState<CourseLogResponseData[]>(
-        []
-    );
-    const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>(
-        []
-    );
-    const [searchQuery] = useState("");
+    const [coursesLogData, setCoursesLogData] = useState<CourseLogResponseData[]>([]);
+    const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [activeSearch, setActiveSearch] = useState("");
     const [isDataEmpty, setIsDataEmpty] = useState(false);
-    const [loading, setLoading] = useState<boolean>(true);
     const hasMounted = useRef(false);
+
+
+    const fetchCourseLogData = async () => {
+        try {
+            // 1. Fetch courses first
+            const courseResponse = await CourseService.getCourse({
+                searchCondition: {
+                    keyword: activeSearch,
+                    category_id: "",
+                    status: undefined,
+                    is_delete: false,
+                },
+                pageInfo: {
+                    pageNum: 1,
+                    pageSize: 10,
+                },
+            });
+
+            if (courseResponse && courseResponse.data.success) {
+                setCoursesData(courseResponse.data.data.pageData);
+
+                // 2. Map over courses and fetch logs for each
+                const coursesLogPromises = courseResponse.data.data.pageData.map(async (course) => {
+                    const courseLogResponse = await CourseService.getCourseLog({
+                        searchCondition: {
+                            keyword: activeSearch,
+                            course_id: course._id, // Fetch logs for this specific course ID
+                            old_status: undefined,
+                            new_status: undefined,
+                            is_delete: false,
+                        },
+                        pageInfo: {
+                            pageNum: 1,
+                            pageSize: 10,
+                        },
+                    });
+
+                    if (courseLogResponse && courseLogResponse.data.success) {
+                        return courseLogResponse.data.data.pageData; // Return log data for this course
+                    } else {
+                        return []; // Return an empty array if there's an error or no logs
+                    }
+                });
+
+                // 3. Wait for all log fetches to complete
+                const allCoursesLogs = await Promise.all(coursesLogPromises);
+
+                // 4. Flatten the array of arrays and update state
+                const flattenedLogs = allCoursesLogs.flat();
+                setCoursesLogData(flattenedLogs);
+                setIsDataEmpty(flattenedLogs.length === 0);
+            }
+
+        } catch (error) {
+            console.error("Failed to fetch data:", error);
+        }
+    };
+
+    const filteredCourses = coursesLogData.filter((course) =>
+        course.course_name.toLowerCase().includes(activeSearch.toLowerCase())
+    );
 
     useEffect(() => {
         if (hasMounted.current) return;
         hasMounted.current = true;
-
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-
-                // 1. Fetch courses first
-                const courseResponse = await CourseService.getCourse({
-                    searchCondition: {
-                        keyword: searchQuery,
-                        category_id: "",
-                        status: undefined,
-                        is_delete: false,
-                    },
-                    pageInfo: {
-                        pageNum: 1,
-                        pageSize: 10,
-                    },
-                });
-
-                if (courseResponse && courseResponse.data.success) {
-                    setCoursesData(courseResponse.data.data.pageData);
-
-                    // 2. Map over courses and fetch logs for each
-                    const coursesLogPromises = courseResponse.data.data.pageData.map(async (course) => {
-                        const courseLogResponse = await CourseService.getCourseLog({
-                            searchCondition: {
-                                keyword: searchQuery,
-                                course_id: course._id, // Fetch logs for this specific course ID
-                                old_status: undefined,
-                                new_status: undefined,
-                                is_delete: false,
-                            },
-                            pageInfo: {
-                                pageNum: 1,
-                                pageSize: 10,
-                            },
-                        });
-
-                        if (courseLogResponse && courseLogResponse.data.success) {
-                            return courseLogResponse.data.data.pageData; // Return log data for this course
-                        } else {
-                            return []; // Return an empty array if there's an error or no logs
-                        }
-                    });
-
-                    // 3. Wait for all log fetches to complete
-                    const allCoursesLogs = await Promise.all(coursesLogPromises);
-
-                    // 4. Flatten the array of arrays and update state
-                    const flattenedLogs = allCoursesLogs.flat();
-                    setCoursesLogData(flattenedLogs);
-                    setIsDataEmpty(flattenedLogs.length === 0);
-                }
-
-            } catch (error) {
-                console.error("Failed to fetch data:", error);
-            } finally {
-                console.log(coursesData)
-                console.log(coursesLogData)
-                setLoading(false);
-            }
-        };
-
-        fetchData();
+        fetchCourseLogData();
     }, [searchQuery]);
 
-    const filteredCourses = coursesLogData.filter((course) =>
-        course.course_name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    useEffect(() => {
+        if (coursesData.length > 0) {
+          console.log("Có khóa học trong coursesData:", coursesData);
+        }
+    }, [coursesData]);
 
-
+    const handleSearch = () => {
+        setActiveSearch(searchQuery);
+    };
 
 
 
@@ -260,9 +258,17 @@ const CoursesLogTable = () => {
 
 
     ];
-    if (loading) return <Spin tip="Loading course details..." />;
-
     return (
+        <div className="w-5em">
+                <Input.Search
+                    className="w-1/4"
+                    placeholder="Search courses..."
+                    value={searchQuery}
+                    onSearch={handleSearch}
+                    onPressEnter={handleSearch}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    enterButton
+            />
         <div className="w-full">
             {isDataEmpty ? (
                 <div className="text-center text-red-500">No courses found.</div>
@@ -281,6 +287,7 @@ const CoursesLogTable = () => {
                     }}
                 />
             )}
+                </div>
         </div>
     );
 };
