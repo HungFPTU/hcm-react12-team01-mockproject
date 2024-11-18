@@ -1,4 +1,5 @@
 export interface ApiResponse<T> {
   success: boolean;
-  data: T; 
+  data: T;
+  errors?: { message: string; field: string }[]; // Optional errors property
 }

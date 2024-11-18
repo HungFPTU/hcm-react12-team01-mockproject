@@ -1,19 +1,80 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Popover, Modal, message, Space, Input } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Table, Button, Popover, Modal, message, Space, Input,Form,Select,Spin  } from "antd";
 import { SessionService } from "../../../../../services/SessionService/session.service";
-import { EyeOutlined, DeleteOutlined} from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined} from "@ant-design/icons";
 import { GetSessionResponsePageData } from "../../../../../model/admin/response/Session.response"
 import { GetSessionRequest } from "../../../../../model/admin/request/Session.request";
+import { CourseService } from "../../../../../services/CourseService/course.service";
 import ButtonSession from "../ButtonSession";
 
 const TableSession = () => {
-  const navigate = useNavigate();
+ 
   const [sessionsData, setSessionsData] = useState<GetSessionResponsePageData[]>([]);
-  const [filteredSessions, setFilteredSessions] = useState<GetSessionResponsePageData[]>([]);
+
   const [isDataEmpty, setIsDataEmpty] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [courses, setCourses] = useState<any[]>([]); 
   const [searchQuery, setSearchQuery] = useState("");
+  const [editingSession, setEditingSession] = useState<any>(null);
+  const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
+  const [form] = Form.useForm();  
   const hasMounted = useRef(false);
+
+  useEffect(() => {
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+
+    const fetchSessions = async () => {
+      try {
+        setLoading(true);
+        
+        const params: GetSessionRequest = {
+          searchCondition: {
+            keyword: "", 
+            is_position_order: false, 
+            is_delete: false, 
+          },
+          pageInfo: {
+            pageNum: 1, 
+            pageSize: 10, 
+          },
+        };
+        const response = await SessionService.getSessions(params);
+        if (response.data?.success && response.data.data?.pageData) {
+          const sessionsWithKey = response.data.data.pageData.map(
+            (session: GetSessionResponsePageData) => ({
+              ...session,
+              key: session._id,
+            })
+          );
+          setSessionsData(sessionsWithKey);
+        } else {
+          console.error("Failed to fetch sessions: pageData not found", response);
+        }
+      } catch (error) {
+        console.error("Error fetching sessions:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+
+    const fetchCourses = async () => {
+      try {
+        const response = await CourseService.getCourse({ searchCondition: { keyword: '', category_id: '', status: undefined, is_delete: false }, pageInfo: { pageNum: 1, pageSize: 10 } });
+        if (response.data?.success && response.data.data?.pageData) {
+          setCourses(response.data.data.pageData); 
+        } else {
+          console.error("Failed to fetch courses:", response);
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchSessions();
+    fetchCourses();
+  }, []);
 
   const fetchSession = async (params: GetSessionRequest) => {
     try {
@@ -23,6 +84,8 @@ const TableSession = () => {
       console.error("Fail to fetch sessions:", error);
     }
   };
+
+
 
   const fetchSessionsData = async () => {
     try {
@@ -43,7 +106,7 @@ const TableSession = () => {
       if (response && response.success) {
         const data: GetSessionResponsePageData[] = response.data.pageData;
         setSessionsData(data);
-        setFilteredSessions(data);
+        setSessionsData(data);
         setIsDataEmpty(data.length === 0);
       } else {
         message.error("Không tìm thấy khóa học nào.");
@@ -65,11 +128,8 @@ const TableSession = () => {
     }
   }, [sessionsData]);
 
-  const handleViewDetails = (id: string) => {
-    navigate(`/instructor/manage-course/view-detail-session/${id}`);
-  };
 
-  const handleDeleteSession = async (sessionId: string) => {
+const handleDeleteSession = async (sessionId: string) => {
     try {
       await SessionService.deleteSession(sessionId);
       setSessionsData((prevSessions) =>
@@ -100,6 +160,61 @@ const TableSession = () => {
     fetchSessionsData();
   };
 
+  const showEditModal = (session: any) => {
+    setEditingSession(session);
+    setIsEditModalVisible(true);
+    form.setFieldsValue({
+      name: session.name,
+      course_id: session.course_id,
+      description: session.description,
+      position_order: session.position_order,
+    });
+  };
+
+  const handleUpdateSession = async () => {
+    try {
+      const updatedSession = form.getFieldsValue();
+  
+      if (updatedSession.position_order && isNaN(updatedSession.position_order)) {
+        message.error("Position order must be a number.");
+        return;
+      }
+  
+      updatedSession.position_order = Number(updatedSession.position_order);
+  
+      if (!updatedSession.name || !updatedSession.course_id || !updatedSession.description || !updatedSession.position_order) {
+        message.error("Please fill in all required fields.");
+        return;
+      }
+  
+      const response = await SessionService.updateSession(updatedSession, editingSession._id);
+      
+      if (response.data?.success) {
+        // Tìm tên khóa học từ courses dựa trên course_id
+        const updatedCourse = courses.find(course => course._id === updatedSession.course_id);
+        const updatedSessionWithCourseName = {
+          ...updatedSession,
+          course_name: updatedCourse ? updatedCourse.name : "",
+        };
+  
+        // Cập nhật lại danh sách phiên học trên UI
+        setSessionsData((prevSessions) =>
+          prevSessions.map((session) =>
+            session._id === editingSession._id ? { ...session, ...updatedSessionWithCourseName } : session
+          )
+        );
+        message.success("Session updated successfully!");
+        setIsEditModalVisible(false);
+        setEditingSession(null);
+      } else {
+        message.error("Failed to update session!");
+      }
+    } catch (error) {
+      console.error("Error updating session:", error);
+      message.error("Failed to update session!");
+    }
+  };
+
   const columns = [
     {
       title: "Name",
@@ -111,12 +226,7 @@ const TableSession = () => {
       dataIndex: "course_name",
       key: "course_name",
     },
-    {
-      title: "Lesson",
-      dataIndex: "lesson_count",
-      key: "lesson_count",
-      render: (lesson_count: number) => (lesson_count ? lesson_count : "-"),
-    },
+    
     {
       title: "Created At",
       dataIndex: "created_at",
@@ -128,12 +238,13 @@ const TableSession = () => {
       key: "action",
       render: (_: unknown, record: GetSessionResponsePageData) => (
         <Space size="middle">
-          <Popover content="View Session Detail">
+     
+           <Popover content="Edit Session">
             <Button
-              onClick={() => handleViewDetails(record._id)}
+              onClick={() => showEditModal(record)}
               className="bg-blue-500 hover:bg-blue-600 text-white"
             >
-              <EyeOutlined />
+              <EditOutlined />
             </Button>
           </Popover>
           <Popover content="Delete Session">
@@ -148,6 +259,7 @@ const TableSession = () => {
       ),
     },
   ];
+  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
     <div className="w-full">
@@ -168,7 +280,7 @@ const TableSession = () => {
           <div className="text-center text-red-500">No sessions found.</div>
       ) : (
       <Table
-        dataSource={filteredSessions}
+        dataSource={sessionsData}
         columns={columns}
         rowKey= "_id"
         className="w-full shadow-md rounded-lg overflow-hidden"
@@ -179,7 +291,52 @@ const TableSession = () => {
             position: ["bottomRight"],
           }}
         />
-        )}
+        )
+        }
+         
+
+      <Modal
+        title="Edit Session"
+        visible={isEditModalVisible}
+        onCancel={() => setIsEditModalVisible(false)}
+        onOk={handleUpdateSession}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item 
+            name="name" 
+            label="Session Name" 
+            rules={[{ required: true, message: 'Please input session name!' }]}>
+            <Input placeholder="Session Name" />
+          </Form.Item>
+
+          <Form.Item 
+            name="course_id" 
+            label="Course" 
+            rules={[{ required: true, message: 'Please select a course!' }]}>
+            <Select placeholder="Select a course">
+              {courses.map(course => (
+                <Select.Option key={course._id} value={course._id}>
+                  {course.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item 
+            name="description" 
+            label="Description" 
+            rules={[{ required: true, message: 'Please input description!' }]}>
+            <Input placeholder="Description" />
+          </Form.Item>
+
+          <Form.Item 
+            name="position_order" 
+            label="Position Order" 
+            rules={[{ required: true, message: 'Please input position order!' }]}>
+            <Input type="number" placeholder="Position Order" />
+          </Form.Item>
+        </Form>
+      </Modal>
       </div>
     </div>
   );

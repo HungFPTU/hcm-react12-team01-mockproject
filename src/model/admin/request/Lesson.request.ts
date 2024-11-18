@@ -16,6 +16,7 @@ export interface UpdateLessonRequest {
   name: string;
   course_id: string;
   session_id: string;
+  user_id: string,
   lesson_type: LessonTypeEnum;
   description: string | null;
   video_url: string | null;
