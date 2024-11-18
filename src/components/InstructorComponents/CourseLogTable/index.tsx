@@ -3,7 +3,6 @@ import { Table, Popover, Input } from "antd";
 import { CourseLogResponseData, GetCourseResponsePageData } from "../../../model/admin/response/Course.response";
 import { CourseStatusEnum } from "../../../model/Course";
 import { CourseService } from "../../../services/CourseService/course.service";
-// import { GetCourseLogRequest } from "../../../model/admin/request/Course.request";
 
 const CoursesLogTable = () => {
     const [coursesLogData, setCoursesLogData] = useState<CourseLogResponseData[]>([]);
@@ -256,7 +255,7 @@ const CoursesLogTable = () => {
 
     ];
     return (
-        <div className="w-full">
+        <div className="w-20">
             <Input.Search
                 placeholder="Search courses..."
                 value={searchQuery}
