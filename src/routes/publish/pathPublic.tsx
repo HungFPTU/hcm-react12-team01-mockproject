@@ -13,6 +13,7 @@ const Register = lazy(() => import("../../pages/Register/Register"));
 const VerifyEmail = lazy(() => import("../../pages/Verifycaion"));
 const ResendVerification = lazy(() => import("../../pages/ResendToken"));
 const CartPage = lazy(() => import("../../pages/cart"))
+const ViewDetailInstructor = lazy(() => import("../../components/home/instructorDetail"));
 
 export const pathPublic: Record<string, RouteObject[]> = {
   [ROUTER_URL.COMMON.HOME]: [
@@ -37,6 +38,10 @@ export const pathPublic: Record<string, RouteObject[]> = {
         {
           path: ROUTER_URL.COMMON.CART,
           element: <CartPage />,
+        },
+        {
+          path: ROUTER_URL.COMMON.VIEW_DETAIL_INSTRUCTOR,
+          element: <ViewDetailInstructor />,
         }
       ]
     }

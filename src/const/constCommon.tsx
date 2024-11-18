@@ -8,6 +8,7 @@ export const CourseDetailPage = lazy(
 export const AllCoursesPage = lazy(() => import("../pages/AllCourses"));
 export const VerifyEmail = lazy(() => import("../pages/Verifycaion"));
 export const CartPage = lazy(() => import("../pages/cart"));
+export const ViewDetailInstructor = lazy(() => import("../components/home/instructorDetail"));
 
 export const homeRoute = { index: true, element: <HomePage /> };
 export const coureseDetail = {
@@ -20,3 +21,4 @@ export const verifyEmail = {
   element: <VerifyEmail />,
 };
 export const cart = { path: "/cart", element: <CartPage /> };
+export const detailinstructor = { path: "/view-detail/:id", element:<ViewDetailInstructor/>}
