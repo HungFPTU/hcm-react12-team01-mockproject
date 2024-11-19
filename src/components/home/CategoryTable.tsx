@@ -5,6 +5,7 @@ import { CourseService } from "../../services/CourseService/course.service";
 import { GetPublicCourseResponse } from "../../model/admin/response/Course.response";
 import { CartService } from "../../services/cart/cart.service";
 import { toast } from "react-toastify";
+import { useCart } from "../../context/CartContext";
 
 interface CourseProps {
     pageSize?: number;
@@ -35,6 +36,8 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 10, pageNum = 1 }) =>
     const [pageSizeState, setPageSizeState] = useState<number>(pageSize);
     const navigate = useNavigate();
     const hasMounted = useRef(false);
+    const { getCartCount } = useCart();
+
 
     useEffect(() => {
         if (hasMounted.current) return;
@@ -47,8 +50,7 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 10, pageNum = 1 }) =>
     }, []);
 
     useEffect(() => {
-        if (hasMounted.current) return;
-        hasMounted.current = true;
+
         const fetchCourses = async () => {
             try {
                 const coursesData = await fetchCoursePublic({}, { pageNum: currentPage, pageSize: pageSizeState });
@@ -87,6 +89,7 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 10, pageNum = 1 }) =>
                 if (response.data.data && response.data.data._id) {
                     toast.success("Course added to cart successfully!");
                     navigate("/cart");
+                    getCartCount();
                 } else {
                     console.error("Failed to add to cart");
                     toast.error("Failed to add course to cart. Please try again.");
@@ -249,7 +252,7 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 10, pageNum = 1 }) =>
                 current={currentPage}
                 pageSize={pageSizeState}
                 total={courses.pageData.length}
-                
+
                 onChange={handlePageChange}
                 className="text-center mt-4 flex justify-center"
             />
