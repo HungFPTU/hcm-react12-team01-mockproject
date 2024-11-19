@@ -102,7 +102,7 @@ const MyLearning = () => {
                           </div>
                         </Col>
                         <Col span={8} className="space-y-6 text-right">
-                          <Link to={`/course/${item._id}/lesson/${item?._id}`}>
+                          <Link to={`/course/${item.course_id}`}>
                             <Button
                               type="primary"
                               className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-full animate-pulse"
