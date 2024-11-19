@@ -5,15 +5,18 @@ import { CartService } from "../services/cart/cart.service";
 
 interface CartContextType {
   cartItems: any[];
+  cartCount: number;
   updateCartItems: (status?: CartStatusEnum) => Promise<void>;
   updateCartStatus: (cartIds: string | string[], status: CartStatusEnum) => Promise<void>;
   deleteCartItem: (cartId: string) => Promise<void>;
+  getCartCount: () => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartCount, setCartCount] = useState(0);
   const token = localStorage.getItem("token");
   const defaultStatus = CartStatusEnum.new;
 
@@ -49,7 +52,8 @@ export const CartProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
       if (itemsToUpdate.length > 0) {
         const items = itemsToUpdate.map((item) => ({ _id: item._id, cart_no: item.cart_no }));
         await CartService.UpdateStatusCart({ status, items });
-        updateCartItems(status); // Refresh cart items after status update
+        updateCartItems(status);
+        getCartCount();
       } else {
         console.error(`No cart items found for the provided IDs: ${idsArray.join(", ")}`);
       }
@@ -62,21 +66,66 @@ export const CartProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
     try {
       await CartService.DeleteCart(cartId);
       console.log(`Cart item with ID ${cartId} deleted`);
-      updateCartItems(CartStatusEnum.new); // Refresh cart items after deletion
+      updateCartItems(CartStatusEnum.new);
+      getCartCount();
     } catch (error) {
       console.error("Error deleting cart item:", error);
+    }
+  };
+
+
+  const getCartCount = async () => {
+    try {
+      let totalCount = 0;
+
+      // Fetch count for waiting_paid status
+      const responseWaitingPaid = await CartService.getCarts({
+        searchCondition: {
+          status: CartStatusEnum.waiting_paid,
+          is_delete: false
+        },
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10
+        }
+      });
+      totalCount += responseWaitingPaid.data.data.pageData.length;
+
+      // Fetch count for new status
+      const responseNew = await CartService.getCarts({
+        searchCondition: {
+          status: CartStatusEnum.new,
+          is_delete: false
+        },
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10
+        }
+      });
+      totalCount += responseNew.data.data.pageData.length;
+
+
+      setCartCount(totalCount);
+    } catch (error) {
+      console.error("Error fetching cart count:", error);
     }
   };
 
   useEffect(() => {
     if (token) {
       updateCartItems(CartStatusEnum.new);
+      getCartCount();
     } else {
       setCartItems([]);
+      setCartCount(0);
     }
   }, [token]);
 
-  return <CartContext.Provider value={{ cartItems, updateCartItems, updateCartStatus, deleteCartItem }}>{children}</CartContext.Provider>;
+  return (
+    <CartContext.Provider value={{ cartItems, cartCount, updateCartItems, updateCartStatus, deleteCartItem, getCartCount }}>
+      {children}
+    </CartContext.Provider>
+  );
 };
 
 export const useCart = () => {
