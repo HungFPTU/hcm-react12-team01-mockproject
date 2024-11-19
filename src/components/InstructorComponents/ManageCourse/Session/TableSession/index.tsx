@@ -1,23 +1,23 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Popover, Modal, message, Space, Input,Form,Select,Spin  } from "antd";
+import { Table, Button, Popover, Modal, message, Space, Input, Form, Select, Spin } from "antd";
 import { SessionService } from "../../../../../services/SessionService/session.service";
-import { EditOutlined, DeleteOutlined} from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { GetSessionResponsePageData } from "../../../../../model/admin/response/Session.response"
 import { GetSessionRequest } from "../../../../../model/admin/request/Session.request";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import ButtonSession from "../ButtonSession";
 
 const TableSession = () => {
- 
+
   const [sessionsData, setSessionsData] = useState<GetSessionResponsePageData[]>([]);
 
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [courses, setCourses] = useState<any[]>([]); 
+  const [courses, setCourses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [editingSession, setEditingSession] = useState<any>(null);
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
-  const [form] = Form.useForm();  
+  const [form] = Form.useForm();
   const hasMounted = useRef(false);
 
   useEffect(() => {
@@ -27,16 +27,16 @@ const TableSession = () => {
     const fetchSessions = async () => {
       try {
         setLoading(true);
-        
+
         const params: GetSessionRequest = {
           searchCondition: {
-            keyword: "", 
-            is_position_order: false, 
-            is_delete: false, 
+            keyword: "",
+            is_position_order: false,
+            is_delete: false,
           },
           pageInfo: {
-            pageNum: 1, 
-            pageSize: 10, 
+            pageNum: 1,
+            pageSize: 10,
           },
         };
         const response = await SessionService.getSessions(params);
@@ -57,13 +57,13 @@ const TableSession = () => {
         setLoading(false);
       }
     };
-    
+
 
     const fetchCourses = async () => {
       try {
         const response = await CourseService.getCourse({ searchCondition: { keyword: '', category_id: '', status: undefined, is_delete: false }, pageInfo: { pageNum: 1, pageSize: 10 } });
         if (response.data?.success && response.data.data?.pageData) {
-          setCourses(response.data.data.pageData); 
+          setCourses(response.data.data.pageData);
         } else {
           console.error("Failed to fetch courses:", response);
         }
@@ -129,7 +129,7 @@ const TableSession = () => {
   }, [sessionsData]);
 
 
-const handleDeleteSession = async (sessionId: string) => {
+  const handleDeleteSession = async (sessionId: string) => {
     try {
       await SessionService.deleteSession(sessionId);
       setSessionsData((prevSessions) =>
@@ -188,16 +188,14 @@ const handleDeleteSession = async (sessionId: string) => {
       }
   
       const response = await SessionService.updateSession(updatedSession, editingSession._id);
-      
+  
       if (response.data?.success) {
-        // Tìm tên khóa học từ courses dựa trên course_id
         const updatedCourse = courses.find(course => course._id === updatedSession.course_id);
         const updatedSessionWithCourseName = {
           ...updatedSession,
           course_name: updatedCourse ? updatedCourse.name : "",
         };
   
-        // Cập nhật lại danh sách phiên học trên UI
         setSessionsData((prevSessions) =>
           prevSessions.map((session) =>
             session._id === editingSession._id ? { ...session, ...updatedSessionWithCourseName } : session
@@ -214,6 +212,7 @@ const handleDeleteSession = async (sessionId: string) => {
       message.error("Failed to update session!");
     }
   };
+  
 
   const columns = [
     {
@@ -226,7 +225,7 @@ const handleDeleteSession = async (sessionId: string) => {
       dataIndex: "course_name",
       key: "course_name",
     },
-    
+
     {
       title: "Created At",
       dataIndex: "created_at",
@@ -238,8 +237,8 @@ const handleDeleteSession = async (sessionId: string) => {
       key: "action",
       render: (_: unknown, record: GetSessionResponsePageData) => (
         <Space size="middle">
-     
-           <Popover content="Edit Session">
+
+          <Popover content="Edit Session">
             <Button
               onClick={() => showEditModal(record)}
               className="bg-blue-500 hover:bg-blue-600 text-white"
@@ -276,67 +275,68 @@ const handleDeleteSession = async (sessionId: string) => {
         <ButtonSession />
       </div>
       <div>
-      {isDataEmpty ? (
+        {isDataEmpty ? (
           <div className="text-center text-red-500">No sessions found.</div>
-      ) : (
-      <Table
-        dataSource={sessionsData}
-        columns={columns}
-        rowKey= "_id"
-        className="w-full shadow-md rounded-lg overflow-hidden"
-        pagination={{
-          defaultPageSize: 10,
-          showSizeChanger: true,
-          pageSizeOptions: ["15", "20"],
-            position: ["bottomRight"],
-          }}
-        />
+        ) : (
+          <Table
+            dataSource={sessionsData}
+            columns={columns}
+            rowKey="_id"
+            className="w-full shadow-md rounded-lg overflow-hidden"
+            pagination={{
+              defaultPageSize: 10,
+              showSizeChanger: true,
+              pageSizeOptions: ["15", "20"],
+              position: ["bottomRight"],
+            }}
+          />
         )
         }
-         
 
-      <Modal
-        title="Edit Session"
-        visible={isEditModalVisible}
-        onCancel={() => setIsEditModalVisible(false)}
-        onOk={handleUpdateSession}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item 
-            name="name" 
-            label="Session Name" 
-            rules={[{ required: true, message: 'Please input session name!' }]}>
-            <Input placeholder="Session Name" />
-          </Form.Item>
 
-          <Form.Item 
-            name="course_id" 
-            label="Course" 
-            rules={[{ required: true, message: 'Please select a course!' }]}>
-            <Select placeholder="Select a course">
-              {courses.map(course => (
-                <Select.Option key={course._id} value={course._id}>
-                  {course.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
+        <Modal
+          title="Edit Session"
+          visible={isEditModalVisible}
+          onCancel={() => setIsEditModalVisible(false)}
+          onOk={handleUpdateSession}
+          okText="Save"
+        >
+          <Form form={form} layout="vertical">
+            <Form.Item
+              name="name"
+              label="Session Name"
+              rules={[{ required: true, message: 'Please input session name!' }]}>
+              <Input placeholder="Session Name" />
+            </Form.Item>
 
-          <Form.Item 
-            name="description" 
-            label="Description" 
-            rules={[{ required: true, message: 'Please input description!' }]}>
-            <Input placeholder="Description" />
-          </Form.Item>
+            <Form.Item
+              name="course_id"
+              label="Course"
+              rules={[{ required: true, message: 'Please select a course!' }]}>
+              <Select placeholder="Select a course">
+                {courses.map(course => (
+                  <Select.Option key={course._id} value={course._id}>
+                    {course.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-          <Form.Item 
-            name="position_order" 
-            label="Position Order" 
-            rules={[{ required: true, message: 'Please input position order!' }]}>
-            <Input type="number" placeholder="Position Order" />
-          </Form.Item>
-        </Form>
-      </Modal>
+            <Form.Item
+              name="description"
+              label="Description"
+              rules={[{ required: true, message: 'Please input description!' }]}>
+              <Input placeholder="Description" />
+            </Form.Item>
+
+            <Form.Item
+              name="position_order"
+              label="Position Order"
+              rules={[{ required: true, message: 'Please input position order!' }]}>
+              <Input type="number" placeholder="Position Order" />
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
     </div>
   );

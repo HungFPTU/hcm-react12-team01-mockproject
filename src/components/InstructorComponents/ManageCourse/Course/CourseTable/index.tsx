@@ -1,29 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  Table,
-  Button,
-  Switch,
-  message,
-  Popover,
-  Spin,
-  Modal,
-  Form,
-  Input,
-  Select,
-  Upload,
-} from "antd";
+import { Table, Button, Switch, message, Popover, Spin, Modal, Form, Input, Select } from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { CategoryService } from "../../../../../services/category/category.service";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { SendOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { GetCategoryRequest } from "../../../../../model/admin/request/Category.request";
-import { UploadOutlined } from "@ant-design/icons";
-import { uploadFile } from "../../../../../firebase-config";
 import ButtonCourse from "../ButtonCourse";
-
 const { Option } = Select;
-
 interface Course {
   _id: string;
   name: string;
@@ -48,12 +32,12 @@ const convertToCourse = (data: any): Course => {
   return {
     _id: data._id,
     name: data.name,
-    session: data.session || "", // Nếu session không có, đặt giá trị mặc định là ""
+    session: data.session || "",
     category_name: data.category_name || "",
     category_id: data.category_id,
     user_id: data.user_id,
     description: data.description,
-    content: data.content || "", // Đặt giá trị mặc định nếu cần
+    content: data.content || "",
     status: data.status,
     video_url: data.video_url,
     image_url: data.image_url,
@@ -70,7 +54,6 @@ const convertToCourse = (data: any): Course => {
 const CourseTable = () => {
   const [coursesData, setCoursesData] = useState<Course[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -85,27 +68,6 @@ const CourseTable = () => {
     image_url: "",
     video_url: "",
   });
-
-  const handleFileChange = async (info: any, type: "image" | "video") => {
-    if (info.file.status === "uploading") {
-      message.loading({ content: `Uploading ${type}...`, key: "upload" });
-    }
-    if (info.file.status === "done") {
-      const file = info.file.originFileObj;
-      try {
-        const fileUrl = await uploadFile(file, file.name); // Upload file lên Firebase và lấy URL
-        setFormData({ ...formData, [`${type}_url`]: fileUrl }); // Cập nhật URL vào formData
-        message.success({
-          content: `${
-            type.charAt(0).toUpperCase() + type.slice(1)
-          } uploaded successfully!`,
-          key: "upload",
-        });
-      } catch (error) {
-        message.error("Failed to upload file");
-      }
-    }
-  };
 
   const hasMounted = useRef(false);
   const fetchCourse = async (params: GetCourseRequest) => {
@@ -175,7 +137,7 @@ const CourseTable = () => {
     hasMounted.current = true;
 
     fetchCoursesData();
-    fetchCategoriesData(); // Gọi hàm lấy danh sách thể loại
+    fetchCategoriesData();
   }, []);
 
   const handleUpdate = async (courseId: string) => {
@@ -185,6 +147,10 @@ const CourseTable = () => {
         const course = convertToCourse(response.data.data);
         setSelectedCourse(course);
 
+        setFormData({
+          image_url: course.image_url,
+          video_url: course.video_url,
+        });
         const categoryName = coursesData.find(
           (c) => c.category_id === course.category_id
         )?.category_name;
@@ -309,6 +275,12 @@ const CourseTable = () => {
     fetchCoursesData();
   };
 
+  const extractYouTubeID = (url: string) => {
+    const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
+};
+
   const showDeleteConfirm = (courseId: string) => {
     Modal.confirm({
       title: "Are you sure you want to delete this course?",
@@ -426,22 +398,7 @@ const CourseTable = () => {
         <div className="text-right">{discount}%</div>
       ),
     },
-    // {
-    //   title: "Session Count",
-    //   dataIndex: "session_count",
-    //   key: "session_count",
-    //   render: (session_count: number) => (
-    //     <div className="text-right">{session_count}</div>
-    //   ),
-    // },
-    // {
-    //   title: "Lesson Count",
-    //   dataIndex: "lesson_count",
-    //   key: "lesson_count",
-    //   render: (lesson_count: number) => (
-    //     <div className="text-right">{lesson_count}</div>
-    //   ),
-    // },
+
     {
       title: "Session",
       dataIndex: "session_count",
@@ -490,11 +447,10 @@ const CourseTable = () => {
                     onChangeStatus(record._id, newStatus);
                   }}
                   disabled={!canChangeStatus}
-                  className={`transition-all duration-300 ${
-                    record.status === CourseStatusEnum.Active
-                      ? "bg-blue-500"
-                      : "bg-gray-500"
-                  }`}
+                  className={`transition-all duration-300 ${record.status === CourseStatusEnum.Active
+                    ? "bg-blue-500"
+                    : "bg-gray-500"
+                    }`}
                 />
               </Popover>
             )}
@@ -528,15 +484,15 @@ const CourseTable = () => {
           {[CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(
             record.status
           ) && (
-            <Popover content="Send course to admin">
-              <Button
-                className="bg-green-400 hover:bg-green-600 text-white"
-                onClick={() => handleSendClick(record._id)}
-              >
-                <SendOutlined />
-              </Button>
-            </Popover>
-          )}
+              <Popover content="Send course to admin">
+                <Button
+                  className="bg-green-400 hover:bg-green-600 text-white"
+                  onClick={() => handleSendClick(record._id)}
+                >
+                  <SendOutlined />
+                </Button>
+              </Popover>
+            )}
         </div>
       ),
     },
@@ -592,10 +548,13 @@ const CourseTable = () => {
         visible={isModalVisible}
         onCancel={handleModalCancel}
         footer={null}
+
       >
         {selectedCourse && (
           <Form layout="vertical">
-            <Form.Item label="Name">
+            <Form.Item 
+            label="Name"
+         >
               <Input
                 value={selectedCourse.name}
                 onChange={(e) =>
@@ -619,74 +578,56 @@ const CourseTable = () => {
               </Select>
             </Form.Item>
             <Form.Item label="Description">
-              <Input
-                value={selectedCourse.description}
+              <Input.TextArea
+                value={selectedCourse?.description}
                 onChange={(e) =>
-                  setSelectedCourse({
-                    ...selectedCourse,
-                    description: e.target.value,
-                  })
+                  setSelectedCourse((prev) =>
+                    prev ? { ...prev, description: e.target.value } : null
+                  )
                 }
               />
             </Form.Item>
-            <Form.Item label="Content">
-              <Input
-                value={selectedCourse.content}
-                onChange={(e) =>
-                  setSelectedCourse({
-                    ...selectedCourse,
-                    content: e.target.value,
-                  })
-                }
-              />
-            </Form.Item>
-            <Form.Item label="Video">
-              <Upload
-                accept="video/*"
-                showUploadList={false}
-                customRequest={({ onSuccess }) => {
-                  setTimeout(() => {
-                    if (onSuccess) {
-                      onSuccess("ok");
-                    }
-                  }, 0);
-                }}
-                onChange={(info) => handleFileChange(info, "video")}
-              >
-                <Button icon={<UploadOutlined />}>Upload Video</Button>
-              </Upload>
-            </Form.Item>
-            {selectedCourse.video_url && (
-              <video
-                src={formData.video_url}
-                controls
-                style={{ width: "100%", marginTop: "10px" }}
-              />
-            )}
 
-            <Form.Item label="Image">
-              <Upload
-                accept="image/*"
-                showUploadList={false}
-                customRequest={({ onSuccess }) => {
-                  setTimeout(() => {
-                    if (onSuccess) {
-                      onSuccess("ok");
-                    }
-                  }, 0);
-                }}
-                onChange={(info) => handleFileChange(info, "image")}
-              >
-                <Button icon={<UploadOutlined />}>Upload Image</Button>
-              </Upload>
-            </Form.Item>
-            {selectedCourse.image_url && (
-              <img
-                src={formData.image_url}
-                alt="Selected"
-                style={{ width: "100%", marginTop: "10px" }}
+            <Form.Item label="Video URL">
+              <Input
+                value={formData.video_url}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, video_url: e.target.value }))
+                }
+                placeholder="Enter video URL"
               />
-            )}
+            </Form.Item>
+            {formData.video_url && (
+        formData.video_url.includes('youtube.com') || formData.video_url.includes('youtu.be') ? (
+            <iframe
+                width="100%"
+                height="315"
+                src={`https://www.youtube.com/embed/${extractYouTubeID(formData.video_url)}`}
+                title="YouTube video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{ marginTop: '10px' }}
+            ></iframe>
+        ) : (
+            <video src={formData.video_url} controls style={{ width: '100%', marginTop: '10px' }} />
+        )
+    )}
+
+            {/* New Image Input Field */}
+            <Form.Item label="Image URL">
+              <Input
+                value={formData.image_url}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, image_url: e.target.value }))
+                }
+                placeholder="Enter image URL"
+              />
+            </Form.Item>
+            {formData.image_url && (
+        <img src={formData.image_url} alt="Selected" style={{ width: '100%', marginTop: '10px' }} />
+    )}
+
 
             <Form.Item label="Price">
               <Input
@@ -716,6 +657,7 @@ const CourseTable = () => {
               type="primary"
               onClick={handleSaveCourse}
               icon={<SendOutlined />}
+
             >
               Save
             </Button>

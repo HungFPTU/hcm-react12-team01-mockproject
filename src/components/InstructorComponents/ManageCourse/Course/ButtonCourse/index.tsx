@@ -11,12 +11,12 @@ const { Option } = Select;
 const ButtonCourse = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [categoryData, setCategoryData] = useState<Category[]>([]);
-  const [courseType, setCourseType] = useState("free"); // State để điều chỉnh hiển thị trường Price và Discount
+  const [courseType, setCourseType] = useState("free"); 
 
   const showModal = () => {
     setIsModalVisible(true);
 
-    // Fetch categories only if they haven't been loaded already
+ 
     if (categoryData.length === 0) {
       const params = {
         searchCondition: {
@@ -62,7 +62,7 @@ const ButtonCourse = () => {
         video_url,
         image_url,
         price: courseType === "paid" ? price : 0,
-        discount: courseType === "paid" ? discount : 0, // Nếu là Free, discount sẽ là 0
+        discount: courseType === "paid" ? discount : 0, 
       };
 
       const response = await CourseService.createCourse(newCourse);
@@ -131,17 +131,6 @@ const ButtonCourse = () => {
             <Input.TextArea placeholder="Nhập nội dung khóa học" />
           </Form.Item>
 
-          <Form.Item
-            name="image_url"
-            label="Image URL"
-            labelCol={{ span: 24 }}
-            rules={[{ required: true }]}
-          >
-            <Input
-              placeholder="Nhập đường dẫn hình ảnh"
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
 
           <Form.Item
             name="video_url"
@@ -154,6 +143,19 @@ const ButtonCourse = () => {
               style={{ width: "100%" }}
             />
           </Form.Item>
+
+          <Form.Item
+            name="image_url"
+            label="Image URL"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
+          >
+            <Input
+              placeholder="Nhập đường dẫn hình ảnh"
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+
           <Form.Item
             name="courseType"
             label="Course Type"

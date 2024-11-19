@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Modal, Input, Form, Button, message, Select, Spin, Upload } from 'antd';
+import { Modal, Input, Form, Button, message, Select, Spin } from 'antd';
 import { LessonService } from '../../../../../services/LessonService/lesson.service';
 import { CourseService } from '../../../../../services/CourseService/course.service';
 import { LessonDetailsResponse } from '../../../../../model/admin/response/Lesson.response';
 import { UpdateLessonRequest } from '../../../../../model/admin/request/Lesson.request';
 import { LessonTypeEnum } from '../../../../../model/Lesson';
-import { UploadOutlined } from '@ant-design/icons';
-import { uploadFile } from '../../../../../firebase-config';
 
 const { Option } = Select;
 
@@ -15,12 +13,14 @@ interface UpdateDetailLessonProps {
     onClose: () => void;
     onUpdate: () => void;
 }
+
 const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose, onUpdate }) => {
     const [formData, setFormData] = useState<LessonDetailsResponse>(lesson);
     const [loading, setLoading] = useState(true);
     const [courses, setCourses] = useState<any[]>([]);
+    const [form] = Form.useForm(); 
     const hasMounted = useRef(false);
-    
+
     useEffect(() => {
         setFormData(lesson);
     }, [lesson]);
@@ -34,7 +34,7 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
             if (response?.data?.success) {
                 setCourses(response.data.data.pageData);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to fetch courses:", error);
         }
     };
@@ -52,6 +52,17 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
     }, []);
 
     const handleSave = async () => {
+        if (!formData.name || !formData.course_id || !formData.lesson_type || !formData.video_url || !formData.image_url || !formData.description || !formData.full_time) {
+            message.error("Please fill in all required fields.");
+            return;
+        }
+
+        if (!formData.session_id) {
+            console.log("Form Data before Save:", formData);
+            message.error("Session ID is required.");
+            return;
+        }
+
         const lessonId = lesson._id;
         try {
             const updateData: UpdateLessonRequest = {
@@ -61,26 +72,20 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                 user_id: formData.user_id,
                 lesson_type: formData.lesson_type as LessonTypeEnum,
                 description: formData.description || null,
-                video_url: formData.video_url || "", 
-                image_url: formData.image_url || "", 
+                video_url: formData.video_url || "",
+                image_url: formData.image_url || "",
                 full_time: formData.full_time,
                 position_order: formData.position_order || 0,
             };
-    
-            console.log('Submitting update data:', updateData);
-    
+
             const response = await LessonService.updateLesson(lessonId, updateData);
-    
+
             if (response?.data?.success) {
                 message.success("Lesson updated successfully!");
                 onUpdate();
                 onClose();
-            } else if (response?.data?.errors) {
-                console.log('API Errors:', response.data.errors);
-    
-                response.data.errors.forEach((error) => console.log('API Error Detail:', error));
-    
-                response.data.errors.forEach((err: { message: string, field: string }) => {
+            } else if (response?.data?.data && Array.isArray(response.data.data)) {
+                response.data.data.forEach((err: { message: string, field: string }) => {
                     if (err.field === "course_id") {
                         message.error("The selected course cannot be used!");
                     }
@@ -95,27 +100,16 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                     }
                 });
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error updating lesson:", error);
             message.error("Failed to update lesson. Please try again.");
         }
     };
-    
 
-    const handleFileChange = async (info: any, type: 'image' | 'video') => {
-        if (info.file.status === 'uploading') {
-            message.loading({ content: `Uploading ${type}...`, key: 'upload' });
-        }
-        if (info.file.status === 'done') {
-            const file = info.file.originFileObj;
-            try {
-                const fileUrl = await uploadFile(file, file.name); 
-                setFormData({ ...formData, [`${type}_url`]: fileUrl || "" }); // Đảm bảo giá trị là chuỗi rỗng nếu không có file URL
-                message.success({ content: `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully!`, key: 'upload' });
-            } catch (error) {
-                message.error("Failed to upload file");
-            }
-        }
+    const extractYouTubeID = (url: string) => {
+        const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return match && match[2].length === 11 ? match[2] : null;
     };
 
     if (loading) {
@@ -136,28 +130,23 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                 </Button>,
             ]}
         >
-            <Form layout="vertical">
-                <Form.Item label="Name">
+            <Form form={form} layout="vertical" initialValues={formData}>
+                <Form.Item
+                    label="Name"
+                    name="name"
+                    rules={[{ required: true, message: 'Please input the lesson name!' }]}
+                >
                     <Input
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
                 </Form.Item>
 
-                <Form.Item label="Course">
-                    <Select
-                        value={formData.course_id} // Đây là giá trị đang được chọn
-                        onChange={(value) => setFormData({ ...formData, course_id: value })} // Khi thay đổi sẽ cập nhật `course_id` trong `formData`
-                    >
-                        {courses.map((course) => (
-                            <Option key={course._id} value={course._id}>
-                                {course.name}
-                            </Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-
-                <Form.Item label="Lesson Type">
+                <Form.Item
+                    label="Lesson Type"
+                    name="lesson_type"
+                    rules={[{ required: true, message: 'Please select a lesson type!' }]}
+                >
                     <Select
                         value={formData.lesson_type}
                         onChange={(value: LessonTypeEnum) => setFormData({ ...formData, lesson_type: value })}
@@ -172,45 +161,47 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
 
                 {formData.lesson_type === LessonTypeEnum.Video && (
                     <>
-                        <Form.Item label="Video">
-                            <Upload
-                                accept="video/*"
-                                showUploadList={false}
-                                customRequest={({ onSuccess }) => {
-                                    setTimeout(() => {
-                                        if (onSuccess) {
-                                            onSuccess("ok");
-                                        }
-                                    }, 0);
-                                }}
-                                onChange={(info) => handleFileChange(info, 'video')}
-                            >
-                                <Button icon={<UploadOutlined />}>Upload Video</Button>
-                            </Upload>
+                        <Form.Item
+                            label="Video URL"
+                            name="video_url"
+                            rules={[{ required: true, message: 'Please enter the Video URL!' }]}
+                        >
+                            <Input
+                                value={formData.video_url || ""}
+                                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                                placeholder="Enter video URL"
+                            />
                         </Form.Item>
                         {formData.video_url && (
-                            <video src={formData.video_url} controls style={{ width: '100%', marginTop: '10px' }} />
+                            formData.video_url.includes('youtube.com') || formData.video_url.includes('youtu.be') ? (
+                                <iframe
+                                    width="100%"
+                                    height="315"
+                                    src={`https://www.youtube.com/embed/${extractYouTubeID(formData.video_url)}`}
+                                    title="YouTube video"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                    style={{ marginTop: '10px' }}
+                                ></iframe>
+                            ) : (
+                                <video src={formData.video_url} controls style={{ width: '100%', marginTop: '10px' }} />
+                            )
                         )}
                     </>
                 )}
-
                 {formData.lesson_type === LessonTypeEnum.Image && (
                     <>
-                        <Form.Item label="Image">
-                            <Upload
-                                accept="image/*"
-                                showUploadList={false}
-                                customRequest={({ onSuccess }) => {
-                                    setTimeout(() => {
-                                        if (onSuccess) {
-                                            onSuccess("ok");
-                                        }
-                                    }, 0);
-                                }}
-                                onChange={(info) => handleFileChange(info, 'image')}
-                            >
-                                <Button icon={<UploadOutlined />}>Upload Image</Button>
-                            </Upload>
+                        <Form.Item
+                            label="Image URL"
+                            name="image_url"
+                            rules={[{ required: true, message: 'Please input the lesson Image URL!' }]}
+                        >
+                            <Input
+                                value={formData.image_url || ""}
+                                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                                placeholder="Enter image URL"
+                            />
                         </Form.Item>
                         {formData.image_url && (
                             <img src={formData.image_url} alt="Selected" style={{ width: '100%', marginTop: '10px' }} />
@@ -219,15 +210,23 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                 )}
 
                 {formData.lesson_type === LessonTypeEnum.Text && (
-                    <Form.Item label="Description">
-                    <Input.TextArea
-                        value={formData.description || ''} // Chuyển null thành chuỗi rỗng
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    />
-                </Form.Item>
+                    <Form.Item
+                        label="Description"
+                        name="description"
+                        rules={[{ required: true, message: 'Please input the lesson description!' }]}
+                    >
+                        <Input.TextArea
+                            value={formData.description || ''}
+                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        />
+                    </Form.Item>
                 )}
 
-                <Form.Item label="Time">
+                <Form.Item
+                    label="Time"
+                    name="full_time"
+                    rules={[{ required: true, message: 'Please input the lesson time!' }]}
+                >
                     <Input
                         type="number"
                         value={formData.full_time}
@@ -240,4 +239,3 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
 };
 
 export default UpdateDetailLesson;
-// QUân
