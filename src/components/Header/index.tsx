@@ -13,7 +13,7 @@ const { Header } = Layout;
 
 
 export default function Home() {
-  const { cartCount } = useCart();
+  const { cartCount, getCartCount } = useCart();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   // const token = localStorage.getItem("token");
@@ -41,8 +41,13 @@ export default function Home() {
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
+
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  useEffect(() => {
+    // Fetch cart count initially
+    getCartCount();
+  }, [getCartCount]);
 
   const handleLogOut = async () => {
     try {
@@ -118,13 +123,13 @@ export default function Home() {
           <div className="flex items-center space-x-2 md:space-x-4">
             {userInfo ? (
               <>
-                <Badge showZero>
+                <Badge count={cartCount} showZero> {/* Use cartCount directly in Badge */}
                   <Button
                     icon={<ShoppingCartOutlined style={{ fontSize: "24px" }} />}
                     type="text"
                     onClick={() => navigate("/cart")}
                   />
-                  {cartCount > 0 && <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">{cartCount}</span>}
+                  {/* You can remove the manual count display here */}
                 </Badge>
                 <Dropdown menu={{ items: userMenuItems }} placement="bottomLeft">
                   <Avatar
