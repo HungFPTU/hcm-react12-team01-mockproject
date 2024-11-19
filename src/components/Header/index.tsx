@@ -13,7 +13,7 @@ const { Header } = Layout;
 
 
 export default function Home() {
-  const { cartItems } = useCart();
+  const { cartCount } = useCart();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   // const token = localStorage.getItem("token");
@@ -107,7 +107,7 @@ export default function Home() {
               <Button icon={<MenuOutlined />} />
             </Dropdown>
           ) : (
-            <Menu 
+            <Menu
               mode="horizontal"
               items={items}
               className="flex-grow flex justify-center"
@@ -124,7 +124,7 @@ export default function Home() {
                     type="text"
                     onClick={() => navigate("/cart")}
                   />
-                  {cartItems.length > 0 && <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">{cartItems.length}</span>}
+                  {cartCount > 0 && <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">{cartCount}</span>}
                 </Badge>
                 <Dropdown menu={{ items: userMenuItems }} placement="bottomLeft">
                   <Avatar
