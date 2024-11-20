@@ -8,6 +8,7 @@ const Login = () => {
   const navigate = useNavigate();
   const handleBackHome  = () => {
     navigate("/");
+    window.location.reload();
   }
   return (
       <div className="flex items-center justify-center w-full h-screen bg-gradient-to-r from-[#330933] to-white-600 relative">

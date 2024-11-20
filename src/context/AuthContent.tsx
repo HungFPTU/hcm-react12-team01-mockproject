@@ -33,20 +33,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return storedToken as string | null;
   });
 
-  const [userInfo, setUserInfo] = useState<ReponseSuccess<User>["data"] | null>(() => {
-    const storedUserInfo = localStorage.getItem("userInfo");
-    return storedUserInfo ? JSON.parse(storedUserInfo) : null;
+  const [userInfo, setUserInfo] = useState(() => {
+    try {
+      const storedUserInfo = localStorage.getItem("userInfo");
+      return storedUserInfo ? JSON.parse(storedUserInfo) : null;
+    } catch (error) {
+      console.error("Failed to parse userInfo from localStorage:", error);
+      return null;
+    }
   });
+  
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Store userInfo in localStorage whenever it changes
-    if (userInfo) {
-      localStorage.setItem("userInfo", JSON.stringify(userInfo));
-    } else {
-      localStorage.removeItem("userInfo");
+    try {
+      if (userInfo) {
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      } else {
+        localStorage.removeItem("userInfo");
+      }
+    } catch (error) {
+      console.error("Failed to update userInfo in localStorage:", error);
     }
   }, [userInfo]);
+  
 
   const handleLogin = async (token: string) => {
     try {
@@ -77,9 +87,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(null);
     setRole(null);
     setUserInfo(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    localStorage.clear();
     window.location.href = "/login";
   };
   
