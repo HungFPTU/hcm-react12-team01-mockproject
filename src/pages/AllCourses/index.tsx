@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Card, Button, Rate, Tooltip, Col, Row } from "antd";
+import { Card, Button, Rate, Tooltip, Col, Row, Input } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { CourseService } from "../../services/CourseService/course.service";
 import { GetPublicCourseResponse } from "../../model/admin/response/Course.response";
 import { CartService } from "../../services/cart/cart.service";
 import { toast } from "react-toastify";
+
+const { Search } = Input;
 
 interface CourseProps {
     pageSize?: number;
@@ -30,6 +32,7 @@ const fetchCoursePublic = async (searchCondition = {}, pageInfo = { pageNum: 1, 
 const AllCourse: React.FC<CourseProps> = ({ pageSize = 14, pageNum = 1 }) => {
     const [courses, setCourses] = useState<GetPublicCourseResponse | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [searchKeyword, setSearchKeyword] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
@@ -44,7 +47,10 @@ const AllCourse: React.FC<CourseProps> = ({ pageSize = 14, pageNum = 1 }) => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const coursesData = await fetchCoursePublic({}, { pageNum, pageSize });
+                const coursesData = await fetchCoursePublic(
+                    { keyword: searchKeyword },
+                    { pageNum, pageSize }
+                );
                 setCourses(coursesData.data);
                 setError(null);
             } catch (error) {
@@ -54,7 +60,7 @@ const AllCourse: React.FC<CourseProps> = ({ pageSize = 14, pageNum = 1 }) => {
         };
 
         fetchCourses();
-    }, [pageNum, pageSize]);
+    }, [searchKeyword, pageNum, pageSize]);
 
     const formatPrice = (price: number) => price.toLocaleString("vi-VN") + "₫";
 
@@ -67,6 +73,12 @@ const AllCourse: React.FC<CourseProps> = ({ pageSize = 14, pageNum = 1 }) => {
     };
 
     const handleAddToCart = async (course: any) => {
+        if (!isLoggedIn) {
+            toast.warning("Please log in to add courses to your cart.");
+            navigate("/login");
+            return;
+        }
+    
         try {
             if (course.is_in_cart) {
                 navigate("/cart");
@@ -85,12 +97,8 @@ const AllCourse: React.FC<CourseProps> = ({ pageSize = 14, pageNum = 1 }) => {
         }
     };
 
-    const handleButtonClick = (course: any) => {
-        if (!isLoggedIn) {
-            toast.warning("Please login to add course to cart");
-        } else {
-            handleAddToCart(course);
-        }
+    const handleSearch = (value: string) => {
+        setSearchKeyword(value);
     };
 
     if (error) {
@@ -108,6 +116,17 @@ const AllCourse: React.FC<CourseProps> = ({ pageSize = 14, pageNum = 1 }) => {
     return (
         <div className="mt-20">
             <h1 className="text-center mb-7 font-bold text-4xl text-gray-800">All Courses</h1>
+            <div className="container mx-auto px-4 mb-6">
+                <div className="flex justify-between items-center">
+                    <Search
+                        placeholder="Search courses..."
+                        enterButton="Search"
+                        size="large"
+                        onSearch={handleSearch}
+                        className="w-1/3"
+                    />
+                </div>
+            </div>
             <div className="container mx-auto px-4">
                 <Row gutter={[24, 24]}>
                     {courses.pageData.map((course) => (
@@ -125,17 +144,17 @@ const AllCourse: React.FC<CourseProps> = ({ pageSize = 14, pageNum = 1 }) => {
                                     </Link>
                                 }
                             >
-                             <div className="course-info flex items-center justify-between mb-3">
-                                <div className="bg-gray-100 px-2 py-1 rounded-full text-gray-500 text-sm">
-                                    {course.session_count} sessions
+                                <div className="course-info flex items-center justify-between mb-3">
+                                    <div className="bg-gray-100 px-2 py-1 rounded-full text-gray-500 text-sm">
+                                        {course.session_count} sessions
+                                    </div>
+                                    <div className="bg-gray-100 px-2 py-1 rounded-full text-gray-500 text-sm">
+                                        {course.lesson_count} lessons
+                                    </div>
+                                    <div className="bg-gray-100 px-2 py-1 rounded-full text-gray-500 text-sm">
+                                        {formatTime(course.full_time)}
+                                    </div>
                                 </div>
-                                <div className="bg-gray-100 px-2 py-1 rounded-full text-gray-500 text-sm">
-                                    {course.lesson_count} lessons
-                                </div>
-                                <div className="bg-gray-100 px-2 py-1 rounded-full text-gray-500 text-sm">
-                                    {formatTime(course.full_time)}
-                                </div>
-                            </div>
                                 <div className="text-center mb-4">
                                     <Tooltip title={course.name}>
                                         <h2 className="text-lg font-semibold truncate">
@@ -164,9 +183,9 @@ const AllCourse: React.FC<CourseProps> = ({ pageSize = 14, pageNum = 1 }) => {
                                 <Button
                                     type="primary"
                                     className="mt-4 w-full bg-pink-500 border-none hover:bg-pink-600"
-                                    onClick={() => handleButtonClick(course)}
+                                    onClick={() => handleAddToCart(course)}
                                 >
-                                    {course.is_in_cart ? "View Cart" : "Add to Cart"}
+                                     {isLoggedIn ? (course.is_in_cart ? "View Cart" : "Add to Cart") : "Please Login or Register"}
                                 </Button>
                             </Card>
                         </Col>
