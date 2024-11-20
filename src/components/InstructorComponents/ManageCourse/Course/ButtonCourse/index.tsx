@@ -156,8 +156,8 @@ const ButtonCourse = () => {
             />
           </Form.Item>
 
-          <Form.Item
-            name="courseType"
+         <Form.Item
+            name="courseT ype"
             label="Course Type"
             labelCol={{ span: 24 }}
           >

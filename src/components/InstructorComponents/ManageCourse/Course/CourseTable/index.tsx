@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Switch, message, Popover, Spin, Modal, Form, Input, Select } from "antd";
+import { Table, Button, Switch, message, Popover, Spin, Modal, Form, Input, Select, Radio } from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { CategoryService } from "../../../../../services/category/category.service";
@@ -7,6 +7,8 @@ import { GetCourseRequest } from "../../../../../model/admin/request/Course.requ
 import { SendOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { GetCategoryRequest } from "../../../../../model/admin/request/Category.request";
 import ButtonCourse from "../ButtonCourse";
+import { Editor } from "@tinymce/tinymce-react";
+
 const { Option } = Select;
 interface Course {
   _id: string;
@@ -60,9 +62,12 @@ const CourseTable = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
   const [categories, setCategories] = useState<any[]>([]);
+  const [courseType, setCourseType] = useState("free"); 
   const [filterValue, setFilterValue] = useState<CourseStatusEnum | undefined>(
     undefined
   );
+  const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
+
 
   const [formData, setFormData] = useState({
     image_url: "",
@@ -145,6 +150,9 @@ const CourseTable = () => {
       const response = await CourseService.getCourseById(courseId);
       if (response && response.data && response.data.data) {
         const course = convertToCourse(response.data.data);
+        if(course.price>0){
+          setCourseType("paid")
+        }else setCourseType("free")
         setSelectedCourse(course);
 
         setFormData({
@@ -279,7 +287,7 @@ const CourseTable = () => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     return match && match[2].length === 11 ? match[2] : null;
-};
+  };
 
   const showDeleteConfirm = (courseId: string) => {
     Modal.confirm({
@@ -552,39 +560,95 @@ const CourseTable = () => {
       >
         {selectedCourse && (
           <Form layout="vertical">
-            <Form.Item 
-            label="Name"
-         >
+            {/* Course Name */}
+            <Form.Item
+              label={
+                <span>
+                  <span style={{ color: "red" }}>*</span> Name
+                </span>
+              }
+              validateStatus={!selectedCourse?.name ? "error" : ""}
+              help={!selectedCourse?.name ? "Course name is required" : ""}
+            >
               <Input
-                value={selectedCourse.name}
+                value={selectedCourse?.name || ""}
                 onChange={(e) =>
-                  setSelectedCourse({ ...selectedCourse, name: e.target.value })
+                  setSelectedCourse((prev) =>
+                    prev ? { ...prev, name: e.target.value } : null
+                  )
                 }
               />
             </Form.Item>
-            <Form.Item label="Category">
+            <Form.Item
+              label={
+                <span>
+                 <span style={{ color: "red" }}>*</span> Category 
+                </span>
+              }
+              validateStatus={!selectedCategoryName ? "error" : ""}
+              help={!selectedCategoryName ? "Category is required" : ""}
+            >
               <Select
-                value={selectedCategoryName}
+                value={selectedCategoryName || ""}
                 onChange={(value) => {
+                  const category = categories.find((c) => c.name === value);
+                  setSelectedCourse((prev) =>
+                    prev ? { ...prev, category_id: category?._id || "" } : null
+                  );
                   setSelectedCategoryName(value);
-                  setSelectedCourse({ ...selectedCourse, category_id: value });
                 }}
               >
                 {categories.map((category) => (
-                  <Select.Option key={category._id} value={category._id}>
+                  <Option key={category._id} value={category.name}>
                     {category.name}
-                  </Select.Option>
+                  </Option>
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item label="Description">
-              <Input.TextArea
-                value={selectedCourse?.description}
-                onChange={(e) =>
-                  setSelectedCourse((prev) =>
-                    prev ? { ...prev, description: e.target.value } : null
-                  )
-                }
+            <Form.Item
+              label={
+                <span>
+                 <span style={{ color: "red" }}>*</span> Description 
+                </span>
+              }
+              validateStatus={!selectedCourse?.description ? "error" : ""}
+              help={!selectedCourse?.description ? "Description is required" : ""}
+            >
+              <Editor
+                onInit={(_evt, editor) => (editorRef.current = editor)}
+                apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
+                init={{
+                  width: "100%",
+                  height: 300,
+                  plugins: [
+                    "advlist",
+                    "autolink",
+                    "link",
+                    "image",
+                    "lists",
+                    "charmap",
+                    "preview",
+                    "anchor",
+                    "pagebreak",
+                    "searchreplace",
+                    "wordcount",
+                    "visualblocks",
+                    "code",
+                    "fullscreen",
+                    "insertdatetime",
+                    "media",
+                    "table",
+                    "emoticons",
+                    "help",
+                  ],
+                  toolbar:
+                    "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | " +
+                    "bullist numlist outdent indent | link image | print preview media fullscreen | " +
+                    "forecolor backcolor emoticons | help",
+                  menubar: "file edit view insert format tools table help",
+                  content_style:
+                    "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
+                }}
               />
             </Form.Item>
 
@@ -598,21 +662,21 @@ const CourseTable = () => {
               />
             </Form.Item>
             {formData.video_url && (
-        formData.video_url.includes('youtube.com') || formData.video_url.includes('youtu.be') ? (
-            <iframe
-                width="100%"
-                height="315"
-                src={`https://www.youtube.com/embed/${extractYouTubeID(formData.video_url)}`}
-                title="YouTube video"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                style={{ marginTop: '10px' }}
-            ></iframe>
-        ) : (
-            <video src={formData.video_url} controls style={{ width: '100%', marginTop: '10px' }} />
-        )
-    )}
+              formData.video_url.includes('youtube.com') || formData.video_url.includes('youtu.be') ? (
+                <iframe
+                  width="100%"
+                  height="315"
+                  src={`https://www.youtube.com/embed/${extractYouTubeID(formData.video_url)}`}
+                  title="YouTube video"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ marginTop: '10px' }}
+                ></iframe>
+              ) : (
+                <video src={formData.video_url} controls style={{ width: '100%', marginTop: '10px' }} />
+              )
+            )}
 
             {/* New Image Input Field */}
             <Form.Item label="Image URL">
@@ -625,34 +689,59 @@ const CourseTable = () => {
               />
             </Form.Item>
             {formData.image_url && (
-        <img src={formData.image_url} alt="Selected" style={{ width: '100%', marginTop: '10px' }} />
-    )}
+              <img src={formData.image_url} alt="Selected" style={{ width: '100%', marginTop: '10px' }} />
+            )}
 
+<Form.Item
+            name="courseT ype"
+            label="Course Type"
+            labelCol={{ span: 24 }}
+          >
+            <Radio.Group
+              onChange={(e) => setCourseType(e.target.value)}
+              defaultValue= {courseType}
+            >
+              <Radio value="free">Free</Radio>
+              <Radio value="paid">Paid</Radio>
+            </Radio.Group>
+          </Form.Item>
+          {courseType === "paid" && (
+            <Form.Item 
+            label={
+              <span>
+               <span style={{ color: "red" }}>*</span> Price 
+              </span>
+            }
+            
+            >
+            <Input
+              type="number"
+              value={selectedCourse.price}
+              onChange={(e) =>
+                setSelectedCourse({
+                  ...selectedCourse,
+                  price: Number(e.target.value),
+                })
+              }
+            />
+          </Form.Item>
+          )}
 
-            <Form.Item label="Price">
-              <Input
-                type="number"
-                value={selectedCourse.price}
-                onChange={(e) =>
-                  setSelectedCourse({
-                    ...selectedCourse,
-                    price: Number(e.target.value),
-                  })
-                }
-              />
-            </Form.Item>
+          {courseType === "paid" && (
             <Form.Item label="Discount">
-              <Input
-                type="number"
-                value={selectedCourse.discount}
-                onChange={(e) =>
-                  setSelectedCourse({
-                    ...selectedCourse,
-                    discount: Number(e.target.value),
-                  })
-                }
-              />
-            </Form.Item>
+            <Input
+              type="number"
+              value={selectedCourse.discount}
+              onChange={(e) =>
+                setSelectedCourse({
+                  ...selectedCourse,
+                  discount: Number(e.target.value),
+                })
+              }
+            />
+          </Form.Item>
+          )}
+            
             <Button
               type="primary"
               onClick={handleSaveCourse}

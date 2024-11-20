@@ -52,8 +52,8 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
     }, []);
 
     const handleSave = async () => {
-        if (!formData.name || !formData.course_id || !formData.lesson_type || !formData.video_url || !formData.image_url || !formData.description || !formData.full_time) {
-            message.error("Please fill in all required fields.");
+        if (!formData.name || !formData.course_id || !formData.lesson_type  || !formData.full_time) {
+            
             return;
         }
 
@@ -71,7 +71,7 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                 session_id: formData.session_id,
                 user_id: formData.user_id,
                 lesson_type: formData.lesson_type as LessonTypeEnum,
-                description: formData.description || null,
+                description: formData.description ,
                 video_url: formData.video_url || "",
                 image_url: formData.image_url || "",
                 full_time: formData.full_time,
@@ -216,7 +216,7 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                         rules={[{ required: true, message: 'Please input the lesson description!' }]}
                     >
                         <Input.TextArea
-                            value={formData.description || ''}
+                            value={formData.description || ""}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         />
                     </Form.Item>
