@@ -19,6 +19,7 @@ export default function Home() {
       localStorage.removeItem("role");
       localStorage.removeItem("userInfo");
       navigate("/login");
+      window.location.reload();
     } catch (error) {
       console.error("Error logging out:", error);
     }

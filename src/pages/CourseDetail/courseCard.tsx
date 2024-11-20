@@ -4,10 +4,12 @@ import { ClockCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { CartCourseProps } from "../../model/cartCourseProps";
 import { CartService } from "../../services/cart/cart.service";
-
+import { toast } from "react-toastify";
+import { useCart } from "../../context/CartContext";
 const CourseSidebar: React.FC<CartCourseProps> = ({ course }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { getCartCount } = useCart();
 
   // Check login status on component mount
   useEffect(() => {
@@ -18,22 +20,25 @@ const CourseSidebar: React.FC<CartCourseProps> = ({ course }) => {
     checkLoginStatus();
   }, []);
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (course: any) => {
     try {
-      if (course?.is_in_cart) {
-        navigate("/cart");
-      } else {
-        const response = await CartService.CreateCart({course_id:course._id});
-        if (response.data.data && response.data.data._id) {
-          navigate("/cart");
+        if (course.is_in_cart) {
+            navigate("/cart");
         } else {
-          console.error("Failed to add to cart");
+            const response = await CartService.CreateCart({ course_id: course._id });
+            if (response.data.data && response.data.data._id) {
+                toast.success("Course added to cart successfully!");
+                navigate("/cart");
+                getCartCount();
+            } else {
+                console.error("Failed to add to cart");
+                toast.error("Failed to add course to cart. Please try again.");
+            }
         }
-      }
     } catch (error) {
-      console.error("Error handling cart operation:", error);
+        console.error("Error handling cart operation:", error);
     }
-  };
+};
 
   const formatPrice = (price: number | undefined | null) =>
     price ? `${price.toLocaleString("vi-VN")}₫` : "0₫";
