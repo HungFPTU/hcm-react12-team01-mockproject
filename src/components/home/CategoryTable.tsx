@@ -247,8 +247,8 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
             <Pagination
                 current={currentPage}
                 pageSize={pageSizeState}
-                total={courses.pageData.length}
-
+                total={courses?.pageInfo?.totalItems}
+                
                 onChange={handlePageChange}
                 className="text-center mt-4 flex justify-center mb-4"
             />
