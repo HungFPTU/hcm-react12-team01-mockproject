@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Button, Rate, Tooltip, Col, Row, Pagination } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { CourseService } from "../../services/CourseService/course.service";
@@ -12,7 +12,7 @@ interface CourseProps {
     pageNum?: number;
 }
 
-const fetchCoursePublic = async (searchCondition = {}, pageInfo = { pageNum: 1, pageSize: 8 }) => {
+const fetchCoursePublic = async (searchCondition = {}, pageInfo = { pageNum: 1, pageSize: 4 }) => {
     const response = await CourseService.getPublicCourse({
         searchCondition: {
             keyword: "",
@@ -28,20 +28,17 @@ const fetchCoursePublic = async (searchCondition = {}, pageInfo = { pageNum: 1, 
     return response.data;
 };
 
-const CategoryTable: React.FC<CourseProps> = ({ pageSize = 10, pageNum = 1 }) => {
+const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => {
     const [courses, setCourses] = useState<GetPublicCourseResponse | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(pageNum);
     const [pageSizeState, setPageSizeState] = useState<number>(pageSize);
     const navigate = useNavigate();
-    const hasMounted = useRef(false);
     const { getCartCount } = useCart();
 
 
     useEffect(() => {
-        if (hasMounted.current) return;
-        hasMounted.current = true;
         const checkLoginStatus = () => {
             const user = localStorage.getItem("user");
             setIsLoggedIn(!!user);
@@ -50,7 +47,6 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 10, pageNum = 1 }) =>
     }, []);
 
     useEffect(() => {
-
         const fetchCourses = async () => {
             try {
                 const coursesData = await fetchCoursePublic({}, { pageNum: currentPage, pageSize: pageSizeState });
@@ -251,18 +247,15 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 10, pageNum = 1 }) =>
             <Pagination
                 current={currentPage}
                 pageSize={pageSizeState}
-                total={courses.pageData.length}
-
+                total={courses?.pageInfo?.totalItems}
+                
                 onChange={handlePageChange}
-                className="text-center mt-4 flex justify-center"
+                className="text-center mt-4 flex justify-center mb-4"
             />
         </div>
     );
 };
 
-CategoryTable.defaultProps = {
-    pageSize: 10,
-    pageNum: 1,
-};
+
 
 export default CategoryTable;

@@ -10,13 +10,14 @@ import { UserRole } from "../../model/User";
 import { useCart } from "../../context/CartContext";
 const { Header } = Layout;
 
+import { useLocation } from "react-router-dom";
 
 
 export default function Home() {
+  const location = useLocation();
   const { cartCount, getCartCount } = useCart();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  // const token = localStorage.getItem("token");
   const { userInfo } = useAuth();
   const items = [
     {
@@ -47,7 +48,7 @@ export default function Home() {
   useEffect(() => {
     // Fetch cart count initially
     getCartCount();
-  }, [getCartCount]);
+  }, [getCartCount,location]);
 
   const handleLogOut = async () => {
     try {
@@ -57,6 +58,7 @@ export default function Home() {
       localStorage.removeItem("role");
       localStorage.removeItem("userInfo");
       navigate("/login");
+      window.location.reload();
     } catch (error) {
       console.error("Error logging out:", error);
     }
