@@ -5,7 +5,7 @@ import RunRoutes from "./routes/route";
 
 export const App = () => {
   const isLoading = useSelector((state: any) => state.loading);
-
+  //test
   return (
     <>
       {isLoading && <Loading />}
