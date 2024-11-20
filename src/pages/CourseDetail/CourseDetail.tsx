@@ -38,15 +38,15 @@ const CourseDetail =() => {
         const response = await CourseService.getPublicCourseDetail(id);
         const courseData = response.data?.data as GetPublicCourseDetailResponse;
 
-        setAverageRating(courseData.average_rating ?? 0);
-        setReviewCount(courseData.review_count ?? 0);
+        setAverageRating(courseData?.average_rating ?? 0);
+        setReviewCount(courseData?.review_count ?? 0);
         
         setCourseStatus({
-          is_in_cart: courseData.is_in_cart,
-          is_purchased: courseData.is_purchased
+          is_in_cart: courseData?.is_in_cart,
+          is_purchased: courseData?.is_purchased
         });
 
-        setDiscountedPrice(((courseData.price ?? 0) - ((courseData.discount ?? 0) * (courseData.price ?? 0)) / 100).toFixed(2));
+        setDiscountedPrice(((courseData?.price ?? 0) - ((courseData?.discount ?? 0) * (courseData?.price ?? 0)) / 100).toFixed(2));
         setCourse(courseData);
       } catch (error) {
         console.error("Failed to fetch course details:", error);
