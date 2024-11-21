@@ -1,3 +1,4 @@
+// firebase-config.tsx
 import { initializeApp } from 'firebase/app';
 import {
   getAuth,
@@ -44,34 +45,33 @@ const signInWithEmailAndPassword = (email: string, password: string): Promise<Us
 };
 
 // Hàm upload file lên Firebase Storage
-const uploadFile = (file: File, storagePath: string): Promise<string> => {
+export const uploadFile = (file: File, fileName: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    // Tạo reference đến Firebase Storage với đường dẫn đã cung cấp
-    const storageRef = ref(storage, storagePath);
+    // Tạo một reference mới trong Storage
+    const storageRef = ref(storage, 'uploads/' + fileName);
 
-    // Khởi tạo upload
+    // Tạo một task upload file
     const uploadTask = uploadBytesResumable(storageRef, file);
 
-    // Lắng nghe sự kiện thay đổi trạng thái upload
     uploadTask.on(
       'state_changed',
       (snapshot) => {
-        // Có thể thêm logic theo dõi tiến trình upload nếu cần
+        // Có thể theo dõi tiến độ upload nếu cần
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         console.log(`Upload is ${progress}% done`);
       },
       (error) => {
-        // Xử lý lỗi trong quá trình upload
+        // Xử lý lỗi nếu có
+        console.error("Error uploading file:", error);
         reject(error);
       },
-      () => {
-        // Lấy URL của file sau khi upload thành công
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          resolve(downloadURL); // Trả về URL của file đã upload
-        });
+      async () => {
+        // Sau khi upload xong, lấy URL của file
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        resolve(downloadURL); // Trả về URL file đã upload
       }
     );
   });
 };
 
-export { auth, provider, signInWithGoogle, signInWithEmailAndPassword, uploadFile, storage };
+export { auth, provider, signInWithGoogle, signInWithEmailAndPassword, storage };
