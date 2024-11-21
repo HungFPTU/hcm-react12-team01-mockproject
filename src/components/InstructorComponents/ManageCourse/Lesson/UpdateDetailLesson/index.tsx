@@ -5,6 +5,7 @@ import { CourseService } from '../../../../../services/CourseService/course.serv
 import { LessonDetailsResponse } from '../../../../../model/admin/response/Lesson.response';
 import { UpdateLessonRequest } from '../../../../../model/admin/request/Lesson.request';
 import { LessonTypeEnum } from '../../../../../model/Lesson';
+import { Editor } from "@tinymce/tinymce-react";
 
 const { Option } = Select;
 
@@ -18,8 +19,9 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
     const [formData, setFormData] = useState<LessonDetailsResponse>(lesson);
     const [loading, setLoading] = useState(true);
     const [courses, setCourses] = useState<any[]>([]);
-    const [form] = Form.useForm(); 
+    const [form] = Form.useForm();
     const hasMounted = useRef(false);
+    const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
 
     useEffect(() => {
         setFormData(lesson);
@@ -33,6 +35,7 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
             });
             if (response?.data?.success) {
                 setCourses(response.data.data.pageData);
+                console.log(courses)
             }
         } catch (error: any) {
             console.error("Failed to fetch courses:", error);
@@ -52,11 +55,11 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
     }, []);
 
     const handleSave = async () => {
-        if (!formData.name || !formData.course_id || !formData.lesson_type  || !formData.full_time) {
-            
+        if (!formData.name || !formData.course_id || !formData.lesson_type || !formData.full_time) {
+
             return;
         }
-
+        const description = editorRef.current ? editorRef.current.getContent() : "";
         if (!formData.session_id) {
             console.log("Form Data before Save:", formData);
             message.error("Session ID is required.");
@@ -71,7 +74,7 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                 session_id: formData.session_id,
                 user_id: formData.user_id,
                 lesson_type: formData.lesson_type as LessonTypeEnum,
-                description: formData.description ,
+                description: description,
                 video_url: formData.video_url || "",
                 image_url: formData.image_url || "",
                 full_time: formData.full_time,
@@ -121,6 +124,7 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
             title="Update Lesson Details"
             visible={true}
             onCancel={onClose}
+            width={800}
             footer={[
                 <Button key="cancel" onClick={onClose}>
                     Cancel
@@ -213,11 +217,50 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
                     <Form.Item
                         label="Description"
                         name="description"
-                        rules={[{ required: true, message: 'Please input the lesson description!' }]}
+
                     >
-                        <Input.TextArea
+                        {/* <Input.TextArea
                             value={formData.description || ""}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        /> */}
+                        <Editor
+                            onInit={(_evt, editor) => (editorRef.current = editor)}
+                            apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
+                            value={formData.description || ''}
+                            onEditorChange={(content) => setFormData({ ...formData, description: content })}
+
+                            init={{
+                                width: "100%",
+                                height: 300,
+                                plugins: [
+                                    "advlist",
+                                    "autolink",
+                                    "link",
+                                    "image",
+                                    "lists",
+                                    "charmap",
+                                    "preview",
+                                    "anchor",
+                                    "pagebreak",
+                                    "searchreplace",
+                                    "wordcount",
+                                    "visualblocks",
+                                    "code",
+                                    "fullscreen",
+                                    "insertdatetime",
+                                    "media",
+                                    "table",
+                                    "emoticons",
+                                    "help",
+                                ],
+                                toolbar:
+                                    "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | " +
+                                    "bullist numlist outdent indent | link image | print preview media fullscreen | " +
+                                    "forecolor backcolor emoticons | help",
+                                menubar: "file edit view insert format tools table help",
+                                content_style:
+                                    "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
+                            }}
                         />
                     </Form.Item>
                 )}

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Table, Button, Popover, Modal, message, Input } from "antd";
 import { LessonService } from "../../../../../services/LessonService/lesson.service";
-import { EditOutlined , DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { GetLessonRequest } from "../../../../../model/admin/request/Lesson.request";
 import { GetLessonsResponsePageData } from "../../../../../model/admin/response/Lesson.response";
 import ButtonLesson from "../ButtonLesson";
@@ -13,8 +13,8 @@ const TableLesson = () => {
   const [filteredLessons, setFilteredLessons] = useState<GetLessonsResponsePageData[]>([]);
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isModalVisible, setIsModalVisible] = useState(false);  
-  const [selectedLesson, setSelectedLesson] = useState<GetLessonsResponsePageData | null>(null);  
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedLesson, setSelectedLesson] = useState<GetLessonsResponsePageData | null>(null);
   const hasMounted = useRef(false);
 
   const fetchLesson = async (params: GetLessonRequest) => {
@@ -41,7 +41,7 @@ const TableLesson = () => {
           is_deleted: false,
         },
         pageInfo: {
-          pageNum: 1, 
+          pageNum: 1,
           pageSize: 1000,
         },
       });
@@ -103,8 +103,8 @@ const TableLesson = () => {
 
 
   const handleModalClose = () => {
-    setIsModalVisible(false);  
-    setSelectedLesson(null);  
+    setIsModalVisible(false);
+    setSelectedLesson(null);
   };
   const handleEditCourse = (lesson: GetLessonsResponsePageData) => {
     setSelectedLesson(lesson); // Set the selected lesson
@@ -143,15 +143,15 @@ const TableLesson = () => {
       key: "action",
       render: (_: unknown, record: GetLessonsResponsePageData) => (
         <>
-        <Popover content="Edit Course">
+          <Popover content="Edit Course">
             <Button
-              onClick={() => handleEditCourse(record)} 
+              onClick={() => handleEditCourse(record)}
               className="bg-blue-500 hover:bg-blue-600 text-white mr-2"
             >
               <EditOutlined />
             </Button>
           </Popover>
-      
+
           <Popover content="Delete Course">
             <Button
               onClick={() => showDeleteConfirm(record._id)}
@@ -193,20 +193,20 @@ const TableLesson = () => {
               showSizeChanger: true,
               pageSizeOptions: ["15", "20"],
               position: ["bottomRight"],
-            }}  
+            }}
           />
         )}
       </div>
 
       {/* Modal Update Detail Lesson */}
       {isModalVisible && selectedLesson && (
-        <UpdateDetailLesson 
-          lesson={selectedLesson} 
-          onClose={handleModalClose} 
+        <UpdateDetailLesson
+          lesson={selectedLesson}
+          onClose={handleModalClose}
           onUpdate={() => {
-            fetchLessonsData(); 
+            fetchLessonsData();
             handleModalClose();
-          }} 
+          }}
         />
       )}
     </div>

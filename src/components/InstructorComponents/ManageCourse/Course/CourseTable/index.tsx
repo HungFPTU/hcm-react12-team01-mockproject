@@ -62,7 +62,7 @@ const CourseTable = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
   const [categories, setCategories] = useState<any[]>([]);
-  const [courseType, setCourseType] = useState("free"); 
+  const [courseType, setCourseType] = useState("free");
   const [filterValue, setFilterValue] = useState<CourseStatusEnum | undefined>(
     undefined
   );
@@ -150,9 +150,9 @@ const CourseTable = () => {
       const response = await CourseService.getCourseById(courseId);
       if (response && response.data && response.data.data) {
         const course = convertToCourse(response.data.data);
-        if(course.price>0){
+        if (course.price > 0) {
           setCourseType("paid")
-        }else setCourseType("free")
+        } else setCourseType("free")
         setSelectedCourse(course);
 
         setFormData({
@@ -554,6 +554,7 @@ const CourseTable = () => {
       <Modal
         title="Update Course"
         visible={isModalVisible}
+        width={800}
         onCancel={handleModalCancel}
         footer={null}
 
@@ -582,7 +583,7 @@ const CourseTable = () => {
             <Form.Item
               label={
                 <span>
-                 <span style={{ color: "red" }}>*</span> Category 
+                  <span style={{ color: "red" }}>*</span> Category
                 </span>
               }
               validateStatus={!selectedCategoryName ? "error" : ""}
@@ -608,7 +609,7 @@ const CourseTable = () => {
             <Form.Item
               label={
                 <span>
-                 <span style={{ color: "red" }}>*</span> Description 
+                  <span style={{ color: "red" }}>*</span> Description
                 </span>
               }
               validateStatus={!selectedCourse?.description ? "error" : ""}
@@ -617,6 +618,10 @@ const CourseTable = () => {
               <Editor
                 onInit={(_evt, editor) => (editorRef.current = editor)}
                 apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
+                //selectedCourse
+                value={selectedCourse.description || ''}
+                onEditorChange={(content) => setSelectedCourse({ ...selectedCourse, description: content })}
+
                 init={{
                   width: "100%",
                   height: 300,
@@ -679,7 +684,13 @@ const CourseTable = () => {
             )}
 
             {/* New Image Input Field */}
-            <Form.Item label="Image URL">
+            <Form.Item label={
+              <span>
+                <span style={{ color: "red" }}>*</span> Image URL
+              </span>
+            }
+              validateStatus={!selectedCourse?.image_url ? "error" : ""}
+              help={!selectedCourse?.image_url ? "Image URL is required" : ""}>
               <Input
                 value={formData.image_url}
                 onChange={(e) =>
@@ -692,56 +703,62 @@ const CourseTable = () => {
               <img src={formData.image_url} alt="Selected" style={{ width: '100%', marginTop: '10px' }} />
             )}
 
-<Form.Item
-            name="courseT ype"
-            label="Course Type"
-            labelCol={{ span: 24 }}
-          >
-            <Radio.Group
-              onChange={(e) => setCourseType(e.target.value)}
-              defaultValue= {courseType}
-            >
-              <Radio value="free">Free</Radio>
-              <Radio value="paid">Paid</Radio>
-            </Radio.Group>
-          </Form.Item>
-          {courseType === "paid" && (
-            <Form.Item 
-            label={
-              <span>
-               <span style={{ color: "red" }}>*</span> Price 
-              </span>
-            }
-            
-            >
-            <Input
-              type="number"
-              value={selectedCourse.price}
-              onChange={(e) =>
-                setSelectedCourse({
-                  ...selectedCourse,
-                  price: Number(e.target.value),
-                })
+            <Form.Item
+              className="mt-3"
+              name="courseType"
+              label={
+                <span>
+                  <span style={{ color: "red" }}>*</span> Course Type
+                </span>
               }
-            />
-          </Form.Item>
-          )}
+              help={!selectedCourse?.image_url ? "Course Type is required" : ""}
+              labelCol={{ span: 24 }}
+            >
+              <Radio.Group
+                onChange={(e) => setCourseType(e.target.value)}
+                defaultValue={courseType}
+              >
+                <Radio value="free">Free</Radio>
+                <Radio value="paid">Paid</Radio>
+              </Radio.Group>
+            </Form.Item>
+            {courseType === "paid" && (
+              <Form.Item
+                label={
+                  <span>
+                    <span style={{ color: "red" }}>*</span> Price
+                  </span>
+                }
 
-          {courseType === "paid" && (
-            <Form.Item label="Discount">
-            <Input
-              type="number"
-              value={selectedCourse.discount}
-              onChange={(e) =>
-                setSelectedCourse({
-                  ...selectedCourse,
-                  discount: Number(e.target.value),
-                })
-              }
-            />
-          </Form.Item>
-          )}
-            
+              >
+                <Input
+                  type="number"
+                  value={selectedCourse.price}
+                  onChange={(e) =>
+                    setSelectedCourse({
+                      ...selectedCourse,
+                      price: Number(e.target.value),
+                    })
+                  }
+                />
+              </Form.Item>
+            )}
+
+            {courseType === "paid" && (
+              <Form.Item label="Discount">
+                <Input
+                  type="number"
+                  value={selectedCourse.discount}
+                  onChange={(e) =>
+                    setSelectedCourse({
+                      ...selectedCourse,
+                      discount: Number(e.target.value),
+                    })
+                  }
+                />
+              </Form.Item>
+            )}
+
             <Button
               type="primary"
               onClick={handleSaveCourse}

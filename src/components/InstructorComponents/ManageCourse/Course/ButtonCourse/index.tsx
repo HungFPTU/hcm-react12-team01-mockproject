@@ -1,22 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button, Modal, Form, Input, Select, Radio, message } from "antd";
 import { CreateCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { CategoryService } from "../../../../../services/category/category.service";
 import { Category } from "../../../../../model/admin/response/Category.response";
+import { Editor } from "@tinymce/tinymce-react";
 
 const { Option } = Select;
 
 const ButtonCourse = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [categoryData, setCategoryData] = useState<Category[]>([]);
-  const [courseType, setCourseType] = useState("free"); 
+  const [courseType, setCourseType] = useState("free");
+  const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
 
   const showModal = () => {
     setIsModalVisible(true);
 
- 
+
     if (categoryData.length === 0) {
       const params = {
         searchCondition: {
@@ -52,8 +54,11 @@ const ButtonCourse = () => {
       console.log(">>>>>>>>>>>values", values);
       const price = Number(values.price);
       const discount = Number(values.discount);
+      const description = editorRef.current
+        ? editorRef.current.getContent()
+        : ""; // Lấy nội dung từ editor
 
-      const { name, description, video_url, image_url, category_id } = values;
+      const { name, video_url, image_url, category_id } = values;
       const newCourse: CreateCourseRequest = {
         name,
         category_id,
@@ -62,7 +67,7 @@ const ButtonCourse = () => {
         video_url,
         image_url,
         price: courseType === "paid" ? price : 0,
-        discount: courseType === "paid" ? discount : 0, 
+        discount: courseType === "paid" ? discount : 0,
       };
 
       const response = await CourseService.createCourse(newCourse);
@@ -85,6 +90,7 @@ const ButtonCourse = () => {
       <Modal
         title="Create Course"
         open={isModalVisible}
+        width={800}
         onCancel={handleCancel}
         footer={null}
       >
@@ -119,7 +125,42 @@ const ButtonCourse = () => {
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
-            <Input.TextArea placeholder="Nhập mô tả khóa học" />
+            <Editor
+              onInit={(_evt, editor) => (editorRef.current = editor)}
+              apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
+              init={{
+                width: "100%",
+                height: 300,
+                plugins: [
+                  "advlist",
+                  "autolink",
+                  "link",
+                  "image",
+                  "lists",
+                  "charmap",
+                  "preview",
+                  "anchor",
+                  "pagebreak",
+                  "searchreplace",
+                  "wordcount",
+                  "visualblocks",
+                  "code",
+                  "fullscreen",
+                  "insertdatetime",
+                  "media",
+                  "table",
+                  "emoticons",
+                  "help",
+                ],
+                toolbar:
+                  "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | " +
+                  "bullist numlist outdent indent | link image | print preview media fullscreen | " +
+                  "forecolor backcolor emoticons | help",
+                menubar: "file edit view insert format tools table help",
+                content_style:
+                  "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
+              }}
+            />
           </Form.Item>
 
           <Form.Item
@@ -136,7 +177,7 @@ const ButtonCourse = () => {
             name="video_url"
             label="Video URL"
             labelCol={{ span: 24 }}
-            rules={[{ required: true }]}
+          // rules={[{ required: true }]}
           >
             <Input
               placeholder="Nhập đường dẫn video"
@@ -156,10 +197,15 @@ const ButtonCourse = () => {
             />
           </Form.Item>
 
-         <Form.Item
+          <Form.Item
             name="courseT ype"
-            label="Course Type"
+            label={
+              <span>
+                <span style={{ color: "red" }}>*</span> Course Type
+              </span>
+            }
             labelCol={{ span: 24 }}
+
           >
             <Radio.Group
               onChange={(e) => setCourseType(e.target.value)}

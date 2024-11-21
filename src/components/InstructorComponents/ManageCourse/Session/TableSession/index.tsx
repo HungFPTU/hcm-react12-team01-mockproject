@@ -174,28 +174,28 @@ const TableSession = () => {
   const handleUpdateSession = async () => {
     try {
       const updatedSession = form.getFieldsValue();
-  
+
       if (updatedSession.position_order && isNaN(updatedSession.position_order)) {
         message.error("Position order must be a number.");
         return;
       }
-  
+
       updatedSession.position_order = Number(updatedSession.position_order);
-  
+
       if (!updatedSession.name || !updatedSession.course_id || !updatedSession.description || !updatedSession.position_order) {
         message.error("Please fill in all required fields.");
         return;
       }
-  
+
       const response = await SessionService.updateSession(updatedSession, editingSession._id);
-  
+
       if (response.data?.success) {
         const updatedCourse = courses.find(course => course._id === updatedSession.course_id);
         const updatedSessionWithCourseName = {
           ...updatedSession,
           course_name: updatedCourse ? updatedCourse.name : "",
         };
-  
+
         setSessionsData((prevSessions) =>
           prevSessions.map((session) =>
             session._id === editingSession._id ? { ...session, ...updatedSessionWithCourseName } : session
@@ -212,7 +212,7 @@ const TableSession = () => {
       message.error("Failed to update session!");
     }
   };
-  
+
 
   const columns = [
     {
