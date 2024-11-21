@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import { useParams } from "react-router-dom";
 import bannerImage from "../../assets/bgrCourseDetail.jpg";
 import {  Row, Col, Collapse } from "antd";
@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import {
     UserOutlined,
     StarFilled,
-    CheckCircleFilled,
 } from "@ant-design/icons";
 const { Panel } = Collapse;
 
@@ -56,11 +55,12 @@ const CourseDetail =() => {
     fetchCourseDetails();
   }, [id]);
 
-  const handleInstructorClick = () => {
+  const handleInstructorClick = useCallback(() => {
     if (course?.instructor_id) {
       navigate(`/view-detail/${course.instructor_id}`);
     }
-  };
+  }, [course?.instructor_id, navigate]);
+  
 
   
 
@@ -88,15 +88,33 @@ useEffect(() => {
     fetchReviews();
   }, [id]);
 
-const renderLessons = (lessonList: GetPublicCourseDetailResponse["session_list"][0]["lesson_list"]) => {
-    return lessonList.map((lesson) => (
-      <div key={lesson._id} className="pl-6">
-        <p>
-          - {lesson.name} ({lesson.lesson_type}, {lesson.full_time} minutes)
-        </p>
-      </div>
-    ));
-  };
+  const renderLessons = useCallback(
+    (lessonList: GetPublicCourseDetailResponse["session_list"][0]["lesson_list"]) => {
+      return lessonList.map((lesson) => (
+        <div
+          key={lesson._id}
+          className={`pl-6 cursor-pointer ${
+            courseStatus.is_purchased ? "text-blue-500" : "text-gray-400"
+          }`}
+          onClick={() => {
+            if (!courseStatus.is_purchased) {
+              alert("You must purchase this course to access lessons.");
+            } else {
+              navigate(`/course/${course?._id}/lesson/${lesson._id}`);
+            }
+          }}
+        >
+          <p>
+            - {lesson.name} ({lesson.lesson_type}, {lesson.full_time} minutes)
+          </p>
+        </div>
+      ));
+    },
+    [course?._id, courseStatus.is_purchased, navigate]
+  );
+  
+
+  
 
   return (
     <div className="w-full relative">
@@ -131,11 +149,7 @@ const renderLessons = (lessonList: GetPublicCourseDetailResponse["session_list"]
 
                     <Col span={14} className="w-full mt-4">
                             <h1 className="text-3xl text-left font-bold pl-12">What will you learn in this course?</h1>
-                            <div className="text-lg mt-4 text-left pl-12">
-                                <p className="mb-2">
-                                    <CheckCircleFilled className="mr-2" />
-                                    {course?.description}
-                                </p>
+                            <div className="text-lg mt-4 text-left pl-12" dangerouslySetInnerHTML={{ __html: course?.description || "" }}>
                             </div>
 
                             <h1 className="text-3xl text-left font-bold pl-12 mt-6">Course Content</h1>

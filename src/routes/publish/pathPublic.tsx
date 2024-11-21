@@ -14,6 +14,8 @@ const VerifyEmail = lazy(() => import("../../pages/Verifycaion"));
 const ResendVerification = lazy(() => import("../../pages/ResendToken"));
 const CartPage = lazy(() => import("../../pages/cart"))
 const ViewDetailInstructor = lazy(() => import("../../components/home/instructorDetail"));
+const SessionDetail = lazy(() => import("../../pages/SessionDetail"));
+const LessonDetail = lazy(() => import("../../pages/LessonDetail"));
 
 export const pathPublic: Record<string, RouteObject[]> = {
   [ROUTER_URL.COMMON.HOME]: [
@@ -42,6 +44,14 @@ export const pathPublic: Record<string, RouteObject[]> = {
         {
           path: ROUTER_URL.COMMON.VIEW_DETAIL_INSTRUCTOR,
           element: <ViewDetailInstructor />,
+        },
+        {
+          path: ROUTER_URL.COMMON.COURSE_SESSION_DETAIL_PAGE,
+          element: <SessionDetail />,
+        },
+        {
+          path: ROUTER_URL.COMMON.COURSE_LESSON_DETAIL_PAGE ,
+          element: <LessonDetail />,
         }
       ]
     }
