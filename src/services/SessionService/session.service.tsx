@@ -1,5 +1,5 @@
 import { API } from "../../const/path.api";
-import { CreateSessionRequest, GetSessionRequest } from "../../model/admin/request/Session.request";
+import { CreateSessionRequest, GetSessionRequest,CreateSessionRequestModel } from "../../model/admin/request/Session.request";
 import {
   CreateSessionResponse,
   GetSessionsResponse,
@@ -24,6 +24,12 @@ export const SessionService = {
       url: "/api/session",
       payload: params,
       isLoading: true,
+    });
+  },
+  updateSession: (params: CreateSessionRequestModel, sessionId: string) => {
+    return BaseService.put<ApiResponse<CreateSessionResponse>>({
+      url: API.SESSION.UPDATE_SESSION.replace(":id", sessionId),
+      payload: params
     });
   },
   getSessionById(id: string) {

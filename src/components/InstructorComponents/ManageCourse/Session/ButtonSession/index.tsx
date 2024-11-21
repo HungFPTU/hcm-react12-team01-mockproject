@@ -73,7 +73,7 @@ const ButtonSession = () => {
         : 1;
       const description = values.description || "";
       const { sessionName: name, course_id } = values;
-  
+
       // Create an object that matches CreateSessionRequest
       const params: CreateSessionRequest = {
         name,
@@ -81,15 +81,15 @@ const ButtonSession = () => {
         description,
         positionOrder,
       };
-  
+
       // Call the createSession method with the params object
       const response = await SessionService.createSession(params);
-  
+
       if (response && response.data.success) {
         console.log("API Response:", response); // Check API response
         message.success("Session đã được tạo thành công!");
       }
-  
+
       setIsModalVisible(false);
     } catch (error) {
       message.error("Có lỗi xảy ra khi tạo session!");

@@ -16,9 +16,9 @@ export type Lesson = {
 };
 
 export enum LessonTypeEnum {
-  Video = "Video",
-  Image = "Image",
-  Text = "Text",
+  Video = "video",
+  Image = "image",
+  Text = "text",
 }
 
   

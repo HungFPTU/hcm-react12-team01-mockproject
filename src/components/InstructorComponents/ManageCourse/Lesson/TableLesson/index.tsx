@@ -1,18 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 import { Table, Button, Popover, Modal, message, Input } from "antd";
-import { useNavigate } from "react-router-dom";
 import { LessonService } from "../../../../../services/LessonService/lesson.service";
-import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { GetLessonRequest } from "../../../../../model/admin/request/Lesson.request";
 import { GetLessonsResponsePageData } from "../../../../../model/admin/response/Lesson.response";
 import ButtonLesson from "../ButtonLesson";
+import UpdateDetailLesson from '../UpdateDetailLesson/index';
 
 const TableLesson = () => {
-  const navigate = useNavigate();
+
   const [lessonsData, setLessonsData] = useState<GetLessonsResponsePageData[]>([]);
   const [filteredLessons, setFilteredLessons] = useState<GetLessonsResponsePageData[]>([]);
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedLesson, setSelectedLesson] = useState<GetLessonsResponsePageData | null>(null);
   const hasMounted = useRef(false);
 
   const fetchLesson = async (params: GetLessonRequest) => {
@@ -39,7 +41,7 @@ const TableLesson = () => {
           is_deleted: false,
         },
         pageInfo: {
-          pageNum: 1, 
+          pageNum: 1,
           pageSize: 1000,
         },
       });
@@ -99,8 +101,14 @@ const TableLesson = () => {
     fetchLessonsData();
   };
 
-  const handleViewDetails = (id: string) => {
-    navigate(`/instructor/manage-course/view-detail-lesson/${id}`);
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    setSelectedLesson(null);
+  };
+  const handleEditCourse = (lesson: GetLessonsResponsePageData) => {
+    setSelectedLesson(lesson); // Set the selected lesson
+    setIsModalVisible(true);    // Show the modal for editing
   };
 
   const columns = [
@@ -135,14 +143,15 @@ const TableLesson = () => {
       key: "action",
       render: (_: unknown, record: GetLessonsResponsePageData) => (
         <>
-          <Popover content="View Course Detail">
+          <Popover content="Edit Course">
             <Button
-              onClick={() => handleViewDetails(record._id)}
-              className="bg-blue-500 hover:bg-blue-600 text-white"
+              onClick={() => handleEditCourse(record)}
+              className="bg-blue-500 hover:bg-blue-600 text-white mr-2"
             >
-              <EyeOutlined />
+              <EditOutlined />
             </Button>
           </Popover>
+
           <Popover content="Delete Course">
             <Button
               onClick={() => showDeleteConfirm(record._id)}
@@ -155,6 +164,7 @@ const TableLesson = () => {
       ),
     },
   ];
+
   return (
     <div className="w-full">
       <div className="flex mb-4 justify-between items-center">
@@ -170,23 +180,35 @@ const TableLesson = () => {
         <ButtonLesson />
       </div>
       <div>
-      {isDataEmpty ? (
-        <div className="text-center text-red-500">No lessons found.</div>
-      ) : (
-        <Table
-      dataSource={filteredLessons}
-      columns={columns}
-      rowKey="key"
-      className="w-full shadow-md rounded-lg overflow-hidden"
-      pagination={{
-        defaultPageSize: 10,
-        showSizeChanger: true,
-        pageSizeOptions: ["15", "20"],
-        position: ["bottomRight"],
-      }}
-      />
+        {isDataEmpty ? (
+          <div className="text-center text-red-500">No lessons found.</div>
+        ) : (
+          <Table
+            dataSource={filteredLessons}
+            columns={columns}
+            rowKey="key"
+            className="w-full shadow-md rounded-lg overflow-hidden"
+            pagination={{
+              defaultPageSize: 10,
+              showSizeChanger: true,
+              pageSizeOptions: ["15", "20"],
+              position: ["bottomRight"],
+            }}
+          />
+        )}
+      </div>
+
+      {/* Modal Update Detail Lesson */}
+      {isModalVisible && selectedLesson && (
+        <UpdateDetailLesson
+          lesson={selectedLesson}
+          onClose={handleModalClose}
+          onUpdate={() => {
+            fetchLessonsData();
+            handleModalClose();
+          }}
+        />
       )}
-    </div>
     </div>
   );
 };
