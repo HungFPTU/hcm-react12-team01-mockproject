@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import {
     UserOutlined,
     StarFilled,
-    CheckCircleFilled,
 } from "@ant-design/icons";
 const { Panel } = Collapse;
 
@@ -25,7 +24,6 @@ const CourseDetail =() => {
     const [reviewCount, setReviewCount] = useState<number | null>(null);
     const [courseStatus, setCourseStatus] = useState({ is_in_cart: false, is_purchased: false });
     const [discountedPrice, setDiscountedPrice] = useState<string>("0.00");
-    const [isExpanded, setIsExpanded] = useState(false);
     const navigate = useNavigate();
 
   useEffect(() => {
