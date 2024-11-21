@@ -49,7 +49,12 @@ export const ROUTER_URL = {
     COURSE_DETAIL: "/course/:id",
     ALL_COURSES: "/all",
     CART: "/cart",
-    VIEW_DETAIL_INSTRUCTOR:"/view-detail/:id"
+    VIEW_DETAIL_INSTRUCTOR:"/view-detail/:id",
+    COURSE_LESSON_DETAIL_PAGE:"/course/:courseId/lesson/:lessonId",
+    COURSE_SESSION_DETAIL_PAGE: "/course/:courseId/session/:sessionId",
+    COURSE_SESSION_LESSON_DETAIL_PAGE: "/course/:courseId/session/:sessionId/lesson/:lessonId",
+    SESSION_DETAILS: "/session-details",
+    LESSON_DETAILS: "/lesson-details",
   },
   UNAUTHORIZED: "/unauthorize"
 };

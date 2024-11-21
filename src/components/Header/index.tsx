@@ -131,7 +131,6 @@ export default function Home() {
                     type="text"
                     onClick={() => navigate("/cart")}
                   />
-                  {/* You can remove the manual count display here */}
                 </Badge>
                 <Dropdown menu={{ items: userMenuItems }} placement="bottomLeft">
                   <Avatar
