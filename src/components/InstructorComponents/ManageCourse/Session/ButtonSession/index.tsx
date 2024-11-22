@@ -23,7 +23,7 @@ const ButtonSession = () => {
     setIsModalVisible(false);
   };
 
-  const fetchCourse = async (params: GetCourseRequest) => {
+  const fetchSessionCourse = async (params: GetCourseRequest) => {
     try {
       const response = await CourseService.getCourse(params);
       return response.data;
@@ -45,7 +45,7 @@ const ButtonSession = () => {
           is_delete: false,
         };
 
-        const response = await fetchCourse({
+        const response = await fetchSessionCourse({
           searchCondition,
           pageInfo: {
             pageNum: 1,

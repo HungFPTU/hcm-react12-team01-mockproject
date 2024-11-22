@@ -20,7 +20,7 @@ export const UserService = {
         },
         pageInfo: {
           pageNum: 1,
-          pageSize: 10,
+          pageSize: 100,
         },
       },
       headers: {
@@ -53,7 +53,7 @@ export const UserService = {
         },
         pageInfo: {
           pageNum: 1,
-          pageSize: 10,
+          pageSize: 100,
         },
       },
       headers: {
@@ -88,23 +88,23 @@ export const UserService = {
     status: string;
     comment?: string;
   }) {
-      const payload: any = {
-        user_id: userId,
-        status: status,
-      };
+    const payload: any = {
+      user_id: userId,
+      status: status,
+    };
 
-      if (status === "reject" && comment) {
-        payload.comment = comment
-      }
+    if (status === "reject" && comment) {
+      payload.comment = comment
+    }
 
-      return BaseService.put<ApiResponse<any>>({
-        url: API.ADMIN.REVIEW_PROFILE_INSTRUCTOR,
-        payload: payload,
-        headers: {
-          Authorization: token ? `Bearer ${String(token)}` : "",
-        },
-          isLoading: true,
-      });
+    return BaseService.put<ApiResponse<any>>({
+      url: API.ADMIN.REVIEW_PROFILE_INSTRUCTOR,
+      payload: payload,
+      headers: {
+        Authorization: token ? `Bearer ${String(token)}` : "",
+      },
+      isLoading: true,
+    });
   },
 
 
