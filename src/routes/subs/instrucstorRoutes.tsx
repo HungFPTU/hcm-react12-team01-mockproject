@@ -43,7 +43,7 @@ export const MylearningPage = lazy(() => import("../../pages/MyLearning"));
 const PayoutInstructorPage = lazy(
   () => import("../../pages/InstructorPage/PayoutInstructorPage")
 );
-const PurchaseLog = lazy(() => import("../../pages/Admin/purchaselog"));
+const PurchaseLog = lazy(() => import("../../pages/Admin/Purchaselog"));
 const SettingPage = lazy(() => import("../../pages/Student/setting"));
 import Loading from "../../app/Loading";
 const instructorRoute: RouteObject[] = [

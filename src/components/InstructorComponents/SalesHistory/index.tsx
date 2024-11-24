@@ -1,7 +1,7 @@
 import React, { useState, useEffect, lazy, useRef } from "react";
 import { Table, message, Empty, Popover, Button } from "antd";
 import { GetPurchaseRequest } from "../../../model/admin/request/Purchase.request";
-import { PurchaseService } from "../../../services/PurchaseService/purcase.service";
+import { PurchaseService } from "../../../services/PurchaseService/purchase.service";
 import { Purchase } from "../../../model/admin/response/Purchase.response";
 import { CreatePayoutRequest } from "../../../model/admin/request/Payout.request";
 

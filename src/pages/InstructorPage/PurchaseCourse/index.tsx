@@ -1,5 +1,5 @@
 import React from "react";
-import PurchaseCourseTable from "../../../pages/Admin/purchaselog";
+import PurchaseCourseTable from "../../Admin/Purchaselog";
 
 const PurchaseCourse: React.FC = () => {
 
