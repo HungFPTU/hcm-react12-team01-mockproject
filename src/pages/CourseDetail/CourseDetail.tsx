@@ -124,9 +124,9 @@ useEffect(() => {
               <h1 className="text-white text-6xl font-bold">
                 {course?.name || "Course Name"}
               </h1>
-              <p className="text-slate-300 text-xl py-3">
+              {/* <p className="text-slate-300 text-xl py-3">
                 {course?.description || "No description available."}
-              </p>
+              </p> */}
             </Col>
           </Row>
           <div className="mt-auto flex items-center mb-6">

@@ -45,7 +45,7 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
         setIsLoggedIn(!!localStorage.getItem("user"));
     }, []);
 
-    // Hàm fetch data được tối ưu hóa bằng useCallback
+
     const fetchCourses = useCallback(async () => {
         try {
             const coursesData = await fetchCoursePublic({}, { pageNum: currentPage, pageSize: pageSizeState });
@@ -56,6 +56,8 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
             setError("Unable to fetch courses. Please try again later.");
         }
     }, [currentPage, pageSizeState]);
+    
+    
 
     useEffect(() => {
         fetchCourses();

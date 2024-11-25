@@ -183,7 +183,12 @@ const LessonDetail: React.FC = () => {
                     className="h-full w-full object-cover"
                   />
                 ) : null}
+                 <div
+                className="text-gray-600 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: lesson?.description || "" }}
+              />
               </div>
+              
             </Card>
           </Col>
         </Row>
