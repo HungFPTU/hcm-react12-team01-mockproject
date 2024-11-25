@@ -1,10 +1,10 @@
 const { Content, Sider } = Layout;
 import { Layout } from "antd";
-import React, { useState } from "react";
+import React, { useState, lazy } from "react";
 import { Outlet } from "react-router-dom";
 
-const Footer = React.lazy(() => import("../../components/Footer"));
-const HeaderStudent = React.lazy(() => import('../../components/HeaderDashboard'));
+const Footer = lazy(() => import("../../components/Footer"));
+const Header = lazy(() => import("../../components/HeaderDashboard"));
 const StudentSidebar = React.lazy(() => import("../../components/StudentComponents/StudentSidebar"));
 
 
@@ -12,7 +12,7 @@ export const StudentLayout = (): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <HeaderStudent />
+      <Header />
       <Layout style={{ marginTop: "66px" }}>
         <Sider
           collapsible

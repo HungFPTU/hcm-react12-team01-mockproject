@@ -1,8 +1,8 @@
 import { Layout } from "antd";
-import React, { useState } from "react";
+import { useState,lazy } from "react";
 
-const Footer = React.lazy(() => import("../../components/Footer"));
-const Header = React.lazy(() => import("../../components/HeaderDashboard"));
+const Footer = lazy(() => import("../../components/Footer"));
+const Header = lazy(() => import("../../components/HeaderDashboard"));
 import SidebarComponents from "../../components/InstructorComponents/SidebarCoponent";
 import { Outlet } from "react-router-dom";
 

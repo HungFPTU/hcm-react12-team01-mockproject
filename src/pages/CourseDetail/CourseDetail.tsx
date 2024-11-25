@@ -20,10 +20,8 @@ const CourseDetail =() => {
     const { id } = useParams();
     const [course, setCourse] = useState<any>(null);
     const [reviews, setReviews] = useState<any[]>([]);
-    const [averageRating, setAverageRating] = useState<number | null>(null);
     const [reviewCount, setReviewCount] = useState<number | null>(null);
     const [courseStatus, setCourseStatus] = useState({ is_in_cart: false, is_purchased: false });
-    const [discountedPrice, setDiscountedPrice] = useState<string>("0.00");
     const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,7 +35,6 @@ const CourseDetail =() => {
         const response = await CourseService.getPublicCourseDetail(id);
         const courseData = response.data?.data as GetPublicCourseDetailResponse;
 
-        setAverageRating(courseData?.average_rating ?? 0);
         setReviewCount(courseData?.review_count ?? 0);
         
         setCourseStatus({
@@ -45,7 +42,6 @@ const CourseDetail =() => {
           is_purchased: courseData?.is_purchased
         });
 
-        setDiscountedPrice(((courseData?.price ?? 0) - ((courseData?.discount ?? 0) * (courseData?.price ?? 0)) / 100).toFixed(2));
         setCourse(courseData);
       } catch (error) {
         console.error("Failed to fetch course details:", error);
@@ -171,7 +167,6 @@ useEffect(() => {
                                 reviews={reviews}
                                 courseId={course?._id}
                                 course={course}
-                                averageRating={averageRating}
                                 reviewCount={reviewCount}
                               />
                         </Col>
@@ -179,7 +174,7 @@ useEffect(() => {
                             span={8}
                             className="absolute top-56 left-3/4 transform -translate-x-1/2 w-full sm:top-44 sm:left-3/4 "
                         >
-                          <CourseCard course={course} discountedPrice={discountedPrice} courseStatus={courseStatus} />
+                          <CourseCard course={course}/>
                         </Col>
 
                     </Row>

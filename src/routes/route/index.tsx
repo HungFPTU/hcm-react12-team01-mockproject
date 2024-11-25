@@ -36,11 +36,16 @@ const App = () => {
 
   useEffect(() => {
     const currentRole = role || (localStorage.getItem("role") as UserRole);
+    const defaultPath = getDefaultPath(currentRole);
+  
+    // Điều hướng chỉ khi ở trang mặc định ("/") và role có sẵn
     if (currentRole && window.location.pathname === "/") {
-      const defaultPath = getDefaultPath(currentRole);
-      window.location.href = defaultPath;
+      if (window.location.href !== defaultPath) {
+        window.location.href = defaultPath;
+      }
     }
-  }, [role]); // Add role as a dependency
+  }, [role]);
+  
 
 
   const renderProtectedRoutes = () => {
@@ -60,8 +65,8 @@ const App = () => {
           {adminPaths[ROUTER_URL.ADMIN.DASHBOARD]?.map((route) => (
             <Route
               key={route.path || "index"}
-              index={route.index} //loading index
-              path={route.path?.replace("/admin/", "")} // Remove /admin/ prefix
+              index={route.index} 
+              path={route.path?.replace("/admin/", "")} 
               element={route.element}
             />
           ))}
@@ -80,7 +85,6 @@ const App = () => {
 
   return (
     <Routes>
-    {/* Public Routes */}
     {Object.entries(pathPublic).map(([key, routes]) =>
       routes.map((route) => (
         <Route key={route.path || "index"} path={route.path} element={key === ROUTER_URL.COMMON.HOME ? <PublicRoute component={route.element} /> : route.element}>
@@ -89,7 +93,6 @@ const App = () => {
       ))
     )}
 
-    {/* Protected Routes */}
     {renderProtectedRoutes()}
   </Routes>
   );

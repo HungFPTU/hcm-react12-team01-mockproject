@@ -6,7 +6,7 @@ import { signInWithEmailAndPassword } from "../../firebase-config";
 import { FirebaseError } from "firebase/app";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthService } from "../../services/authService/auth.service";
-import { useAuth } from "../../context/AuthContent"; // Import useAuth for context
+import { useAuth } from "../../context/AuthContent"; 
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -23,25 +23,28 @@ interface FormValues {
 }
 
 const LoginEmailPassword = () => {
-  const {handleLogin } = useAuth(); // Destructure setRole and setUserInfo
+  const {handleLogin } = useAuth(); 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleAPISignIn = async (email: string, password: string) => {
-    try {
-      const res = await AuthService.login({ email, password });
-      const { token } = res.data.data;
-
-      localStorage.setItem("token", token);
+  const handleAPISignIn = useCallback(
+    async (email: string, password: string) => {
+      try {
+        const res = await AuthService.login({ email, password });
+        const { token } = res.data.data;
   
-      await handleLogin(token);
+        localStorage.setItem("token", token);
   
-      return true;
-    } catch (error) {
-      console.error("API Login failed:", error);
-      return false;
-    }
-  };
+        await handleLogin(token);
+  
+        return true;
+      } catch (error) {
+        console.error("API Login failed:", error);
+        return false;
+      }
+    },
+    [handleLogin]
+  );
   
   const handleEmailSignIn = useCallback(
     async (values: FormValues) => {
@@ -52,7 +55,7 @@ const LoginEmailPassword = () => {
   
       if (apiSignInSuccess) {
         message.success("Login successful!");
-        navigate("/"); 
+        navigate("/");
       } else {
         try {
           const userCredential = await signInWithEmailAndPassword(email, password);
@@ -66,7 +69,7 @@ const LoginEmailPassword = () => {
   
           if (user) {
             const idToken = await user.getIdToken();
-            localStorage.setItem("token", idToken); 
+            localStorage.setItem("token", idToken);
             message.success("Login successful!");
             navigate("/");
           }
@@ -79,7 +82,7 @@ const LoginEmailPassword = () => {
   
       setLoading(false);
     },
-    [navigate]
+    [handleAPISignIn, navigate]
   );
   
   return (

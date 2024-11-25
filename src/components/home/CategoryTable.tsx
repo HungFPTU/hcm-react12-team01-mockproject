@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, Button, Rate, Tooltip, Col, Row, Pagination } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { CourseService } from "../../services/CourseService/course.service";
@@ -12,7 +12,10 @@ interface CourseProps {
     pageNum?: number;
 }
 
-const fetchCoursePublic = async (searchCondition = {}, pageInfo = { pageNum: 1, pageSize: 4 }) => {
+const fetchCoursePublic = async (
+    searchCondition = {},
+    pageInfo = { pageNum: 1, pageSize: 4 }
+) => {
     const response = await CourseService.getPublicCourse({
         searchCondition: {
             keyword: "",
@@ -37,37 +40,37 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
     const navigate = useNavigate();
     const { getCartCount } = useCart();
 
-
+    // Kiểm tra trạng thái đăng nhập
     useEffect(() => {
-        const checkLoginStatus = () => {
-            const user = localStorage.getItem("user");
-            setIsLoggedIn(!!user);
-        };
-        checkLoginStatus();
+        setIsLoggedIn(!!localStorage.getItem("user"));
     }, []);
 
-    useEffect(() => {
-        const fetchCourses = async () => {
-            try {
-                const coursesData = await fetchCoursePublic({}, { pageNum: currentPage, pageSize: pageSizeState });
-                setCourses(coursesData.data);
-                setError(null);
-            } catch (error) {
-                console.error("Failed to fetch courses:", error);
-                setError("Unable to fetch courses. Please try again later.");
-            }
-        };
-
-        fetchCourses();
+    // Hàm fetch data được tối ưu hóa bằng useCallback
+    const fetchCourses = useCallback(async () => {
+        try {
+            const coursesData = await fetchCoursePublic({}, { pageNum: currentPage, pageSize: pageSizeState });
+            setCourses(coursesData.data);
+            setError(null);
+        } catch (error) {
+            console.error("Failed to fetch courses:", error);
+            setError("Unable to fetch courses. Please try again later.");
+        }
     }, [currentPage, pageSizeState]);
 
+    useEffect(() => {
+        fetchCourses();
+    }, [fetchCourses]);
+
+    // Xử lý chuyển trang
     const handlePageChange = (page: number, pageSize: number) => {
         setCurrentPage(page);
         setPageSizeState(pageSize);
     };
 
+    // Format giá tiền
     const formatPrice = (price: number) => price.toLocaleString("vi-VN") + "₫";
 
+    // Format thời gian
     const formatTime = (minutes: number) => {
         const hours = Math.floor(minutes / 60);
         const remainingMinutes = minutes % 60;
@@ -76,6 +79,7 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
             : `${remainingMinutes}p`;
     };
 
+    // Xử lý thêm khóa học vào giỏ hàng
     const handleAddToCart = async (course: any) => {
         try {
             if (course.is_in_cart) {
@@ -91,11 +95,12 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
                     toast.error("Failed to add course to cart. Please try again.");
                 }
             }
-        } catch (error) {
+        } catch (error) { 
             console.error("Error handling cart operation:", error);
         }
     };
 
+    // Xử lý khi người dùng nhấn vào nút
     const handleButtonClick = (course: any) => {
         if (!isLoggedIn) {
             toast.warning("Please login to add course to cart");
@@ -104,10 +109,12 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
         }
     };
 
+    // Hiển thị lỗi nếu có
     if (error) {
         return <p className="text-red-500 text-center">{error}</p>;
     }
 
+    // Hiển thị thông báo khi không có khóa học
     if (!courses?.pageData.length) {
         return (
             <div className="text-center">
@@ -214,8 +221,8 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
                                         <Button
                                             type="primary"
                                             style={{
-                                                backgroundColor: "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
-                                                borderColor: "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
+                                                backgroundColor: "rgb(222 0 165)",
+                                                borderColor: "rgb(222 0 165)",
                                                 color: "white",
                                                 width: "100%",
                                             }}
@@ -227,8 +234,8 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
                                     <Button
                                         type="primary"
                                         style={{
-                                            backgroundColor: "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
-                                            borderColor: "rgb(222 0 165 / var(--tw-bg-opacity, 1))",
+                                            backgroundColor: "rgb(222 0 165)",
+                                            borderColor: "rgb(222 0 165)",
                                             color: "white",
                                             width: "100%",
                                         }}
@@ -248,14 +255,11 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
                 current={currentPage}
                 pageSize={pageSizeState}
                 total={courses?.pageInfo?.totalItems}
-                
                 onChange={handlePageChange}
                 className="text-center mt-4 flex justify-center mb-4"
             />
         </div>
     );
 };
-
-
 
 export default CategoryTable;

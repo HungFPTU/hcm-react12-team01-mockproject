@@ -1,9 +1,8 @@
-import { lazy } from "react";
 import React from "react";
 import asset from "../../assets/assets";
 
 
-const Course = lazy (() => import("../../components/home/CategoryTable"))
+import Course from '../../components/home/CategoryTable'
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
