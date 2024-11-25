@@ -10,10 +10,10 @@ const PurchaseLogTable = () => {
 
   const fetchPurchaseLogData = async () => {
     try {
-      const response = await PurchaseService.getPurchaseForAdmin({
+      const response = await PurchaseService.getPurchaseForInstructor({
         pageInfo: {
           pageNum: 1,
-          pageSize: 10,
+          pageSize: 1000,
         },
         searchCondition: {
           purchase_no: searchQuery,
@@ -104,12 +104,6 @@ const PurchaseLogTable = () => {
       title: "Student Name",
       dataIndex: "student_name",
       key: "student_name",
-      render: (text: string) => <span>{text}</span>,
-    },
-    {
-      title: "Instructor Name",
-      dataIndex: "instructor_name",
-      key: "instructor_name",
       render: (text: string) => <span>{text}</span>,
     },
     {

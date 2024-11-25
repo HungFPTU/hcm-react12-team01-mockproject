@@ -41,7 +41,7 @@ const InstructorSub = lazy(
 const PayoutInstructorPage = lazy(
   () => import("../../pages/InstructorPage/PayoutInstructorPage")
 );
-const PurchaseLog = lazy(() => import("../../pages/Admin/Purchaselog"));
+const PurchaseLog = lazy(() => import("../../pages/InstructorPage/PurchaseLog"));
 const MylearningPage = lazy(() => import("../../pages/MyLearning"));
 
 // const SettingPage = lazy(() => import("../../pages/Student/setting"));

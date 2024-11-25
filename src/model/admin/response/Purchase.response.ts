@@ -10,6 +10,7 @@ export interface Purchase {
     student_id: string,
     instructor_id: string,
     created_at: Date,
+    updated_at: Date,
     is_deleted: boolean,
     cart_no: string,
     course_name: string,
@@ -29,6 +30,7 @@ export interface GetPurchaseResponseData {
     student_id: string,
     instructor_id: string,
     created_at: Date,
+    updated_at: Date,
     is_deleted: boolean,
     cart_no: string,
     course_name: string,
@@ -66,6 +68,7 @@ export interface PurchaseLogResponse {
     student_id: string;
     instructor_id: string;
     created_at: Date;
+    updated_at: Date;
     is_deleted: boolean;
     student_name: string;
     instructor_name: string;
