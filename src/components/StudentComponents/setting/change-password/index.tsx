@@ -1,9 +1,12 @@
 import { Button, Form, Input, notification } from "antd";
 import { ChangePasswordUser } from "../../../../model/User"; // Nhập interface ChangePasswordUser
 import { UserSettingService } from "../../../../services/SettingService/user-service";
+import { AuthService } from "../../../../services/authService/auth.service";
+import { useNavigate } from "react-router-dom";
 
 const ChangePassword = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const handleSubmit = async (values: ChangePasswordUser) => {
     const { old_password, new_password } = values; // Sử dụng old_password và new_password
@@ -19,13 +22,26 @@ const ChangePassword = () => {
     try {
       await UserSettingService.changePassword(data);
       notification.success({ message: "Password changed successfully!" });
+      handleLogOut();
       form.resetFields(); // Đặt lại các trường trong form
     } catch (error) {
       notification.error({ message: "Error changing password" });
       console.error("Change password error:", error);
     }
   };
-
+  const handleLogOut = async () => {
+    try {
+      await AuthService.logout();
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("role");
+      localStorage.removeItem("userInfo");
+      navigate("/login");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
   return (
     <div className="p-8">
       <Form form={form} layout="vertical" onFinish={handleSubmit}>

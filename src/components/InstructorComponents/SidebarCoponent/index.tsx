@@ -67,7 +67,7 @@ function SidebarComponents() {
             label: "Purchase Log",
           },
           {
-            key: "9",
+            key: "/instructor/setting",
             icon: <SettingOutlined />,
             label: "Setting",
           },
