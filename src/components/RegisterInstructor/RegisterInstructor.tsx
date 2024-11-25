@@ -1,10 +1,10 @@
 import { Field, ErrorMessage } from 'formik';
-import { Input } from 'antd'; 
+import { Input } from 'antd';
 
 interface FormValues {
     phone_number: string;
     description: string;
-    avatar_url?: string;  
+    avatar_url?: string;
     video_url?: string;
     bank_name: string;
     bank_account_no: string;

@@ -159,27 +159,36 @@ const LessonDetail: React.FC = () => {
               <Title level={2}>{lesson?.name}</Title>
               <Divider />
               <div className="relative aspect-video mb-6 flex items-center justify-center rounded-md">
-              {!lesson?.description && (
-                  <div className="relative mb-6 aspect-video overflow-hidden rounded-lg shadow-2xl">
-                    {lesson?.video_url ? (
-                      <>
-                        <video controls className="h-full w-full">
-                          <source src={lesson.video_url} type="video/mp4" />
-                          Your browser does not support the video tag.
-                        </video>
-                      </>
-                    ) : lesson?.image_url ? (
-                      <>
-                        <img src={lesson.image_url} alt={lesson.name} className="h-full w-full object-cover" />
-                      </>
-                    ) : null}
-                  </div>
-                )}
-             <div
+                {lesson?.video_url ? (
+                  lesson.video_url.includes("youtube.com") || lesson.video_url.includes("youtu.be") ? (
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      src={`https://www.youtube.com/embed/${new URLSearchParams(new URL(lesson.video_url).search).get("v")}`}
+                      title={lesson.name}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="rounded-lg shadow-2xl"
+                    />
+                  ) : (
+                    <video controls className="h-full w-full">
+                      <source src={lesson.video_url} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  )
+                ) : lesson?.image_url ? (
+                  <img
+                    src={lesson.image_url}
+                    alt={lesson.name}
+                    className="h-full w-full object-cover"
+                  />
+                ) : null}
+                 <div
                 className="text-gray-600 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: lesson?.description || "" }}
               />
               </div>
+              
             </Card>
           </Col>
         </Row>

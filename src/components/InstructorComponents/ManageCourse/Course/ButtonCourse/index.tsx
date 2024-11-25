@@ -8,16 +8,17 @@ import { Category } from "../../../../../model/admin/response/Category.response"
 import { Editor } from "@tinymce/tinymce-react";
 
 const { Option } = Select;
-
-const ButtonCourse = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+interface ButtonCourseProps {
+  onAdd: () => void;
+}
+const ButtonCourse: React.FC<ButtonCourseProps> = ({ onAdd }) => {
+  const [isAddModalVisible, setAddIsModalVisible] = useState(false);
   const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [courseType, setCourseType] = useState("free");
   const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
 
   const showModal = () => {
-    setIsModalVisible(true);
-
+    setAddIsModalVisible(true);
 
     if (categoryData.length === 0) {
       const params = {
@@ -45,18 +46,16 @@ const ButtonCourse = () => {
   };
 
   const handleCancel = () => {
-    setIsModalVisible(false);
+    setAddIsModalVisible(false);
   };
 
   const handleSubmit = async (values: any) => {
     try {
-      const content = values.content || "";
+      const description = values.description || "";
       console.log(">>>>>>>>>>>values", values);
       const price = Number(values.price);
       const discount = Number(values.discount);
-      const description = editorRef.current
-        ? editorRef.current.getContent()
-        : ""; // Lấy nội dung từ editor
+      const content = editorRef.current ? editorRef.current.getContent() : ""; // Lấy nội dung từ editor
 
       const { name, video_url, image_url, category_id } = values;
       const newCourse: CreateCourseRequest = {
@@ -74,8 +73,9 @@ const ButtonCourse = () => {
       if (response && response.data.success) {
         message.success("Khóa học đã được tạo thành công!");
         console.log("API Response:", response);
+        onAdd();
+        setAddIsModalVisible(false);
       }
-      setIsModalVisible(false);
     } catch (error) {
       console.error("Error creating course:", error);
     }
@@ -89,7 +89,7 @@ const ButtonCourse = () => {
 
       <Modal
         title="Create Course"
-        open={isModalVisible}
+        open={isAddModalVisible}
         width={800}
         onCancel={handleCancel}
         footer={null}
@@ -122,6 +122,15 @@ const ButtonCourse = () => {
           <Form.Item
             name="description"
             label="Description"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
+          >
+            <Input.TextArea placeholder="Enter course's description" />
+          </Form.Item>
+
+          <Form.Item
+            name="content"
+            label="Content"
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
@@ -161,23 +170,14 @@ const ButtonCourse = () => {
                   "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
               }}
             />
+            {/* <Input.TextArea placeholder="Nhập nội dung khóa học" /> */}
           </Form.Item>
-
-          <Form.Item
-            name="content"
-            label="Content"
-            labelCol={{ span: 24 }}
-            rules={[{ required: true }]}
-          >
-            <Input.TextArea placeholder="Nhập nội dung khóa học" />
-          </Form.Item>
-
 
           <Form.Item
             name="video_url"
             label="Video URL"
             labelCol={{ span: 24 }}
-          // rules={[{ required: true }]}
+            // rules={[{ required: true }]}
           >
             <Input
               placeholder="Nhập đường dẫn video"
@@ -205,7 +205,6 @@ const ButtonCourse = () => {
               </span>
             }
             labelCol={{ span: 24 }}
-
           >
             <Radio.Group
               onChange={(e) => setCourseType(e.target.value)}

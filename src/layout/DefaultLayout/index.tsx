@@ -1,7 +1,7 @@
-import React from "react";
+import { lazy } from "react";
 import { Outlet } from "react-router-dom";
-const Footer = React.lazy(() => import("../../components/Footer"));
-const Header = React.lazy(() => import("../../components/Header"));
+const Footer = lazy(() => import("../../components/Footer"));
+const Header = lazy(() => import("../../components/Header"));
 
 
 export const DefaultLayout = (): JSX.Element => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { UserService } from "../../services/UserService/user.service";
 
@@ -6,23 +6,23 @@ const InstructorDetail = () => {
   const { id: instructorId } = useParams<{ id: string }>();
   const [instructorDetails, setInstructorDetails] = useState<any>(null);
 
-  useEffect(() => {
-    const fetchInstructorDetails = async () => {
-      if (!instructorId) {
-        console.error("Instructor ID is undefined");
-        return;
-      }
-
-      try {
-        const response = await UserService.getUserDetails(instructorId);
-        setInstructorDetails(response.data.data);
-      } catch (error) {
-        console.error("Failed to fetch instructor details:", error);
-      }
-    };
-
-    fetchInstructorDetails();
+  const fetchInstructorDetails = useCallback(async () => {
+    if (!instructorId) {
+      return;
+    }
+  
+    try {
+      const response = await UserService.getUserDetails(instructorId);
+      setInstructorDetails(response.data.data);
+    } catch (error) {
+      console.error("Failed to fetch instructor details:", error);
+    }
   }, [instructorId]);
+  
+  useEffect(() => {
+    fetchInstructorDetails();
+  }, [fetchInstructorDetails]);
+  
 
   return (
     <div className="flex-1 pt-16 mt-4 p-4 overflow-auto">
