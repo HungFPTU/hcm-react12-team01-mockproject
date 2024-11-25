@@ -18,7 +18,6 @@ const ButtonCourse = () => {
   const showModal = () => {
     setIsModalVisible(true);
 
-
     if (categoryData.length === 0) {
       const params = {
         searchCondition: {
@@ -50,13 +49,11 @@ const ButtonCourse = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      const content = values.content || "";
+      const description = values.description || "";
       console.log(">>>>>>>>>>>values", values);
       const price = Number(values.price);
       const discount = Number(values.discount);
-      const description = editorRef.current
-        ? editorRef.current.getContent()
-        : ""; // Lấy nội dung từ editor
+      const content = editorRef.current ? editorRef.current.getContent() : ""; // Lấy nội dung từ editor
 
       const { name, video_url, image_url, category_id } = values;
       const newCourse: CreateCourseRequest = {
@@ -125,6 +122,15 @@ const ButtonCourse = () => {
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
+            <Input.TextArea placeholder="Enter course's description" />
+          </Form.Item>
+
+          <Form.Item
+            name="content"
+            label="Content"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
+          >
             <Editor
               onInit={(_evt, editor) => (editorRef.current = editor)}
               apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
@@ -161,23 +167,14 @@ const ButtonCourse = () => {
                   "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
               }}
             />
+            {/* <Input.TextArea placeholder="Nhập nội dung khóa học" /> */}
           </Form.Item>
-
-          <Form.Item
-            name="content"
-            label="Content"
-            labelCol={{ span: 24 }}
-            rules={[{ required: true }]}
-          >
-            <Input.TextArea placeholder="Nhập nội dung khóa học" />
-          </Form.Item>
-
 
           <Form.Item
             name="video_url"
             label="Video URL"
             labelCol={{ span: 24 }}
-          // rules={[{ required: true }]}
+            // rules={[{ required: true }]}
           >
             <Input
               placeholder="Nhập đường dẫn video"
@@ -205,7 +202,6 @@ const ButtonCourse = () => {
               </span>
             }
             labelCol={{ span: 24 }}
-
           >
             <Radio.Group
               onChange={(e) => setCourseType(e.target.value)}
