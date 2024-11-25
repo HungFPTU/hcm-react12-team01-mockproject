@@ -1,18 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Row,
-  Col,
-  Progress,
-  Form,
-  Rate,
-  Typography,
-  Avatar,
-  Input,
-  Select,  
-  List,
-  message
-} from "antd";
+import React, { useState, useEffect, useCallback } from "react";
+import {Button, Row, Col, Progress, Form, Rate, Typography, Avatar, Input, List, message} from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { ReviewService } from "../../services/review/review.service";
 import dayjs from "dayjs";
@@ -21,7 +8,7 @@ import { useAuth } from "../../context/AuthContent";
 
 const { Title } = Typography;
 
-const CourseReviews: React.FC<any & { courseId: string, course: any, averageRating: number, reviewCount: number }> = ({ reviews, courseId, reviewCount }) => {
+const CourseReviews: React.FC<any & { courseId: string, course: any, reviewCount: number }> = ({ reviews, courseId, reviewCount }) => {
   const [comment, setComment] = useState("");
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [fetchedReviews, setFetchedReviews] = useState(reviews);
@@ -31,7 +18,7 @@ const CourseReviews: React.FC<any & { courseId: string, course: any, averageRati
    const [visibleReviews, setVisibleReviews] = useState(3);
 
 
-  const fetchReviews = async () => {
+   const fetchReviews = useCallback(async () => {
     try {
       const response = await ReviewService.searchForReview({
         searchCondition: {
@@ -46,20 +33,19 @@ const CourseReviews: React.FC<any & { courseId: string, course: any, averageRati
           pageSize: 10,
         },
       });
-      const reviewsData = response.data.data.pageData;
+      const reviewsData = response.data.data.pageData ;
       setFetchedReviews(reviewsData);
-      // setHasUserCommented(
-      //   reviewsData.some((review: any) => review.reviewer_id === userInfo?._id)
-      // );
     } catch (error) {
       console.error("Failed to fetch reviews", error);
       message.error("Unable to fetch reviews. Please try again.");
     }
-  };
-
-    useEffect(() => {
-    fetchReviews();
   }, [courseId]);
+  
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
+  
 
 
   const handleChangeComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -70,64 +56,43 @@ const CourseReviews: React.FC<any & { courseId: string, course: any, averageRati
     setShowReviewForm(true);
   };
 
-  const handleSelectChange = async (value: any) => {
-    const { value: key } = value;
-    let sortedFilteredReviews = [...fetchedReviews];
-  
-    if (key.includes("quantity")) {
-      // Sorting based on review counts for each rating
-      sortedFilteredReviews = fetchedReviews.sort((a: { rating: number; }, b: { rating: number; }) =>
-        key === "quantity-increase" ? a.rating - b.rating : b.rating - a.rating
-      );
-    } else if (key.includes("date")) {
-      // Sorting based on created_at or updated_at
-      sortedFilteredReviews = fetchedReviews.sort((a: { created_at: string | number | Date; updated_at: string | number | Date; }, b: { created_at: string | number | Date; updated_at: string | number | Date; }) => {
-        const dateA = new Date(key === "date-newest" ? a.created_at : a.updated_at);
-        const dateB = new Date(key === "date-newest" ? b.created_at : b.updated_at);
-        return key === "date-newest" ? dateB.getTime() - dateA.getTime() : dateA.getTime() - dateB.getTime();
-      });
-    } else if (key.includes("star")) {
-      // Filtering by rating
-      const rating = parseInt(key.replace("star", ""), 10);
-      sortedFilteredReviews = fetchedReviews.filter((review: any) => review.rating === rating);
-    }
-  
-    setFetchedReviews(sortedFilteredReviews);
-  };
-  
-
   const handleViewMore = () => {
     setVisibleReviews((prev) => prev + 3);
   };
 
-  const handleSubmit = async (values: { rating: number; comment: string }) => {
-    try {
-      if (editingReview) {
-        await ReviewService.updateReview(editingReview._id, {
-          course_id: courseId,
-          rating: values.rating,
-          comment: values.comment,
-        });
-        message.success("Review updated successfully!");
-        setEditingReview(null);
-      } else {
-        await ReviewService.createReview({
-          course_id: courseId,
-          rating: values.rating,
-          comment: values.comment,
-        });
-        message.success("Review created successfully!");
+  const handleSubmit = useCallback(
+    async (values: { rating: number; comment: string }) => {
+      try {
+        if (editingReview) {
+          await ReviewService.updateReview(editingReview._id, {
+            course_id: courseId,
+            rating: values.rating,
+            comment: values.comment,
+          });
+          message.success("Review updated successfully!");
+          setEditingReview(null);
+        } else {
+          await ReviewService.createReview({
+            course_id: courseId,
+            rating: values.rating,
+            comment: values.comment,
+          });
+          message.success("Review created successfully!");
+        }
+        setShowReviewForm(false);
+        form.resetFields();
+        await fetchReviews();
+      } catch (error) {
+        console.error("Failed to submit review", error);
+        message.error("Failed to submit review. Please try again.");
       }
-      setShowReviewForm(false);
-      form.resetFields();
-      await fetchReviews();
-    } catch (error) {
-      console.error("Failed to submit review", error);
-      message.error("Failed to submit review. Please try again.");
-    }
-  };
+    },
+    [editingReview, courseId, fetchReviews, form]
+  );
+  
 
   const starCounts = [0, 0, 0, 0, 0];
+  
   fetchedReviews.forEach((review: any) => {
     if (review.rating >= 1 && review.rating <= 5) {
       starCounts[review.rating - 1]++;
@@ -135,10 +100,10 @@ const CourseReviews: React.FC<any & { courseId: string, course: any, averageRati
   });
   const calculateProgress = (star: number) => {
     const totalReviews = fetchedReviews.length;
-    const count = fetchedReviews.filter((review: any) => review.rating === star)
-      .length;
-    return totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+    const starCount = fetchedReviews.filter((review:any) => review.rating === star).length;
+    return totalReviews > 0 ? Math.round((starCount / totalReviews) * 100) : 0;
   };
+  
 
   return (
     <div className="Reviews ml-9">
@@ -161,22 +126,27 @@ const CourseReviews: React.FC<any & { courseId: string, course: any, averageRati
 
         {/* Progress Bars */}
         <div className="proStar w-full flex flex-col justify-between border rounded-xl bg-[#fff1e4]">
-          {[5, 4, 3, 2, 1].map((star) => (
-            <div key={star} className="flex items-center gap-4 p-3">
-              <p className="text-[20px]">{star}</p>
-              <svg
-                height="24px"
-                width="24px"
-                viewBox="0 0 53.867 53.867"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="#f2c307"
-              >
-                <polygon points="26.934,1.318 35.256,18.182 53.867,20.887 40.4,34.013 43.579,52.549 26.934,43.798 10.288,52.549 13.467,34.013 0,20.887 18.611,18.182" />
-              </svg>
-              <Progress percent={calculateProgress(star)} showInfo={false} />
-              <p className="md:text-16 text-14 text-[#5979F2]">{reviewCount}</p>
-            </div>
-          ))}
+          {[5, 4, 3, 2, 1].map((star) => {
+            const starCount = fetchedReviews.filter((review: any) => review.rating === star).length;
+            const percentage = calculateProgress(star);
+
+            return (
+              <div key={star} className="flex items-center gap-4 p-3">
+                <p className="text-[20px]">{star}</p>
+                <svg
+                  height="24px"
+                  width="24px"
+                  viewBox="0 0 53.867 53.867"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="#f2c307"
+                >
+                  <polygon points="26.934,1.318 35.256,18.182 53.867,20.887 40.4,34.013 43.579,52.549 26.934,43.798 10.288,52.549 13.467,34.013 0,20.887 18.611,18.182" />
+                </svg>
+                <Progress percent={percentage} showInfo={false} />
+                <p className="md:text-16 text-14 text-[#5979F2]">{starCount}</p>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -248,61 +218,10 @@ const CourseReviews: React.FC<any & { courseId: string, course: any, averageRati
     </div>
   </div>
 )}
-
-
-      {/* Sort and Filter */}
-      <div className="ml-9 rounded-xl">
-        <Form layout="vertical" style={{ maxWidth: 600, marginLeft: "36px", fontWeight: "600" }}>
-          <Row gutter={[16, 16]}>
-            <Col span={12}>
-              <Form.Item label="Sort">
-              <Select
-                  size="large"
-                  labelInValue
-                  defaultValue={{ value: "date-newest", label: "Date created newest" }}
-                  style={{ width: 300 }}
-                  onChange={handleSelectChange}
-                  options={[
-                    { value: "quantity-increase", label: "Quantity star increase" },
-                    { value: "quantity-decrease", label: "Quantity star decrease" },
-                    { value: "date-newest", label: "Date created newest" },
-                    { value: "date-oldest", label: "Date updated oldest" },
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Form.Item label="Filter">
-              <Select
-                  size="large"
-                  labelInValue
-                  defaultValue={{ value: "all-star", label: "All Star" }}
-                  style={{ width: 300 }}
-                  onChange={handleSelectChange}
-                  options={[
-                    { value: "all-star", label: "All Star" },
-                    { value: "star5", label: "5*" },
-                    { value: "star4", label: "4*" },
-                    { value: "star3", label: "3*" },
-                    { value: "star2", label: "2*" },
-                    { value: "star1", label: "1*" },
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </div>
-
       {/* Reviews List */}
       <div className="ml-9 mt-10">
+      <h1 className="text-3xl text-left font-bold pl-12">Comment</h1>
       <List
-          pagination={{
-            position: "bottom",
-            align: "center",
-            pageSize: 3,
-          }}
           dataSource={fetchedReviews.slice(0, visibleReviews)}
           renderItem={(review: any, index: number) => (
             <List.Item key={review._id || index}>

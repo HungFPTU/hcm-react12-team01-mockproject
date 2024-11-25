@@ -45,10 +45,21 @@ export default function Home() {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   useEffect(() => {
-    // Fetch cart count initially
-    getCartCount();
-  }, [getCartCount,location]);
+    const cartPages = ["/cart", "/checkout"];
+    if (cartPages.includes(location.pathname) && cartCount === null) {
+      getCartCount();
+    }
+  }, [getCartCount, location.pathname, cartCount]);
+  
+  const handleCartClick = () => {
+    if (cartCount === null) {
+      getCartCount();
+    }
+    navigate("/cart");
+  };
+  
 
   const handleLogOut = async () => {
     try {
@@ -122,43 +133,44 @@ export default function Home() {
             />
           )}
 
-          <div className="flex items-center space-x-2 md:space-x-4">
-            {userInfo ? (
-              <>
-                <Badge count={cartCount} showZero> {/* Use cartCount directly in Badge */}
-                  <Button
-                    icon={<ShoppingCartOutlined style={{ fontSize: "24px" }} />}
-                    type="text"
-                    onClick={() => navigate("/cart")}
-                  />
-                </Badge>
-                <Dropdown menu={{ items: userMenuItems }} placement="bottomLeft">
-                  <Avatar
-                    size={40}
-                    src={userInfo.avatar_url || null}
-                    icon={!userInfo.avatar_url && <UserOutlined />}
-                  />
-                </Dropdown>
-                <span className="font-semibold text-gray-700">{userInfo.name}</span>
-              </>
-            ) : (
-              <>
-                <Button
-                  onClick={() => navigate("/login")}
-                  type="text"
-                  className="font-semibold text-gray-700"
-                >
-                  Register
-                </Button>
-                <Button
-                  onClick={() => navigate("/login")}
-                  className="px-4 py-1 rounded-full bg-gradient-to-br from-[#d01bc7] to-[#ff5117] text-white"
-                >
-                  Login
-                </Button>
-              </>
-            )}
-          </div>
+<div className="flex items-center space-x-2 md:space-x-4">
+  {userInfo ? (
+    <>
+      <Badge count={cartCount} showZero>
+        <Button
+          icon={<ShoppingCartOutlined style={{ fontSize: "24px" }} />}
+          type="text"
+          onClick={handleCartClick}
+        />
+      </Badge>
+      <Dropdown menu={{ items: userMenuItems }} placement="bottomLeft">
+        <Avatar
+          size={40}
+          src={userInfo.avatar_url || null}
+          icon={!userInfo.avatar_url && <UserOutlined />}
+        />
+      </Dropdown>
+      <span className="font-semibold text-gray-700">{userInfo.name}</span>
+    </>
+  ) : (
+    <>
+      <Button
+        onClick={() => navigate("/login")}
+        type="text"
+        className="font-semibold text-gray-700"
+      >
+        Register
+      </Button>
+      <Button
+        onClick={() => navigate("/login")}
+        className="px-4 py-1 rounded-full bg-gradient-to-br from-[#d01bc7] to-[#ff5117] text-white"
+      >
+        Login
+      </Button>
+    </>
+  )}
+</div>
+
         </div>
       </Header>
     </Layout>

@@ -75,51 +75,58 @@ export const CartProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
 
 
   const getCartCount = async () => {
+    if (!token) {
+      console.log("No token found, skipping cart count fetch");
+      setCartCount(0); // Đặt giá trị mặc định nếu chưa đăng nhập
+      return;
+    }
+  
     try {
       let totalCount = 0;
-
+  
       // Fetch count for waiting_paid status
       const responseWaitingPaid = await CartService.getCarts({
         searchCondition: {
           status: CartStatusEnum.waiting_paid,
-          is_delete: false
+          is_delete: false,
         },
         pageInfo: {
           pageNum: 1,
-          pageSize: 10
-        }
+          pageSize: 10,
+        },
       });
       totalCount += responseWaitingPaid.data.data.pageData.length;
-
+  
       // Fetch count for new status
       const responseNew = await CartService.getCarts({
         searchCondition: {
           status: CartStatusEnum.new,
-          is_delete: false
+          is_delete: false,
         },
         pageInfo: {
           pageNum: 1,
-          pageSize: 10
-        }
+          pageSize: 10,
+        },
       });
       totalCount += responseNew.data.data.pageData.length;
-
-
+  
       setCartCount(totalCount);
     } catch (error) {
       console.error("Error fetching cart count:", error);
+      setCartCount(0); // Đảm bảo reset giá trị nếu xảy ra lỗi
     }
   };
-
+  
   useEffect(() => {
     if (token) {
       updateCartItems(CartStatusEnum.new);
       getCartCount();
     } else {
-      setCartItems([]);
-      setCartCount(0);
+      setCartItems([]); // Reset giỏ hàng nếu không có token
+      setCartCount(0); // Đặt giá trị mặc định
     }
   }, [token]);
+  
 
   return (
     <CartContext.Provider value={{ cartItems, cartCount, updateCartItems, updateCartStatus, deleteCartItem, getCartCount }}>
