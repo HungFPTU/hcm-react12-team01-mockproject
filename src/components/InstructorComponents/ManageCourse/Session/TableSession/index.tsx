@@ -1,12 +1,13 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Table, Button, Popover, Modal, message, Space, Input, Form, Select, Spin } from "antd";
 import { SessionService } from "../../../../../services/SessionService/session.service";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { GetSessionResponsePageData } from "../../../../../model/admin/response/Session.response"
-import { GetSessionRequest } from "../../../../../model/admin/request/Session.request";
+import { CreateSessionRequest, GetSessionRequest } from "../../../../../model/admin/request/Session.request";
 import { CourseService } from "../../../../../services/CourseService/course.service";
-import ButtonSession from "../ButtonSession";
-
+import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
+import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
+const { Option } = Select;
 const TableSession = () => {
 
   const [sessionsData, setSessionsData] = useState<GetSessionResponsePageData[]>([]);
@@ -19,44 +20,127 @@ const TableSession = () => {
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const hasMounted = useRef(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>(
+    []
+  );
 
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+  const handleSubmit = async (values: any) => {
+    try {
+      const positionOrder = values.positionOrder
+        ? Number(values.positionOrder)
+        : 1;
+      const description = values.description || "";
+      const { sessionName: name, course_id } = values;
+
+      // Create an object that matches CreateSessionRequest
+      const params: CreateSessionRequest = {
+        name,
+        course_id,
+        description,
+        positionOrder,
+      };
+
+      // Call the createSession method with the params object
+      const response = await SessionService.createSession(params);
+
+      if (response && response.data.success) {
+        console.log("API Response:", response); // Check API response
+        message.success("Session đã được tạo thành công!");
+        setIsModalVisible(false);
+        await fetchSessions()
+      }
+
+    } catch (error) {
+      message.error("Có lỗi xảy ra khi tạo session!");
+      console.error("Error creating session:", error);
+    }
+  };
+  const fetchSessionCourse = async (params: GetCourseRequest) => {
+    try {
+      const response = await CourseService.getCourse(params);
+      return response.data;
+    } catch (error) {
+      console.error("Fail to fetch courses:", error);
+    }
+  };
+
+
+
+  const fetchSessions = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      const params: GetSessionRequest = {
+        searchCondition: {
+          keyword: "",
+          is_position_order: false,
+          is_delete: false,
+        },
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      };
+      const response = await SessionService.getSessions(params);
+      if (response.data?.success && response.data.data?.pageData) {
+        const sessionsWithKey = response.data.data.pageData.map(
+          (session: GetSessionResponsePageData) => ({
+            ...session,
+            key: session._id,
+          })
+        );
+        setSessionsData(sessionsWithKey);
+      } else {
+        console.error("Failed to fetch sessions: pageData not found", response);
+      }
+    } catch (error) {
+      console.error("Error fetching sessions:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [searchQuery]);
   useEffect(() => {
     if (hasMounted.current) return;
     hasMounted.current = true;
-
-    const fetchSessions = async () => {
+    const fetchCoursesData = async () => {
       try {
-        setLoading(true);
+        const searchCondition = {
+          keyword: searchQuery,
+          category_id: "",
+          status: undefined,
+          is_delete: false,
+        };
 
-        const params: GetSessionRequest = {
-          searchCondition: {
-            keyword: "",
-            is_position_order: false,
-            is_delete: false,
-          },
+        const response = await fetchSessionCourse({
+          searchCondition,
           pageInfo: {
             pageNum: 1,
             pageSize: 10,
           },
-        };
-        const response = await SessionService.getSessions(params);
-        if (response.data?.success && response.data.data?.pageData) {
-          const sessionsWithKey = response.data.data.pageData.map(
-            (session: GetSessionResponsePageData) => ({
-              ...session,
-              key: session._id,
-            })
-          );
-          setSessionsData(sessionsWithKey);
-        } else {
-          console.error("Failed to fetch sessions: pageData not found", response);
+        });
+
+        if (response && response.success) {
+
+          const data = response.data.pageData;
+          setCoursesData(data);
         }
       } catch (error) {
-        console.error("Error fetching sessions:", error);
-      } finally {
-        setLoading(false);
+        console.error("Failed to fetch courses:", error);
       }
     };
+
+    fetchCoursesData();
+
+
 
 
     const fetchCourses = async () => {
@@ -135,7 +219,7 @@ const TableSession = () => {
       setSessionsData((prevSessions) =>
         prevSessions.filter((session) => session._id !== sessionId)
       );
-
+      await fetchSessions()
       message.success("Session deleted successfully!");
     } catch (error) {
       console.error("Error deleting session:", error);
@@ -156,8 +240,8 @@ const TableSession = () => {
     });
   };
 
-  const handleSearch = () => {
-    fetchSessionsData();
+  const handleSearch = async () => {
+    await fetchSessionsData();
   };
 
   const showEditModal = (session: any) => {
@@ -204,6 +288,7 @@ const TableSession = () => {
         message.success("Session updated successfully!");
         setIsEditModalVisible(false);
         setEditingSession(null);
+        await fetchSessions()
       } else {
         message.error("Failed to update session!");
       }
@@ -272,8 +357,67 @@ const TableSession = () => {
           enterButton
           style={{ width: '20%' }}
         />
-        <ButtonSession />
+        <Button onClick={showModal} style={{ marginRight: "10px" }}>
+          Create Session
+        </Button>
       </div>
+      <Modal
+        title="Create Session"
+        open={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <Form onFinish={handleSubmit}>
+          <Form.Item
+            name="sessionName"
+            label="Session Name"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true, message: "Vui lòng nhập tên session" }]}
+          >
+            <Input placeholder="Nhập tên session" />
+          </Form.Item>
+
+          <Form.Item
+            name="course_id"
+            label="Course "
+            labelCol={{ span: 24 }}
+            rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}
+          >
+            <Select placeholder="Chọn khóa học">
+              {coursesData.map((course) => (
+                <Option key={course._id} value={course._id}>
+                  {course.name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="description"
+            label="Description"
+            labelCol={{ span: 24 }}
+          >
+            <Input.TextArea
+              placeholder="Nhập mô tả"
+              style={{ width: "100%", height: "100px" }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="positionOrder"
+            label="Position Order"
+            labelCol={{ span: 24 }}
+          >
+            <Input type="number" placeholder="Nhập thứ tự vị trí " />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Create Session
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
       <div>
         {isDataEmpty ? (
           <div className="text-center text-red-500">No sessions found.</div>

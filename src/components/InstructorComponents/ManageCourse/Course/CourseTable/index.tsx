@@ -1,13 +1,27 @@
-import { useState, useEffect, useRef } from "react";
-import { Table, Button, Switch, message, Popover, Spin, Modal, Form, Input, Select, Radio } from "antd";
+import { useState, useEffect, useRef, useCallback } from "react";
+import {
+  Table,
+  Button,
+  Switch,
+  message,
+  Popover,
+  Modal,
+  Form,
+  Input,
+  Select,
+  Radio,
+} from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { CategoryService } from "../../../../../services/category/category.service";
-import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
+import {
+  CreateCourseRequest,
+  GetCourseRequest,
+} from "../../../../../model/admin/request/Course.request";
 import { SendOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { GetCategoryRequest } from "../../../../../model/admin/request/Category.request";
-import ButtonCourse from "../ButtonCourse";
 import { Editor } from "@tinymce/tinymce-react";
+import { Category } from "../../../../../model/admin/response/Category.response";
 
 const { Option } = Select;
 interface Course {
@@ -54,11 +68,12 @@ const convertToCourse = (data: any): Course => {
 };
 
 const CourseTable = () => {
+  const [isAddModalVisible, setAddIsModalVisible] = useState(false);
+  const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [coursesData, setCoursesData] = useState<Course[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
   const [categories, setCategories] = useState<any[]>([]);
@@ -68,13 +83,71 @@ const CourseTable = () => {
   );
   const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
 
-
   const [formData, setFormData] = useState({
     image_url: "",
     video_url: "",
   });
 
   const hasMounted = useRef(false);
+  const showModal = () => {
+    setAddIsModalVisible(true);
+
+    if (categoryData.length === 0) {
+      const params = {
+        searchCondition: {
+          keyword: "",
+          is_parent: true,
+          is_delete: false,
+        },
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      };
+
+      CategoryService.getCategory(params)
+        .then((response) => {
+          if (response && response.data && response.data.data) {
+            setCategoryData(response.data.data.pageData);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching categories:", error);
+        });
+    }
+  };
+  const handleCancel = () => {
+    setAddIsModalVisible(false);
+  };
+  const handleSubmit = async (values: any) => {
+    try {
+      const description = values.description || "";
+      const price = Number(values.price);
+      const discount = Number(values.discount);
+      const content = editorRef.current ? editorRef.current.getContent() : ""; // Lấy nội dung từ editor
+
+      const { name, video_url, image_url, category_id } = values;
+      const newCourse: CreateCourseRequest = {
+        name,
+        category_id,
+        description,
+        content,
+        video_url,
+        image_url,
+        price: courseType === "paid" ? price : 0,
+        discount: courseType === "paid" ? discount : 0,
+      };
+
+      const response = await CourseService.createCourse(newCourse);
+      if (response && response.data.success) {
+        message.success("Khóa học đã được tạo thành công!");
+        setAddIsModalVisible(false);
+      }
+      await fetchCoursesData();
+    } catch (error) {
+      console.error("Error creating course:", error);
+    }
+  };
   const fetchCourse = async (params: GetCourseRequest) => {
     try {
       const response = await CourseService.getCourse(params);
@@ -94,7 +167,6 @@ const CourseTable = () => {
       pageSize: 10,
     },
   };
-
   const fetchCategoriesData = async () => {
     try {
       const response = await CategoryService.getCategory(params);
@@ -106,9 +178,8 @@ const CourseTable = () => {
     }
   };
 
-  const fetchCoursesData = async () => {
+  const fetchCoursesData = useCallback(async () => {
     try {
-      setLoading(true);
       const searchCondition = {
         keyword: searchQuery,
         category_id: "",
@@ -126,17 +197,15 @@ const CourseTable = () => {
       });
 
       if (response && response.success) {
-        setLoading(false);
         const convertedData = response.data.pageData.map(convertToCourse);
         setCoursesData(convertedData);
         setIsDataEmpty(convertedData.length === 0);
       }
     } catch (error) {
       console.error("Failed to fetch courses:", error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [searchQuery, filterValue, coursesData]);
+
   useEffect(() => {
     if (hasMounted.current) return;
     hasMounted.current = true;
@@ -151,8 +220,8 @@ const CourseTable = () => {
       if (response && response.data && response.data.data) {
         const course = convertToCourse(response.data.data);
         if (course.price > 0) {
-          setCourseType("paid")
-        } else setCourseType("free")
+          setCourseType("paid");
+        } else setCourseType("free");
         setSelectedCourse(course);
 
         setFormData({
@@ -164,6 +233,7 @@ const CourseTable = () => {
         )?.category_name;
         setSelectedCategoryName(categoryName || "");
         setIsModalVisible(true);
+        await fetchCoursesData();
       }
     } catch (error) {
       console.error("Error fetching course details:", error);
@@ -200,6 +270,7 @@ const CourseTable = () => {
         message.success("Course updated successfully!");
         fetchCoursesData();
         setIsModalVisible(false);
+        await fetchCoursesData();
       } else {
         message.error("Failed to update course.");
       }
@@ -217,13 +288,8 @@ const CourseTable = () => {
         comment: `Changed status to ${status}`,
       });
       if (response && response.data.success) {
-        setCoursesData((prevCourses) =>
-          prevCourses.map((course) =>
-            course._id === id ? { ...course, status } : course
-          )
-        );
-
         message.success(`Course status updated to ${status}!`);
+        await fetchCoursesData();
       }
     } catch (error) {
       message.error("Failed to update course status!");
@@ -251,14 +317,8 @@ const CourseTable = () => {
         comment: "Sent to admin for approval",
       });
       if (response && response.data.success) {
-        setCoursesData((prevCourses) =>
-          prevCourses.map((course) =>
-            course._id === courseId
-              ? { ...course, status: CourseStatusEnum.WaitingApprove }
-              : course
-          )
-        );
         message.success("Course status updated to Waiting for Approval!");
+        await fetchCoursesData();
       }
     } catch (error) {
       console.error("Error sending course:", error);
@@ -269,22 +329,21 @@ const CourseTable = () => {
     try {
       const response = await CourseService.deleteCourse(courseId);
       if (response && response.data.success) {
-        setCoursesData((prevCourses) =>
-          prevCourses.filter((course) => course._id !== courseId)
-        );
         message.success("Course deleted successfully!");
+        await fetchCoursesData();
       }
     } catch (error) {
       message.error("Failed to delete course!");
       console.error("Error deleting course:", error);
     }
   };
-  const handleSearch = () => {
-    fetchCoursesData();
+  const handleSearch = async () => {
+    await fetchCoursesData();
   };
 
   const extractYouTubeID = (url: string) => {
-    const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const regExp =
+      /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     return match && match[2].length === 11 ? match[2] : null;
   };
@@ -455,10 +514,11 @@ const CourseTable = () => {
                     onChangeStatus(record._id, newStatus);
                   }}
                   disabled={!canChangeStatus}
-                  className={`transition-all duration-300 ${record.status === CourseStatusEnum.Active
-                    ? "bg-blue-500"
-                    : "bg-gray-500"
-                    }`}
+                  className={`transition-all duration-300 ${
+                    record.status === CourseStatusEnum.Active
+                      ? "bg-blue-500"
+                      : "bg-gray-500"
+                  }`}
                 />
               </Popover>
             )}
@@ -492,20 +552,19 @@ const CourseTable = () => {
           {[CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(
             record.status
           ) && (
-              <Popover content="Send course to admin">
-                <Button
-                  className="bg-green-400 hover:bg-green-600 text-white"
-                  onClick={() => handleSendClick(record._id)}
-                >
-                  <SendOutlined />
-                </Button>
-              </Popover>
-            )}
+            <Popover content="Send course to admin">
+              <Button
+                className="bg-green-400 hover:bg-green-600 text-white"
+                onClick={() => handleSendClick(record._id)}
+              >
+                <SendOutlined />
+              </Button>
+            </Popover>
+          )}
         </div>
       ),
     },
   ];
-  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
     <div className="w-full">
@@ -536,7 +595,9 @@ const CourseTable = () => {
             <Option value={CourseStatusEnum.Inactive}>Inactive</Option>
           </Select>
         </div>
-        <ButtonCourse />
+        <Button onClick={showModal} style={{ marginRight: "10px" }}>
+          Create Course
+        </Button>
       </div>
 
       {isDataEmpty ? (
@@ -550,14 +611,187 @@ const CourseTable = () => {
           pagination={{ pageSize: 10 }}
         />
       )}
+      <Modal
+        title="Create Course"
+        open={isAddModalVisible}
+        width={800}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <Form onFinish={handleSubmit}>
+          <Form.Item
+            name="name"
+            label="Name"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
+          >
+            <Input placeholder="Nhập tên khóa học" />
+          </Form.Item>
 
+          <Form.Item
+            name="category_id"
+            label="Category"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
+          >
+            <Select placeholder="Chọn thể loại">
+              {categoryData.map((category) => (
+                <Option key={category._id} value={category._id}>
+                  {category.name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="description"
+            label="Description"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
+          >
+            <Input.TextArea placeholder="Enter course's description" />
+          </Form.Item>
+
+          <Form.Item
+            name="content"
+            label="Content"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
+          >
+            <Editor
+              onInit={(_evt, editor) => (editorRef.current = editor)}
+              apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
+              init={{
+                width: "100%",
+                height: 300,
+                plugins: [
+                  "advlist",
+                  "autolink",
+                  "link",
+                  "image",
+                  "lists",
+                  "charmap",
+                  "preview",
+                  "anchor",
+                  "pagebreak",
+                  "searchreplace",
+                  "wordcount",
+                  "visualblocks",
+                  "code",
+                  "fullscreen",
+                  "insertdatetime",
+                  "media",
+                  "table",
+                  "emoticons",
+                  "help",
+                ],
+                toolbar:
+                  "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | " +
+                  "bullist numlist outdent indent | link image | print preview media fullscreen | " +
+                  "forecolor backcolor emoticons | help",
+                menubar: "file edit view insert format tools table help",
+                content_style:
+                  "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="video_url"
+            label="Video URL"
+            labelCol={{ span: 24 }}
+            // rules={[{ required: true }]}
+          >
+            <Input
+              placeholder="Nhập đường dẫn video"
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="image_url"
+            label="Image URL"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
+          >
+            <Input
+              placeholder="Nhập đường dẫn hình ảnh"
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="courseT ype"
+            label={
+              <span>
+                <span style={{ color: "red" }}>*</span> Course Type
+              </span>
+            }
+            labelCol={{ span: 24 }}
+          >
+            <Radio.Group
+              onChange={(e) => setCourseType(e.target.value)}
+              defaultValue="free"
+            >
+              <Radio value="free">Free</Radio>
+              <Radio value="paid">Paid</Radio>
+            </Radio.Group>
+          </Form.Item>
+          {courseType === "paid" && (
+            <Form.Item
+              name="price"
+              label="Price"
+              labelCol={{ span: 24 }}
+              rules={[
+                { required: true, message: "Giá là trường bắt buộc" },
+                {
+                  validator: (_, value) => {
+                    if (value && !isNaN(value) && Number(value) >= 0) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error("Giá phải là số không âm"));
+                  },
+                },
+              ]}
+            >
+              <Input
+                type="number"
+                placeholder="Nhập giá khóa học"
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, "");
+                  e.target.value = value;
+                }}
+              />
+            </Form.Item>
+          )}
+
+          {courseType === "paid" && (
+            <Form.Item
+              name="discount"
+              label="Discount"
+              labelCol={{ span: 24 }}
+              rules={[{ required: true }]}
+            >
+              <Input
+                type="number"
+                placeholder="Nhập phần trăm giảm giá (nếu có)"
+              />
+            </Form.Item>
+          )}
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Create Course
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
       <Modal
         title="Update Course"
         visible={isModalVisible}
         width={800}
         onCancel={handleModalCancel}
         footer={null}
-
       >
         {selectedCourse && (
           <Form layout="vertical">
@@ -613,15 +847,36 @@ const CourseTable = () => {
                 </span>
               }
               validateStatus={!selectedCourse?.description ? "error" : ""}
-              help={!selectedCourse?.description ? "Description is required" : ""}
+              help={
+                !selectedCourse?.description ? "Description is required" : ""
+              }
+            >
+              <Input
+                value={selectedCourse?.description || ""}
+                onChange={(e) =>
+                  setSelectedCourse((prev) =>
+                    prev ? { ...prev, description: e.target.value } : null
+                  )
+                }
+              />
+            </Form.Item>
+            <Form.Item
+              label={
+                <span>
+                  <span style={{ color: "red" }}>*</span> Content
+                </span>
+              }
+              validateStatus={!selectedCourse?.content ? "error" : ""}
+              help={!selectedCourse?.content ? "Content is required" : ""}
             >
               <Editor
                 onInit={(_evt, editor) => (editorRef.current = editor)}
                 apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
                 //selectedCourse
-                value={selectedCourse.description || ''}
-                onEditorChange={(content) => setSelectedCourse({ ...selectedCourse, description: content })}
-
+                value={selectedCourse.content || ""}
+                onEditorChange={(content) =>
+                  setSelectedCourse({ ...selectedCourse, content: content })
+                }
                 init={{
                   width: "100%",
                   height: 300,
@@ -661,46 +916,64 @@ const CourseTable = () => {
               <Input
                 value={formData.video_url}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, video_url: e.target.value }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    video_url: e.target.value,
+                  }))
                 }
                 placeholder="Enter video URL"
               />
             </Form.Item>
-            {formData.video_url && (
-              formData.video_url.includes('youtube.com') || formData.video_url.includes('youtu.be') ? (
+            {formData.video_url &&
+              (formData.video_url.includes("youtube.com") ||
+              formData.video_url.includes("youtu.be") ? (
                 <iframe
                   width="100%"
                   height="315"
-                  src={`https://www.youtube.com/embed/${extractYouTubeID(formData.video_url)}`}
+                  src={`https://www.youtube.com/embed/${extractYouTubeID(
+                    formData.video_url
+                  )}`}
                   title="YouTube video"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style={{ marginTop: '10px' }}
+                  style={{ marginTop: "10px" }}
                 ></iframe>
               ) : (
-                <video src={formData.video_url} controls style={{ width: '100%', marginTop: '10px' }} />
-              )
-            )}
+                <video
+                  src={formData.video_url}
+                  controls
+                  style={{ width: "100%", marginTop: "10px" }}
+                />
+              ))}
 
             {/* New Image Input Field */}
-            <Form.Item label={
-              <span>
-                <span style={{ color: "red" }}>*</span> Image URL
-              </span>
-            }
+            <Form.Item
+              label={
+                <span>
+                  <span style={{ color: "red" }}>*</span> Image URL
+                </span>
+              }
               validateStatus={!selectedCourse?.image_url ? "error" : ""}
-              help={!selectedCourse?.image_url ? "Image URL is required" : ""}>
+              help={!selectedCourse?.image_url ? "Image URL is required" : ""}
+            >
               <Input
                 value={formData.image_url}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, image_url: e.target.value }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    image_url: e.target.value,
+                  }))
                 }
                 placeholder="Enter image URL"
               />
             </Form.Item>
             {formData.image_url && (
-              <img src={formData.image_url} alt="Selected" style={{ width: '100%', marginTop: '10px' }} />
+              <img
+                src={formData.image_url}
+                alt="Selected"
+                style={{ width: "100%", marginTop: "10px" }}
+              />
             )}
 
             <Form.Item
@@ -729,7 +1002,6 @@ const CourseTable = () => {
                     <span style={{ color: "red" }}>*</span> Price
                   </span>
                 }
-
               >
                 <Input
                   type="number"
@@ -763,7 +1035,6 @@ const CourseTable = () => {
               type="primary"
               onClick={handleSaveCourse}
               icon={<SendOutlined />}
-
             >
               Save
             </Button>
