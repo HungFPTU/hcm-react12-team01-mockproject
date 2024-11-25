@@ -4,10 +4,9 @@ import ProfileForm from "./form/ProfileForm";
 import { notification } from "antd";
 import { User, UpdateUser } from "../../../../model/User";
 import { UserSettingService } from "../../../../services/SettingService/user-service";
-
+import { getCurrentUser } from "../../../../services/auth.service";
 const SettingProfile = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const userInfo = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -16,7 +15,7 @@ const SettingProfile = () => {
       const response = await UserSettingService.getUserById(userInfo._id);
       const userData = response.data.data; // Assuming the user data is in the 'data' property
       setUser(userData);
-      setAvatarUrl(userData.avatar_url || "");
+      getCurrentUser();
     } catch (error) {
       notification.error({ message: `Failed to load user data: ${error}` });
     } finally {
@@ -33,7 +32,6 @@ const SettingProfile = () => {
       if (user) {
         await UserSettingService.updateUser(userInfo._id, {
           ...updatedData,
-          avatar_url: avatarUrl,
         });
         notification.success({ message: "Profile updated successfully!" });
 
@@ -52,10 +50,7 @@ const SettingProfile = () => {
 
   return (
     <div className="p-8">
-      <ProfileForm
-        user={{ ...user, avatar_url: avatarUrl }}
-        onUpdate={handleUpdate}
-      />
+      <ProfileForm user={{ ...user }} onUpdate={handleUpdate} />
     </div>
   );
 };

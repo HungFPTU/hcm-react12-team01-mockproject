@@ -8,7 +8,6 @@ const CoursesLogTable = () => {
     const [coursesLogData, setCoursesLogData] = useState<CourseLogResponseData[]>([]);
     const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
-    const [activeSearch, setActiveSearch] = useState("");
     const [isDataEmpty, setIsDataEmpty] = useState(false);
     const hasMounted = useRef(false);
 
@@ -18,7 +17,7 @@ const CoursesLogTable = () => {
             // 1. Fetch courses first
             const courseResponse = await CourseService.getCourse({
                 searchCondition: {
-                    keyword: activeSearch,
+                    keyword: searchQuery,
                     category_id: "",
                     status: undefined,
                     is_delete: false,
@@ -36,7 +35,7 @@ const CoursesLogTable = () => {
                 const coursesLogPromises = courseResponse.data.data.pageData.map(async (course) => {
                     const courseLogResponse = await CourseService.getCourseLog({
                         searchCondition: {
-                            keyword: activeSearch,
+                            keyword: searchQuery,
                             course_id: course._id, // Fetch logs for this specific course ID
                             old_status: undefined,
                             new_status: undefined,
@@ -70,14 +69,14 @@ const CoursesLogTable = () => {
     };
 
     const filteredCourses = coursesLogData.filter((course) =>
-        course.course_name.toLowerCase().includes(activeSearch.toLowerCase())
+        course.course_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     useEffect(() => {
         if (hasMounted.current) return;
         hasMounted.current = true;
         fetchCourseLogData();
-    }, [searchQuery]);
+    }, []);
 
     useEffect(() => {
         if (coursesData.length > 0) {
@@ -86,7 +85,7 @@ const CoursesLogTable = () => {
     }, [coursesData]);
 
     const handleSearch = () => {
-        setActiveSearch(searchQuery);
+        fetchCourseLogData();
     };
 
 

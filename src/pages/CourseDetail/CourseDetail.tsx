@@ -124,9 +124,9 @@ useEffect(() => {
               <h1 className="text-white text-6xl font-bold">
                 {course?.name || "Course Name"}
               </h1>
-              {/* <p className="text-slate-300 text-xl py-3">
+              <p className="text-slate-300 text-xl py-3">
                 {course?.description || "No description available."}
-              </p> */}
+              </p>
             </Col>
           </Row>
           <div className="mt-auto flex items-center mb-6">
@@ -145,7 +145,7 @@ useEffect(() => {
 
                     <Col span={14} className="w-full mt-4">
                             <h1 className="text-3xl text-left font-bold pl-12">What will you learn in this course?</h1>
-                            <div className="text-lg mt-4 text-left pl-12" dangerouslySetInnerHTML={{ __html: course?.description || "" }}>
+                            <div className="text-lg mt-4 text-left pl-12" dangerouslySetInnerHTML={{ __html: course?.content || "" }}>
                             </div>
 
                             <h1 className="text-3xl text-left font-bold pl-12 mt-6">Course Content</h1>

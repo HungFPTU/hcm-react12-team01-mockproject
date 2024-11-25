@@ -32,9 +32,8 @@ export const ROUTER_URL = {
     INSTRUCTOR_SUB: "/instructor/subscriptions",
     PAYOUT_INSTRUCTOR_PAGE: "/instructor/payouts",
     PURCHASE_LOG: "/instructor/purchase-log",
-    MY_LEARNING: "/instructor/my-learning"
-
-    // SETTING: "/student/setting",
+    MY_LEARNING: "/instructor/my-learning",
+    SETTING: "/instructor/setting",
   },
   STUDENT: {
     STUDENT_DASHBOARD: "/student",
