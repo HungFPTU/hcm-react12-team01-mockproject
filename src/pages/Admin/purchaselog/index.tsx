@@ -1,142 +1,156 @@
+import { Input, Table } from "antd";
+import { useState, useEffect, useRef } from "react";
+import { PurchaseService } from "../../../services/PurchaseService/purchase.service";
+import { GetPurchaseResponseData } from "../../../model/admin/response/Purchase.response";
 
-import { Table } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import { useState } from "react";
+const PurchaseLogTable = () => {
+  const [purchaseLogData, setPurchaseLogData] = useState<GetPurchaseResponseData[]>([]);
+  const hasMounted = useRef(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-// Định nghĩa kiểu dữ liệu cho log mua hàng
-export type PurchaseLog = {
-  key: string;
-  courseName: string;
-  purchaseNumber: string;
-  status: string;
-  pricePaid: number;
-  discount: string;
-  studentName: string;
-  instructorName: string;
-  createdAt: string;
-};
+  const fetchPurchaseLogData = async () => {
+    try {
+      const response = await PurchaseService.getPurchaseForAdmin({
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+        searchCondition: {
+          purchase_no: searchQuery,
+          cart_no: "",
+          course_id: "",
+          status: "",
+          is_delete: false,
+        },
+      });
+      if (response.data && response.data.data && response.data.data.pageData) {
+        setPurchaseLogData(response.data.data.pageData);
+      } else {
+        console.error("pageData không tồn tại trong phản hồi:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching purchase logs:", error);
+    }
+  };
+  // const filteredPurchaseLogData = purchaseLogData.filter((purchase) =>
+  //   purchase.purchase_no.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
 
-// Dữ liệu mẫu
-const initialData: PurchaseLog[] = [
-  {
-    key: "1",
-    courseName: "Yoga for Kids Relaxation, Emotional Well-being With Poses",
-    purchaseNumber: "PURCHASE_ZOOIE20241009",
-    status: "NEW",
-    pricePaid: 180.0,
-    discount: "None",
-    studentName: "Group2",
-    instructorName: "Luu Ka Ka",
-    createdAt: "09/10/2024",
-  },
-  {
-    key: "3",
-    courseName: "Yoga for Kids Relaxation, Emotional Well-being With Poses",
-    purchaseNumber: "PURCHASE_ZOOIE20241009",
-    status: "NEW",
-    pricePaid: 180.0,
-    discount: "None",
-    studentName: "Group2",
-    instructorName: "Luu Ka Ka",
-    createdAt: "09/10/2024",
-  },
-  {
-    key: "4",
-    courseName: "Yoga for Kids Relaxation, Emotional Well-being With Poses",
-    purchaseNumber: "PURCHASE_ZOOIE20241009",
-    status: "NEW",
-    pricePaid: 180.0,
-    discount: "None",
-    studentName: "Group2",
-    instructorName: "Luu Ka Ka",
-    createdAt: "09/10/2024",
-  },
-  {
-    key: "5",
-    courseName: "Yoga for Kids Relaxation, Emotional Well-being With Poses",
-    purchaseNumber: "PURCHASE_ZOOIE20241009",
-    status: "NEW",
-    pricePaid: 180.0,
-    discount: "None",
-    studentName: "Group2",
-    instructorName: "Luu Ka Ka",
-    createdAt: "09/10/2024",
-  },
-  {
-    key: "6",
-    courseName: "Yoga for Kids Relaxation, Emotional Well-being With Poses",
-    purchaseNumber: "PURCHASE_ZOOIE20241009",
-    status: "NEW",
-    pricePaid: 180.0,
-    discount: "None",
-    studentName: "Group2",
-    instructorName: "Luu Ka Ka",
-    createdAt: "09/10/2024",
-  },
-  {
-    key: "7",
-    courseName: "Complete Guitar Lessons System - Beginner to Advanced",
-    purchaseNumber: "PURCHASE_TNLZJ20241007",
-    status: "NEW",
-    pricePaid: 489.65,
-    discount: "10%",
-    studentName: "Ngô Thị Tuyết Trúc",
-    instructorName: "Luu Ka Ka",
-    createdAt: "07/10/2024",
-  },
-  // Thêm các mục dữ liệu khác theo cùng một cấu trúc
-];
+  useEffect(() => {
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+    fetchPurchaseLogData();
+  }, []);
 
-// Component để hiển thị bảng log mua hàng
-function PurchaseLogTable() {
-  const [data] = useState<PurchaseLog[]>(initialData);
+  useEffect(() => {
+    if (purchaseLogData.length > 0) {
+      console.log("Có khóa học trong purchaseLogData:", purchaseLogData);
+    }
+  }, [purchaseLogData]);
 
-  const columns: ColumnsType<PurchaseLog> = [
+  const handleSearch = () => {
+    fetchPurchaseLogData();
+  };
+
+  const columns = [
     {
       title: "Course Name",
-      dataIndex: "courseName",
-      key: "courseName",
+      dataIndex: "course_name",
+      key: "course_name",
+      render: (text: string) => <span>{text}</span>,
     },
     {
       title: "Purchase Number",
-      dataIndex: "purchaseNumber",
-      key: "purchaseNumber",
+      dataIndex: "purchase_no",
+      key: "purchase_no",
+      render: (text: string) => <span>{text}</span>,
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (text) => <span>{text}</span>,
+      render: (text: string) => {
+        let color;
+        switch (text) {
+          case "new":
+            color = "blue"; // Màu xanh dương cho status new
+            break;
+          case "completed":
+            color = "green"; // Màu xanh lá cho status complete
+            break;
+          case "waiting paid":
+            color = "gold"; // Màu vàng cho status waiting paid
+            break;
+          default:
+            color = "black"; // Màu mặc định
+        }
+        return (
+          <span style={{ color, border: `1px solid ${color}`, padding: '2px 4px', borderRadius: '4px' }}>
+            {text}
+          </span>
+        );
+      },
     },
     {
       title: "Price Paid",
-      dataIndex: "pricePaid",
-      key: "pricePaid",
-      render: (price) => `$${price.toFixed(2)}`,
+      dataIndex: "price_paid",
+      key: "price_paid",
+      render: (price: number) => <span>${price ? price.toFixed(2) : 'N/A'}</span>,
     },
     {
       title: "Discount",
       dataIndex: "discount",
       key: "discount",
+      render: (discount: number) => <span>${discount ? discount.toFixed(2) : 'N/A'}</span>,
     },
     {
       title: "Student Name",
-      dataIndex: "studentName",
-      key: "studentName",
+      dataIndex: "student_name",
+      key: "student_name",
+      render: (text: string) => <span>{text}</span>,
     },
     {
       title: "Instructor Name",
-      dataIndex: "instructorName",
-      key: "instructorName",
+      dataIndex: "instructor_name",
+      key: "instructor_name",
+      render: (text: string) => <span>{text}</span>,
     },
     {
       title: "Created At",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (date: Date) => <span>{new Date(date).toLocaleDateString()}</span>,
     },
   ];
 
-  return <Table dataSource={data} columns={columns} rowKey="key" />;
+  return (
+    <div className="w-5em">
+      <Input.Search
+        className="w-1/4"
+        placeholder="Search courses..."
+        value={searchQuery}
+        onSearch={handleSearch}
+        onPressEnter={handleSearch}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        enterButton
+      />
+      <div className="w-full">
+      <Table<GetPurchaseResponseData>
+        dataSource={purchaseLogData}
+        columns={columns} 
+        rowKey="purchase_no"
+        className="w-full shadow-md rounded-lg overflow-hidden"
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total} courses`,
+        }}
+        />
+      </div>
+    </div>
+  );
 }
 
 export default PurchaseLogTable;
