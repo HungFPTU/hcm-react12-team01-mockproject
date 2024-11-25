@@ -1,9 +1,23 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Table, Button, Switch, message, Popover, Modal, Form, Input, Select, Radio } from "antd";
+import {
+  Table,
+  Button,
+  Switch,
+  message,
+  Popover,
+  Modal,
+  Form,
+  Input,
+  Select,
+  Radio,
+} from "antd";
 import { CourseStatusEnum } from "../../../../../model/Course";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { CategoryService } from "../../../../../services/category/category.service";
-import { CreateCourseRequest, GetCourseRequest } from "../../../../../model/admin/request/Course.request";
+import {
+  CreateCourseRequest,
+  GetCourseRequest,
+} from "../../../../../model/admin/request/Course.request";
 import { SendOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { GetCategoryRequest } from "../../../../../model/admin/request/Category.request";
 import { Editor } from "@tinymce/tinymce-react";
@@ -69,7 +83,6 @@ const CourseTable = () => {
   );
   const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
 
-
   const [formData, setFormData] = useState({
     image_url: "",
     video_url: "",
@@ -78,7 +91,6 @@ const CourseTable = () => {
   const hasMounted = useRef(false);
   const showModal = () => {
     setAddIsModalVisible(true);
-
 
     if (categoryData.length === 0) {
       const params = {
@@ -109,12 +121,10 @@ const CourseTable = () => {
   };
   const handleSubmit = async (values: any) => {
     try {
-      const content = values.content || "";
+      const description = values.description || "";
       const price = Number(values.price);
       const discount = Number(values.discount);
-      const description = editorRef.current
-        ? editorRef.current.getContent()
-        : ""; // Lấy nội dung từ editor
+      const content = editorRef.current ? editorRef.current.getContent() : ""; // Lấy nội dung từ editor
 
       const { name, video_url, image_url, category_id } = values;
       const newCourse: CreateCourseRequest = {
@@ -193,10 +203,8 @@ const CourseTable = () => {
       }
     } catch (error) {
       console.error("Failed to fetch courses:", error);
-    } finally {
     }
   }, [searchQuery, filterValue, coursesData]);
-
 
   useEffect(() => {
     if (hasMounted.current) return;
@@ -212,8 +220,8 @@ const CourseTable = () => {
       if (response && response.data && response.data.data) {
         const course = convertToCourse(response.data.data);
         if (course.price > 0) {
-          setCourseType("paid")
-        } else setCourseType("free")
+          setCourseType("paid");
+        } else setCourseType("free");
         setSelectedCourse(course);
 
         setFormData({
@@ -311,7 +319,6 @@ const CourseTable = () => {
       if (response && response.data.success) {
         message.success("Course status updated to Waiting for Approval!");
         await fetchCoursesData();
-
       }
     } catch (error) {
       console.error("Error sending course:", error);
@@ -322,7 +329,6 @@ const CourseTable = () => {
     try {
       const response = await CourseService.deleteCourse(courseId);
       if (response && response.data.success) {
-
         message.success("Course deleted successfully!");
         await fetchCoursesData();
       }
@@ -333,11 +339,11 @@ const CourseTable = () => {
   };
   const handleSearch = async () => {
     await fetchCoursesData();
-
   };
 
   const extractYouTubeID = (url: string) => {
-    const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const regExp =
+      /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     return match && match[2].length === 11 ? match[2] : null;
   };
@@ -508,10 +514,11 @@ const CourseTable = () => {
                     onChangeStatus(record._id, newStatus);
                   }}
                   disabled={!canChangeStatus}
-                  className={`transition-all duration-300 ${record.status === CourseStatusEnum.Active
-                    ? "bg-blue-500"
-                    : "bg-gray-500"
-                    }`}
+                  className={`transition-all duration-300 ${
+                    record.status === CourseStatusEnum.Active
+                      ? "bg-blue-500"
+                      : "bg-gray-500"
+                  }`}
                 />
               </Popover>
             )}
@@ -545,15 +552,15 @@ const CourseTable = () => {
           {[CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(
             record.status
           ) && (
-              <Popover content="Send course to admin">
-                <Button
-                  className="bg-green-400 hover:bg-green-600 text-white"
-                  onClick={() => handleSendClick(record._id)}
-                >
-                  <SendOutlined />
-                </Button>
-              </Popover>
-            )}
+            <Popover content="Send course to admin">
+              <Button
+                className="bg-green-400 hover:bg-green-600 text-white"
+                onClick={() => handleSendClick(record._id)}
+              >
+                <SendOutlined />
+              </Button>
+            </Popover>
+          )}
         </div>
       ),
     },
@@ -642,6 +649,15 @@ const CourseTable = () => {
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
+            <Input.TextArea placeholder="Enter course's description" />
+          </Form.Item>
+
+          <Form.Item
+            name="content"
+            label="Content"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true }]}
+          >
             <Editor
               onInit={(_evt, editor) => (editorRef.current = editor)}
               apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
@@ -681,20 +697,10 @@ const CourseTable = () => {
           </Form.Item>
 
           <Form.Item
-            name="content"
-            label="Content"
-            labelCol={{ span: 24 }}
-            rules={[{ required: true }]}
-          >
-            <Input.TextArea placeholder="Nhập nội dung khóa học" />
-          </Form.Item>
-
-
-          <Form.Item
             name="video_url"
             label="Video URL"
             labelCol={{ span: 24 }}
-          // rules={[{ required: true }]}
+            // rules={[{ required: true }]}
           >
             <Input
               placeholder="Nhập đường dẫn video"
@@ -722,7 +728,6 @@ const CourseTable = () => {
               </span>
             }
             labelCol={{ span: 24 }}
-
           >
             <Radio.Group
               onChange={(e) => setCourseType(e.target.value)}
@@ -787,7 +792,6 @@ const CourseTable = () => {
         width={800}
         onCancel={handleModalCancel}
         footer={null}
-
       >
         {selectedCourse && (
           <Form layout="vertical">
@@ -843,15 +847,36 @@ const CourseTable = () => {
                 </span>
               }
               validateStatus={!selectedCourse?.description ? "error" : ""}
-              help={!selectedCourse?.description ? "Description is required" : ""}
+              help={
+                !selectedCourse?.description ? "Description is required" : ""
+              }
+            >
+              <Input
+                value={selectedCourse?.description || ""}
+                onChange={(e) =>
+                  setSelectedCourse((prev) =>
+                    prev ? { ...prev, description: e.target.value } : null
+                  )
+                }
+              />
+            </Form.Item>
+            <Form.Item
+              label={
+                <span>
+                  <span style={{ color: "red" }}>*</span> Content
+                </span>
+              }
+              validateStatus={!selectedCourse?.content ? "error" : ""}
+              help={!selectedCourse?.content ? "Content is required" : ""}
             >
               <Editor
                 onInit={(_evt, editor) => (editorRef.current = editor)}
                 apiKey="8pum9vec37gu7gir1pnpc24mtz2yl923s6xg7x1bv4rcwxpe"
                 //selectedCourse
-                value={selectedCourse.description || ''}
-                onEditorChange={(content) => setSelectedCourse({ ...selectedCourse, description: content })}
-
+                value={selectedCourse.content || ""}
+                onEditorChange={(content) =>
+                  setSelectedCourse({ ...selectedCourse, content: content })
+                }
                 init={{
                   width: "100%",
                   height: 300,
@@ -891,46 +916,64 @@ const CourseTable = () => {
               <Input
                 value={formData.video_url}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, video_url: e.target.value }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    video_url: e.target.value,
+                  }))
                 }
                 placeholder="Enter video URL"
               />
             </Form.Item>
-            {formData.video_url && (
-              formData.video_url.includes('youtube.com') || formData.video_url.includes('youtu.be') ? (
+            {formData.video_url &&
+              (formData.video_url.includes("youtube.com") ||
+              formData.video_url.includes("youtu.be") ? (
                 <iframe
                   width="100%"
                   height="315"
-                  src={`https://www.youtube.com/embed/${extractYouTubeID(formData.video_url)}`}
+                  src={`https://www.youtube.com/embed/${extractYouTubeID(
+                    formData.video_url
+                  )}`}
                   title="YouTube video"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style={{ marginTop: '10px' }}
+                  style={{ marginTop: "10px" }}
                 ></iframe>
               ) : (
-                <video src={formData.video_url} controls style={{ width: '100%', marginTop: '10px' }} />
-              )
-            )}
+                <video
+                  src={formData.video_url}
+                  controls
+                  style={{ width: "100%", marginTop: "10px" }}
+                />
+              ))}
 
             {/* New Image Input Field */}
-            <Form.Item label={
-              <span>
-                <span style={{ color: "red" }}>*</span> Image URL
-              </span>
-            }
+            <Form.Item
+              label={
+                <span>
+                  <span style={{ color: "red" }}>*</span> Image URL
+                </span>
+              }
               validateStatus={!selectedCourse?.image_url ? "error" : ""}
-              help={!selectedCourse?.image_url ? "Image URL is required" : ""}>
+              help={!selectedCourse?.image_url ? "Image URL is required" : ""}
+            >
               <Input
                 value={formData.image_url}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, image_url: e.target.value }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    image_url: e.target.value,
+                  }))
                 }
                 placeholder="Enter image URL"
               />
             </Form.Item>
             {formData.image_url && (
-              <img src={formData.image_url} alt="Selected" style={{ width: '100%', marginTop: '10px' }} />
+              <img
+                src={formData.image_url}
+                alt="Selected"
+                style={{ width: "100%", marginTop: "10px" }}
+              />
             )}
 
             <Form.Item
@@ -959,7 +1002,6 @@ const CourseTable = () => {
                     <span style={{ color: "red" }}>*</span> Price
                   </span>
                 }
-
               >
                 <Input
                   type="number"
@@ -993,7 +1035,6 @@ const CourseTable = () => {
               type="primary"
               onClick={handleSaveCourse}
               icon={<SendOutlined />}
-
             >
               Save
             </Button>
