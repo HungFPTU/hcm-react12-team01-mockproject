@@ -8,15 +8,17 @@ import { Category } from "../../../../../model/admin/response/Category.response"
 import { Editor } from "@tinymce/tinymce-react";
 
 const { Option } = Select;
-
-const ButtonCourse = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+interface ButtonCourseProps {
+  onAdd: () => void;
+}
+const ButtonCourse: React.FC<ButtonCourseProps> = ({ onAdd }) => {
+  const [isAddModalVisible, setAddIsModalVisible] = useState(false);
   const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [courseType, setCourseType] = useState("free");
   const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
 
   const showModal = () => {
-    setIsModalVisible(true);
+    setAddIsModalVisible(true);
 
 
     if (categoryData.length === 0) {
@@ -45,7 +47,7 @@ const ButtonCourse = () => {
   };
 
   const handleCancel = () => {
-    setIsModalVisible(false);
+    setAddIsModalVisible(false);
   };
 
   const handleSubmit = async (values: any) => {
@@ -74,8 +76,9 @@ const ButtonCourse = () => {
       if (response && response.data.success) {
         message.success("Khóa học đã được tạo thành công!");
         console.log("API Response:", response);
+        onAdd();
+        setAddIsModalVisible(false);
       }
-      setIsModalVisible(false);
     } catch (error) {
       console.error("Error creating course:", error);
     }
@@ -89,7 +92,7 @@ const ButtonCourse = () => {
 
       <Modal
         title="Create Course"
-        open={isModalVisible}
+        open={isAddModalVisible}
         width={800}
         onCancel={handleCancel}
         footer={null}
