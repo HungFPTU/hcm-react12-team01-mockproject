@@ -7,7 +7,7 @@ const Dashboard = lazy(() => import("../../pages/Admin/Dashboard"));
 const AllCourses = lazy (() => import("../../pages/Admin/allcourses"))
 const CoursesLog = lazy (() => import("../../pages/Admin/courselog"))
 const PendingCourses = lazy (() => import("../../pages/Admin/PendingCourses"))
-const PurchaseLog = lazy (() => import("../../pages/Admin/Purchaselog"))
+const PurchaseLog = lazy (() => import("../../pages/Admin/purchaselog"))
 const CategoryManagement = lazy (() => import("../../pages/Admin/CategoryManagement"))
 const RequestManagement = lazy (() => import("../../pages/Admin/RequestManagement"))
 const UserManagement = lazy (() => import("../../pages/Admin/UserManagement"))

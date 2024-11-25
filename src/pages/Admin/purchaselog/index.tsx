@@ -13,7 +13,7 @@ const PurchaseLogTable = () => {
       const response = await PurchaseService.getPurchaseForAdmin({
         pageInfo: {
           pageNum: 1,
-          pageSize: 10,
+          pageSize: 1000,
         },
         searchCondition: {
           purchase_no: searchQuery,
