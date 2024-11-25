@@ -2,18 +2,48 @@ import { lazy } from "react";
 import { ROUTER_URL } from "../../const/router.const";
 import { RouteObject } from "react-router-dom";
 
-const InstructorDashboard = lazy(() => import("../../pages/InstructorPage/InstructorDashboard"));
-const ManageCourse = lazy(() => import("../../pages/InstructorPage/ManageCourse"));
-const ViewDetailCourse = lazy(() =>import("../../components/InstructorComponents/ManageCourse/Course/ViewDetailCourse"));
-const ViewDetailSession = lazy(() =>import("../../components/InstructorComponents/ManageCourse/Session/ViewDetailSession"));
-const ViewDetailLesson = lazy(() =>import("../../components/InstructorComponents/ManageCourse/Lesson/ViewDetailLesson"));
-const SalesHistory = lazy(() => import("../../components/InstructorComponents/SalesHistory"));
-const InstructorCourseLog = lazy(() => import("../../pages/InstructorPage/InstructorCourseLog"));
-const Review = lazy(() => import("../../components/InstructorComponents/Review"));
-const InstructorSub = lazy(() => import("../../pages/InstructorPage/InstructorSub"));
-const PayoutInstructorPage = lazy(() => import("../../pages/InstructorPage/PayoutInstructorPage"));
+const InstructorDashboard = lazy(
+  () => import("../../pages/InstructorPage/InstructorDashboard")
+);
+const ManageCourse = lazy(
+  () => import("../../pages/InstructorPage/ManageCourse")
+);
+const ViewDetailCourse = lazy(
+  () =>
+    import(
+      "../../components/InstructorComponents/ManageCourse/Course/ViewDetailCourse"
+    )
+);
+const ViewDetailSession = lazy(
+  () =>
+    import(
+      "../../components/InstructorComponents/ManageCourse/Session/ViewDetailSession"
+    )
+);
+const ViewDetailLesson = lazy(
+  () =>
+    import(
+      "../../components/InstructorComponents/ManageCourse/Lesson/ViewDetailLesson"
+    )
+);
+const SalesHistory = lazy(
+  () => import("../../components/InstructorComponents/SalesHistory")
+);
+const InstructorCourseLog = lazy(
+  () => import("../../pages/InstructorPage/InstructorCourseLog")
+);
+const Review = lazy(
+  () => import("../../components/InstructorComponents/Review")
+);
+const InstructorSub = lazy(
+  () => import("../../pages/InstructorPage/InstructorSub")
+);
+const PayoutInstructorPage = lazy(
+  () => import("../../pages/InstructorPage/PayoutInstructorPage")
+);
 const PurchaseLog = lazy(() => import("../../pages/Admin/purchaselog"));
 const MylearningPage = lazy(() => import("../../pages/MyLearning"));
+const SettingPage = lazy(() => import("../../pages/Student/setting"));
 
 // const SettingPage = lazy(() => import("../../pages/Student/setting"));
 
@@ -78,10 +108,10 @@ export const instructorPaths: Record<string, RouteObject[]> = {
       path: ROUTER_URL.INSTRUCTOR.MY_LEARNING,
       element: <MylearningPage />,
     },
-    // {
-    //     index: false,
-    //     path: ROUTER_URL.INSTRUCTOR.SETTING ,
-    //     element: <SettingPage/>,
-    // },
+    {
+      index: false,
+      path: ROUTER_URL.INSTRUCTOR.SETTING,
+      element: <SettingPage />,
+    },
   ],
 };

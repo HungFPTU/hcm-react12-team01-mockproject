@@ -1,7 +1,6 @@
 import { useState } from "react";
 import SettingTabs from "../../../components/StudentComponents/setting/tab";
 import ChangePasswordPage from "./change-password";
-import InstructionReuqestPage from "./instructor-request";
 import ProfilePage from "./profile";
 
 const SettingPage = () => {
@@ -16,7 +15,6 @@ const SettingPage = () => {
       <SettingTabs activeTab={activeTab} onTabChange={handleTabChange} />
       {activeTab === "1" && <ProfilePage />}
       {activeTab === "2" && <ChangePasswordPage />}
-      {activeTab === "3" && <InstructionReuqestPage />}
     </div>
   );
 };
