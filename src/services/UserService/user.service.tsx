@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { API } from "../../const/path.api";
 import { ApiResponse } from "../../model/ApiResponse";
 import { BaseService } from "../config/base.service";
@@ -20,7 +21,7 @@ export const UserService = {
         },
         pageInfo: {
           pageNum: 1,
-          pageSize: 100,
+          pageSize: 10000,
         },
       },
       headers: {
@@ -94,7 +95,7 @@ export const UserService = {
     };
 
     if (status === "reject" && comment) {
-      payload.comment = comment
+      payload.comment = comment;
     }
 
     return BaseService.put<ApiResponse<any>>({
@@ -106,8 +107,6 @@ export const UserService = {
       isLoading: true,
     });
   },
-
-
 
   changeRole(userId: string, role: string) {
     const token = localStorage.getItem("token");
@@ -171,7 +170,7 @@ export const UserService = {
   },
   getUserDetails(instructor_id: string) {
     return BaseService.getById<ApiResponse<User>>({
-      url: API.ADMIN.GET_USER_DETAILS.replace(":id", instructor_id)
+      url: API.ADMIN.GET_USER_DETAILS.replace(":id", instructor_id),
     });
   },
 };

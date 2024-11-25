@@ -4,7 +4,9 @@ import { PurchaseService } from "../../../services/PurchaseService/purchase.serv
 import { GetPurchaseResponseData } from "../../../model/admin/response/Purchase.response";
 
 const PurchaseLogTable = () => {
-  const [purchaseLogData, setPurchaseLogData] = useState<GetPurchaseResponseData[]>([]);
+  const [purchaseLogData, setPurchaseLogData] = useState<
+    GetPurchaseResponseData[]
+  >([]);
   const hasMounted = useRef(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -13,7 +15,7 @@ const PurchaseLogTable = () => {
       const response = await PurchaseService.getPurchaseForAdmin({
         pageInfo: {
           pageNum: 1,
-          pageSize: 10,
+          pageSize: 10000,
         },
         searchCondition: {
           purchase_no: searchQuery,
@@ -85,7 +87,14 @@ const PurchaseLogTable = () => {
             color = "black"; // Màu mặc định
         }
         return (
-          <span style={{ color, border: `1px solid ${color}`, padding: '2px 4px', borderRadius: '4px' }}>
+          <span
+            style={{
+              color,
+              border: `1px solid ${color}`,
+              padding: "2px 4px",
+              borderRadius: "4px",
+            }}
+          >
             {text}
           </span>
         );
@@ -95,13 +104,17 @@ const PurchaseLogTable = () => {
       title: "Price Paid",
       dataIndex: "price_paid",
       key: "price_paid",
-      render: (price: number) => <span>${price ? price.toFixed(2) : 'N/A'}</span>,
+      render: (price: number) => (
+        <span>${price ? price.toFixed(2) : "N/A"}</span>
+      ),
     },
     {
       title: "Discount",
       dataIndex: "discount",
       key: "discount",
-      render: (discount: number) => <span>${discount ? discount.toFixed(2) : 'N/A'}</span>,
+      render: (discount: number) => (
+        <span>${discount ? discount.toFixed(2) : "N/A"}</span>
+      ),
     },
     {
       title: "Student Name",
@@ -119,7 +132,9 @@ const PurchaseLogTable = () => {
       title: "Created At",
       dataIndex: "created_at",
       key: "created_at",
-      render: (date: Date) => <span>{new Date(date).toLocaleDateString()}</span>,
+      render: (date: Date) => (
+        <span>{new Date(date).toLocaleDateString()}</span>
+      ),
     },
   ];
 
@@ -135,22 +150,22 @@ const PurchaseLogTable = () => {
         enterButton
       />
       <div className="w-full">
-      <Table<GetPurchaseResponseData>
-        dataSource={purchaseLogData}
-        columns={columns} 
-        rowKey="purchase_no"
-        className="w-full shadow-md rounded-lg overflow-hidden"
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: true,
-          showQuickJumper: true,
-          showTotal: (total, range) =>
-            `${range[0]}-${range[1]} of ${total} courses`,
-        }}
+        <Table<GetPurchaseResponseData>
+          dataSource={purchaseLogData}
+          columns={columns}
+          rowKey="purchase_no"
+          className="w-full shadow-md rounded-lg overflow-hidden"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} courses`,
+          }}
         />
       </div>
     </div>
   );
-}
+};
 
 export default PurchaseLogTable;
