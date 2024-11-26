@@ -8,6 +8,7 @@ import RegisterInstructor from '../../components/RegisterInstructor/RegisterInst
 import YOUR_IMAGE from '../../assets/Login&Register.jpg';
 import LOGO from '../../assets/logo.png';
 import { FirebaseError } from 'firebase/app';
+import { HomeOutlined } from '@ant-design/icons';
 import { AuthService } from '../../services/authService/auth.service';
 
 interface FormValues {
@@ -17,7 +18,7 @@ interface FormValues {
     confirmPassword: string;
     role: 'student' | 'instructor';
     phone_number?: string;
-    description?: string; 
+    description?: string;
     avatar_url?: string;
     video_url?: string;
     bank_name: string;
@@ -32,11 +33,29 @@ const validationSchema = Yup.object({
     confirmPassword: Yup.string()
         .oneOf([Yup.ref('password')], 'Confirm password does not match!')
         .required('Please confirm your password!'),
+    role: Yup.string().required('Role is required!'),
+    phone_number: Yup.string()
+        .required('Phone number is required!')
+        .matches(/^[0-9]+$/, 'Phone number must be numeric')
+        .min(10, 'Phone number must be at least 10 digits!'),
+    description: Yup.string().required('Description is required!'),
+    avatar_url: Yup.string().url('Invalid URL format!').required('Avatar URL is required!'),
+    video_url: Yup.string().url('Invalid URL format!').required('Video URL is required!'),
+    // bank_name: Yup.string().required('Bank name is required!'),
+    // bank_account_no: Yup.string()
+    //     .required('Bank account number is required!')
+    //     .matches(/^[0-9]+$/, 'Bank account number must be numeric!'),
+    // bank_account_name: Yup.string().required('Bank account name is required!'),
 });
+
 
 const Register = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const handleBackHome = () => {
+        navigate("/");
+        window.location.reload();
+    }
 
     const initialValues: FormValues = {
         name: '',
@@ -56,7 +75,7 @@ const Register = () => {
     const handleRegister = useCallback(async (values: FormValues) => {
         const { name, email, password, role, phone_number, description, avatar_url, video_url, bank_name, bank_account_no, bank_account_name } = values;
         setLoading(true);
-        
+
         try {
             // Tạo payload cho API đăng ký
             const registerPayload = {
@@ -74,11 +93,11 @@ const Register = () => {
                     bank_account_name
                 }),
             };
-    
+
             console.log('registerPayload', registerPayload);
             // Gọi API để đăng ký
             await AuthService.register(registerPayload);
-            
+
             message.success({
                 content: 'Register successful! Please check your email to verify your account.',
                 duration: 6,
@@ -150,14 +169,14 @@ const Register = () => {
                                     <RegisterInstructor
                                         handleChange={handleChange}
                                         handleBlur={handleBlur}
-                                        values={{ 
-                                            phone_number: values.phone_number || '', 
-                                            description: values.description || '', 
-                                            avatar_url: values.avatar_url || '', 
-                                            video_url: values.video_url || '' ,
+                                        values={{
+                                            phone_number: values.phone_number || '',
+                                            description: values.description || '',
+                                            avatar_url: values.avatar_url || '',
+                                            video_url: values.video_url || '',
                                             bank_name: values.bank_name,
                                             bank_account_no: values.bank_account_no,
-                                            bank_account_name: values.bank_account_name 
+                                            bank_account_name: values.bank_account_name
                                         }}
                                     />
                                 )}
@@ -185,6 +204,17 @@ const Register = () => {
                                 > Login</span>
                             </p>
                         </div>
+                    </div>
+                    <div className="absolute top-8 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <button
+                            className="flex items-center text-[#1f0a23] text-lg group"
+                            onClick={handleBackHome}
+                        >
+                            <HomeOutlined
+                                className="mr-2 text-[#1f0a23] text-xl group-hover:text-[#7c3076]"
+                            />
+                            <span className="group-hover:text-[#7c3076]">Back Home</span>
+                        </button>
                     </div>
                 </div>
             </div>
