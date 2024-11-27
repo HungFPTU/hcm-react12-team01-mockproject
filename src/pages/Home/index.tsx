@@ -47,7 +47,7 @@ const Home: React.FC = () => {
           </div>
       </div>
        
-      <div className="topCourse rounded-[50px] bg-[#f9eded] ml-auto mr-auto mt-9">
+      <div className="topCourse bg-[#f9eded] ml-auto mr-auto mt-9">
         <h2 className="text-center mb-11 relative text-3xl sm:text-5xl font-bold">Courses</h2>
         <Course/>
       </div>
