@@ -39,7 +39,6 @@ export const API = {
     GET_SESSIONS: "/api/session/search",
     GET_LESSONS: "/api/lesson/search",
     GET_PURCHASE: "/api/purchase/search",
-
   },
   INSTRUCTOR: {
     GET_USER_DETAILS: "api/users/:id",
