@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Table, Popover, Empty, Modal, Button, } from 'antd';
 import { Payout } from '../../../model/admin/response/Payout.response';
 import { GetPayoutRequest } from '../../../model/admin/request/Payout.request';
-import { PurchaseService } from '../../../services/PurchaseService/purcase.service';
+import { PurchaseService } from '../../../services/PurchaseService/purchase.service';
 import SearchBar from './SearchBar';
 const CompletedPayoutTable: React.FC = () => {
 

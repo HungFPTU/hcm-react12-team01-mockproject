@@ -5,7 +5,6 @@ import { CourseService } from "../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../model/admin/request/Course.request";
 
-
 const TableCourses = () => {
   const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>(
     []
@@ -43,7 +42,7 @@ const TableCourses = () => {
           searchCondition,
           pageInfo: {
             pageNum: 1,
-            pageSize: 10,
+            pageSize: 10000,
           },
         });
 
@@ -165,9 +164,7 @@ const TableCourses = () => {
       dataIndex: "price",
       key: "price",
       render: (price: number) => (
-        <div className="text-right">
-          {price.toLocaleString()} VND
-        </div>
+        <div className="text-right">{price.toLocaleString()} VND</div>
       ),
     },
     {
@@ -175,9 +172,7 @@ const TableCourses = () => {
       dataIndex: "discount",
       key: "discount",
       render: (discount: number) => (
-        <div className="text-right">
-          {discount}%
-        </div>
+        <div className="text-right">{discount}%</div>
       ),
     },
     {
@@ -185,9 +180,7 @@ const TableCourses = () => {
       dataIndex: "session_count",
       key: "session_count",
       render: (session_count: number) => (
-        <div className="text-right">
-          {session_count}
-        </div>
+        <div className="text-right">{session_count}</div>
       ),
     },
     {
@@ -195,9 +188,7 @@ const TableCourses = () => {
       dataIndex: "lesson_count",
       key: "lesson_count",
       render: (lesson_count: number) => (
-        <div className="text-right">
-          {lesson_count}
-        </div>
+        <div className="text-right">{lesson_count}</div>
       ),
     },
     {
@@ -206,7 +197,6 @@ const TableCourses = () => {
       key: "created_at",
       render: (created_at: string) => new Date(created_at).toLocaleDateString(),
     },
-
   ];
   if (loading) return <Spin tip="Loading course details..." />;
 

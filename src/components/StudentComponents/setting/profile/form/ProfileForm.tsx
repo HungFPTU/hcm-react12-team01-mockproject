@@ -48,28 +48,6 @@ const ProfileForm = ({ user, onUpdate }: ProfileFormProps) => {
   };
   return (
     <Form layout="vertical" form={form} onFinish={handleSaveChanges}>
-      {/* <AvatarUpload
-        initialAvatar={avatarUrl || ""}
-        onAvatarChange={setAvatarUrl}
-      /> */}
-      <div className="mb-8 flex justify-center">
-        <div className="relative w-full">
-          <Input
-            placeholder="Enter image URL"
-            value={avatarUrl || ""}
-            onChange={handleAvatarUrlChange}
-          />
-          {avatarUrl && (
-            <>
-              <img
-                src={avatarUrl}
-                alt="Avatar"
-                className="w-32 h-32 rounded-full object-cover"
-              />
-            </>
-          )}
-        </div>
-      </div>
       <Form.Item
         label="Email"
         name="email"
@@ -118,7 +96,30 @@ const ProfileForm = ({ user, onUpdate }: ProfileFormProps) => {
       >
         <Input />
       </Form.Item>
-
+      <Form.Item
+        label="Avatar URL"
+        name="email"
+        rules={[{ required: true, message: "Please enter your avatar url" }]}
+      >
+        <div className="flex justify-center">
+          <div className="relative w-full">
+            <Input
+              placeholder="Enter image URL"
+              value={avatarUrl || ""}
+              onChange={handleAvatarUrlChange}
+            />
+            {avatarUrl && (
+              <>
+                <img
+                  src={avatarUrl}
+                  alt="Avatar"
+                  className="w-32 h-32 mt-4 rounded-full object-cover"
+                />
+              </>
+            )}
+          </div>
+        </div>
+      </Form.Item>
       <Form.Item
         label="Video URL"
         name="video_url"

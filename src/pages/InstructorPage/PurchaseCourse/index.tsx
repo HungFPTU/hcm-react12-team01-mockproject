@@ -1,15 +1,12 @@
 import React from "react";
-import PurchaseCourseTable from "../../../pages/Admin/purchaselog";
+import PurchaseLogTable from "../../../components/InstructorComponents/purchaselog";
 
 const PurchaseCourse: React.FC = () => {
-
-
-    return (
-        <>
-            <h1>This is PurchaseCourse</h1>
-            <PurchaseCourseTable />
-        </>
-    );
+  return (
+    <>
+      <PurchaseLogTable />
+    </>
+  );
 };
 
 export default PurchaseCourse;
