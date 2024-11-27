@@ -155,7 +155,7 @@ export default function Home() {
   ) : (
     <>
       <Button
-        onClick={() => navigate("/login")}
+        onClick={() => navigate("/register")}
         type="text"
         className="font-semibold text-gray-700"
       >
