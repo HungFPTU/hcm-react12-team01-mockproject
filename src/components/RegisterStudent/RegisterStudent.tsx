@@ -13,12 +13,13 @@ interface RegisterStudentProps {
     };
 }
 
-
 const RegisterStudent = ({ handleChange, handleBlur, values }: RegisterStudentProps) => {
     return (
         <>
             {/* Full Name Field */}
             <div className="relative mb-2">
+                <label className="text-red-500 text-sm mr-2">*</label>
+                <label className="text-sm">Full Name</label>
                 <Field
                     as={Input}
                     name="name"
@@ -28,11 +29,13 @@ const RegisterStudent = ({ handleChange, handleBlur, values }: RegisterStudentPr
                     onBlur={handleBlur}
                     value={values.name}
                 />
-                <ErrorMessage name="fullName" component="div" className="text-red-500 text-sm absolute -bottom-5" />
+                <ErrorMessage name="name" component="div" className="text-red-500 text-sm absolute -bottom-5" />
             </div>
 
             {/* Email Field */}
             <div className="relative my-4">
+                <label className="text-red-500 text-sm mr-2">*</label>
+                <label className="text-sm">Email</label>
                 <Field
                     as={Input}
                     name="email"
@@ -47,6 +50,8 @@ const RegisterStudent = ({ handleChange, handleBlur, values }: RegisterStudentPr
 
             {/* Password Field */}
             <div className="relative my-2">
+                <label className="text-red-500 text-sm mr-2">*</label>
+                <label className="text-sm">Password</label>
                 <Field
                     as={Input.Password}
                     name="password"
@@ -60,6 +65,8 @@ const RegisterStudent = ({ handleChange, handleBlur, values }: RegisterStudentPr
 
             {/* Confirm Password Field */}
             <div className="relative my-4">
+                <label className="text-red-500 text-sm mr-2">*</label>
+                <label className="text-sm">Confirm Password</label>
                 <Field
                     as={Input.Password}
                     name="confirmPassword"
@@ -72,6 +79,6 @@ const RegisterStudent = ({ handleChange, handleBlur, values }: RegisterStudentPr
             </div>
         </>
     );
-}; 
+};
 
 export default RegisterStudent;

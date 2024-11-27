@@ -7,15 +7,11 @@ interface SettingTabsProps {
   onTabChange: (key: string) => void;
 }
 
-const SettingTabs = ({
-  activeTab,
-  onTabChange,
-}: SettingTabsProps) => {
+const SettingTabs = ({ activeTab, onTabChange }: SettingTabsProps) => {
   return (
     <Tabs activeKey={activeTab} onChange={onTabChange}>
       <TabPane tab="Account" key="1" />
       <TabPane tab="Change Password" key="2" />
-      <TabPane tab="Send Request Instructors" key="3" />
     </Tabs>
   );
 };
