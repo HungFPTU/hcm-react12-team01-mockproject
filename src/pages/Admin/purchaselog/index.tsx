@@ -1,7 +1,8 @@
-import { Input, Table } from "antd";
-import { useState, useEffect, useRef } from "react";
+import { Input, Select, Table } from "antd";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { PurchaseService } from "../../../services/PurchaseService/purchase.service";
 import { GetPurchaseResponseData } from "../../../model/admin/response/Purchase.response";
+const { Option } = Select;
 
 const PurchaseLogTable = () => {
   const [purchaseLogData, setPurchaseLogData] = useState<
@@ -9,8 +10,8 @@ const PurchaseLogTable = () => {
   >([]);
   const hasMounted = useRef(false);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const fetchPurchaseLogData = async () => {
+  const [filterValue, setFilterValue] = useState<string>("");
+  const fetchPurchaseLogData = useCallback(async () => {
     try {
       const response = await PurchaseService.getPurchaseForAdmin({
         pageInfo: {
@@ -21,7 +22,7 @@ const PurchaseLogTable = () => {
           purchase_no: searchQuery,
           cart_no: "",
           course_id: "",
-          status: "",
+          status: filterValue,
           is_delete: false,
         },
       });
@@ -33,7 +34,7 @@ const PurchaseLogTable = () => {
     } catch (error) {
       console.error("Error fetching purchase logs:", error);
     }
-  };
+  }, [searchQuery, filterValue])
 
   useEffect(() => {
     if (hasMounted.current) return;
@@ -77,7 +78,7 @@ const PurchaseLogTable = () => {
           case "completed":
             color = "green"; // Màu xanh lá cho status complete
             break;
-          case "waiting paid":
+          case "request_paid":
             color = "gold"; // Màu vàng cho status waiting paid
             break;
           default:
@@ -139,13 +140,25 @@ const PurchaseLogTable = () => {
     <div className="w-5em">
       <Input.Search
         className="w-1/4"
-        placeholder="Search courses..."
+        placeholder="Search by Purchase Number..."
         value={searchQuery}
         onSearch={handleSearch}
         onPressEnter={handleSearch}
         onChange={(e) => setSearchQuery(e.target.value)}
         enterButton
       />
+      <Select
+        placeholder="Filter by status"
+        value={filterValue}
+        onChange={(value) => setFilterValue(value)}
+        style={{ width: 200, marginLeft: 10 }}
+      >
+        <Option value="">All Status</Option>
+        <Option value={"new"}>New</Option>
+        <Option value={"completed"}>Completed</Option>
+        <Option value={"request_paid"}>Request Paid</Option>
+
+      </Select>
       <div className="w-full">
         <Table<GetPurchaseResponseData>
           dataSource={purchaseLogData}

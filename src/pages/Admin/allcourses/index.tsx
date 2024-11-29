@@ -3,12 +3,6 @@ import type { TabsProps } from "antd";
 import TableCourses from "./tableCourses";
 import TableSession from "./tableSession";
 import TableLession from "./tableLession";
-import SearchCourse from "../../../components/InstructorComponents/ManageCourse/Course/SearchCourse";
-import SearchSession from "../../../components/InstructorComponents/ManageCourse/Session/SearchSession";
-import SearchLesson from "../../../components/InstructorComponents/ManageCourse/Lesson/SearchLesson";
-
-
-
 const items: TabsProps["items"] = [
   {
     key: "1",
@@ -17,9 +11,9 @@ const items: TabsProps["items"] = [
       <div className="manage-course-container max-w-full mx-auto px-4">
         <div className="mt-6 flex justify-between">
 
-          <div className="flex gap-2">
+          <div className="flex">
             <div className="flex-1 max-w-full ">
-              <SearchCourse onSearch={() => { }} />
+
             </div>
           </div>
         </div>
@@ -37,7 +31,7 @@ const items: TabsProps["items"] = [
       <div className="manage-course-container">
         <Row gutter={16} align="middle"> {/* Use Row for horizontal layout */}
           <Col xs={24} sm={12} md={16}> {/* Adjust column widths as needed */}
-            <SearchSession onSearch={() => { }} />
+
           </Col>
           <Col xs={24} sm={12} md={8} style={{ textAlign: 'right' }}>
             <></>
@@ -56,7 +50,7 @@ const items: TabsProps["items"] = [
       <div className="manage-course-container">
         <Row gutter={16} align="middle">
           <Col xs={24} sm={12} md={16}>
-            <SearchLesson onSearch={() => { }} />
+
           </Col>
           <Col xs={24} sm={12} md={8} style={{ textAlign: 'right' }}>
             <></>

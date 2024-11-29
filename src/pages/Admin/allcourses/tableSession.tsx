@@ -1,49 +1,53 @@
-import { useState, useEffect } from "react";
-import { Table, Spin } from "antd";
+import { useState, useEffect, useCallback } from "react";
+import { Input, Table, message } from "antd";
 import { SessionService } from "../../../services/SessionService/session.service";
+import { GetSessionRequest } from "../../../model/admin/request/Session.request";
+import { GetSessionResponsePageData } from "../../../model/admin/response/Session.response";
 
 const TableSession = () => {
   const [sessionsData, setSessionsData] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const fetchSession = async (params: GetSessionRequest) => {
+    try {
+      const response = await SessionService.getSessions(params);
+      return response.data;
+    } catch (error) {
+      console.error("Fail to fetch sessions:", error);
+    }
+  };
+  const fetchSessionsData = useCallback(async () => {
+    try {
+      const searchCondition = {
+        keyword: searchQuery.trim(),
+        is_position_order: false,
+        is_delete: false,
+      };
 
-  useEffect(() => {
-    const fetchSessions = async () => {
-      try {
-        setLoading(true);
+      const response = await fetchSession({
+        searchCondition,
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 1000,
+        },
+      });
 
-        const response = await SessionService.getSessions({
-          searchCondition: {
-            keyword: "",
-            is_position_order: false,
-            is_delete: false,
-          },
-          pageInfo: { pageNum: 1, pageSize: 10000 },
-        });
-
-        if (response.data?.success && response.data.data?.pageData) {
-          const sessionsWithKey = response.data.data.pageData.map(
-            (session: any) => ({
-              ...session,
-              key: session._id,
-            })
-          );
-          setSessionsData(sessionsWithKey);
-        } else {
-          console.error(
-            "Failed to fetch sessions: pageData not found",
-            response
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching sessions:", error);
-      } finally {
-        setLoading(false);
+      if (response && response.success) {
+        const data: GetSessionResponsePageData[] = response.data.pageData;
+        setSessionsData(data);
+        setSessionsData(data);
+      } else {
+        message.error("Không tìm thấy khóa học nào.");
       }
-    };
-
-    fetchSessions();
+    } catch (error) {
+      console.error("Failed to fetch sessions:", error);
+    }
+  }, [searchQuery])
+  useEffect(() => {
+    fetchSessionsData();
   }, []);
-
+  const handleSearch = async () => {
+    await fetchSessionsData();
+  };
   const columns = [
     {
       title: "Name",
@@ -62,20 +66,33 @@ const TableSession = () => {
       render: (created_at: string) => new Date(created_at).toLocaleDateString(),
     },
   ];
-  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
-    <Table
-      dataSource={sessionsData}
-      columns={columns}
-      rowKey="key"
-      className="w-full shadow-md rounded-lg overflow-hidden"
-      pagination={{
-        pageSize: 10,
-        showSizeChanger: true,
-        showQuickJumper: true,
-      }}
-    />
+    <div className="w-full">
+      <div className="flex mb-4 justify-between items-center">
+        <Input.Search
+          placeholder="Search sessions..."
+          value={searchQuery}
+          onPressEnter={handleSearch}
+          onSearch={handleSearch}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          enterButton
+          style={{ width: '20%' }}
+        />
+
+      </div>
+      <Table
+        dataSource={sessionsData}
+        columns={columns}
+        rowKey="key"
+        className="w-full shadow-md rounded-lg overflow-hidden"
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+        }}
+      />
+    </div>
   );
 };
 

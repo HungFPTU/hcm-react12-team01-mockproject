@@ -1,18 +1,17 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Table, Popover, Input } from "antd";
-import { CourseLogResponseData, GetCourseResponsePageData } from "../../../model/admin/response/Course.response";
+import { CourseLogResponseData } from "../../../model/admin/response/Course.response";
 import { CourseStatusEnum } from "../../../model/Course";
 import { CourseService } from "../../../services/CourseService/course.service";
 
 const CoursesLogTable = () => {
     const [coursesLogData, setCoursesLogData] = useState<CourseLogResponseData[]>([]);
-    const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [isDataEmpty, setIsDataEmpty] = useState(false);
     const hasMounted = useRef(false);
 
 
-    const fetchCourseLogData = async () => {
+    const fetchCourseLogData = useCallback(async () => {
         try {
             // 1. Fetch courses first
             const courseResponse = await CourseService.getCourse({
@@ -29,13 +28,12 @@ const CoursesLogTable = () => {
             });
 
             if (courseResponse && courseResponse.data.success) {
-                setCoursesData(courseResponse.data.data.pageData);
 
                 // 2. Map over courses and fetch logs for each
                 const coursesLogPromises = courseResponse.data.data.pageData.map(async (course) => {
                     const courseLogResponse = await CourseService.getCourseLog({
                         searchCondition: {
-                            keyword: searchQuery,
+                            keyword: "",
                             course_id: course._id, // Fetch logs for this specific course ID
                             old_status: undefined,
                             new_status: undefined,
@@ -66,11 +64,9 @@ const CoursesLogTable = () => {
         } catch (error) {
             console.error("Failed to fetch data:", error);
         }
-    };
+    }, [searchQuery])
 
-    const filteredCourses = coursesLogData.filter((course) =>
-        course.course_name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+
 
     useEffect(() => {
         if (hasMounted.current) return;
@@ -78,11 +74,6 @@ const CoursesLogTable = () => {
         fetchCourseLogData();
     }, []);
 
-    useEffect(() => {
-        if (coursesData.length > 0) {
-          console.log("Có khóa học trong coursesData:", coursesData);
-        }
-    }, [coursesData]);
 
     const handleSearch = () => {
         fetchCourseLogData();
@@ -259,34 +250,34 @@ const CoursesLogTable = () => {
     ];
     return (
         <div className="w-5em">
-                <Input.Search
-                    className="w-1/4"
-                    placeholder="Search courses..."
-                    value={searchQuery}
-                    onSearch={handleSearch}
-                    onPressEnter={handleSearch}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    enterButton
+            <Input.Search
+                className="w-1/4"
+                placeholder="Search courses..."
+                value={searchQuery}
+                onSearch={handleSearch}
+                onPressEnter={handleSearch}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                enterButton
             />
-        <div className="w-full">
-            {isDataEmpty ? (
-                <div className="text-center text-red-500">No courses found.</div>
-            ) : (
-                <Table<CourseLogResponseData>
-                    columns={columns}
-                    dataSource={filteredCourses}
-                    rowKey="_id"
-                    className="w-full shadow-md rounded-lg overflow-hidden"
-                    pagination={{
-                        pageSize: 10,
-                        showSizeChanger: true,
-                        showQuickJumper: true,
-                        showTotal: (total, range) =>
-                            `${range[0]}-${range[1]} of ${total} courses`,
-                    }}
-                />
-            )}
-                </div>
+            <div className="w-full">
+                {isDataEmpty ? (
+                    <div className="text-center text-red-500">No courses found.</div>
+                ) : (
+                    <Table<CourseLogResponseData>
+                        columns={columns}
+                        dataSource={coursesLogData}
+                        rowKey="_id"
+                        className="w-full shadow-md rounded-lg overflow-hidden"
+                        pagination={{
+                            pageSize: 10,
+                            showSizeChanger: true,
+                            showQuickJumper: true,
+                            showTotal: (total, range) =>
+                                `${range[0]}-${range[1]} of ${total} courses`,
+                        }}
+                    />
+                )}
+            </div>
         </div>
     );
 };

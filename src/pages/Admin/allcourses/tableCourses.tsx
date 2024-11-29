@@ -1,18 +1,20 @@
-import { useState, useEffect, useRef } from "react";
-import { Table, Popover, Spin } from "antd";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Table, Popover, Spin, Input, Select } from "antd";
 import { CourseStatusEnum } from "../../../model/Course";
 import { CourseService } from "../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../model/admin/request/Course.request";
+const { Option } = Select;
 
 const TableCourses = () => {
   const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>(
     []
   );
-  const [searchQuery] = useState("");
-  const [isDataEmpty, setIsDataEmpty] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
-
+  const [filterValue, setFilterValue] = useState<CourseStatusEnum | undefined>(
+    undefined
+  );
   const hasMounted = useRef(false);
   const fetchCourse = async (params: GetCourseRequest) => {
     try {
@@ -22,50 +24,47 @@ const TableCourses = () => {
       console.error("Fail to fetch courses:", error);
     }
   };
+  const fetchCoursesData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const searchCondition = {
+        keyword: searchQuery,
+        category_id: "",
+        status: filterValue === undefined ? undefined : filterValue,
 
+        is_delete: false,
+      };
+
+      const response = await fetchCourse({
+        searchCondition,
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10000,
+        },
+      });
+
+      if (response && response.success) {
+        setLoading(false);
+
+        const data = response.data.pageData;
+        setCoursesData(data);
+
+      }
+    } catch (error) {
+      console.error("Failed to fetch courses:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [searchQuery, filterValue])
   useEffect(() => {
     if (hasMounted.current) return;
     hasMounted.current = true;
-
-    const fetchCoursesData = async () => {
-      try {
-        setLoading(true);
-        const searchCondition = {
-          keyword: searchQuery,
-          category_id: "",
-          status: undefined,
-
-          is_delete: false,
-        };
-
-        const response = await fetchCourse({
-          searchCondition,
-          pageInfo: {
-            pageNum: 1,
-            pageSize: 10000,
-          },
-        });
-
-        if (response && response.success) {
-          setLoading(false);
-
-          const data = response.data.pageData;
-          setCoursesData(data);
-          setIsDataEmpty(data.length === 0);
-        }
-      } catch (error) {
-        console.error("Failed to fetch courses:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCoursesData();
-  }, [searchQuery]);
+  }, []);
 
-  const filteredCourses = coursesData.filter((course) =>
-    course.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleSearch = async () => {
+    await fetchCoursesData();
+  };
 
   const columns = [
     {
@@ -202,23 +201,50 @@ const TableCourses = () => {
 
   return (
     <div className="w-full">
-      {isDataEmpty ? (
-        <div className="text-center text-red-500">No courses found.</div>
-      ) : (
-        <Table<GetCourseResponsePageData>
-          columns={columns}
-          dataSource={filteredCourses}
-          rowKey="_id"
-          className="w-full shadow-md rounded-lg overflow-hidden"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total, range) =>
-              `${range[0]}-${range[1]} of ${total} courses`,
-          }}
-        />
-      )}
+      <div className="flex justify-between items-center mb-4">
+
+
+        <div className="flex items-center">
+          <Input.Search
+            placeholder="Search courses..."
+            value={searchQuery}
+            onSearch={handleSearch}
+            onPressEnter={handleSearch}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            enterButton
+          />
+          <Select
+            placeholder="Filter by status"
+            value={filterValue}
+            onChange={(value) => setFilterValue(value)}
+            style={{ width: 200, marginLeft: 10 }}
+          >
+            <Option value="">All Status</Option>
+            <Option value={CourseStatusEnum.New}>New</Option>
+            <Option value={CourseStatusEnum.WaitingApprove}>
+              Waiting for Approval
+            </Option>
+            <Option value={CourseStatusEnum.Approved}>Approved</Option>
+            <Option value={CourseStatusEnum.Rejected}>Rejected</Option>
+            <Option value={CourseStatusEnum.Active}>Active</Option>
+            <Option value={CourseStatusEnum.Inactive}>Inactive</Option>
+          </Select>
+        </div>
+      </div>
+      <Table<GetCourseResponsePageData>
+        columns={columns}
+        dataSource={coursesData}
+        rowKey="_id"
+        className="w-full shadow-md rounded-lg overflow-hidden"
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total} courses`,
+        }}
+      />
+
     </div>
   );
 };

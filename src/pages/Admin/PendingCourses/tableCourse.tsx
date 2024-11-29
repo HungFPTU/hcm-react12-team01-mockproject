@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Popover, Spin, Modal, Input, Form } from "antd";
+import { Table, Button, Popover, Modal, Input, Form } from "antd";
 import { GetCourseResponsePageData } from "../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../model/admin/request/Course.request";
 import { CourseService } from "../../../services/CourseService/course.service";
@@ -10,8 +10,7 @@ import { CheckCircleOutlined, CloseCircleFilled } from "@ant-design/icons";
 const TableCoursesPending = () => {
   const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
   const [searchQuery] = useState("");
-  const [isDataEmpty, setIsDataEmpty] = useState(false);
-  const [loading, setLoading] = useState<boolean>(true);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<GetCourseResponsePageData | null>(null);
   const [status, setStatus] = useState<CourseStatusEnum>(CourseStatusEnum.WaitingApprove);
@@ -30,7 +29,6 @@ const TableCoursesPending = () => {
 
   const fetchCoursesData = async () => {
     try {
-      setLoading(true);
       const searchCondition = {
         keyword: searchQuery,
         category_id: "",
@@ -47,15 +45,11 @@ const TableCoursesPending = () => {
       });
 
       if (response && response.success) {
-        setLoading(false);
         const data = response.data.pageData;
         setCoursesData(data);
-        setIsDataEmpty(data.length === 0);
       }
     } catch (error) {
       console.error("Failed to fetch courses:", error);
-    } finally {
-      setLoading(false);
     }
   };
   useEffect(() => {
@@ -85,8 +79,6 @@ const TableCoursesPending = () => {
     if (!selectedCourse) return;
 
     try {
-      setLoading(true);
-
       const response = await CourseService.changeStatusCourse({
         course_id: selectedCourse._id,
         new_status: status,
@@ -110,7 +102,6 @@ const TableCoursesPending = () => {
       // toast.error('An error occurred while changing course status!');
     } finally {
       fetchCoursesData();
-      setLoading(false);
     }
   };
 
@@ -121,7 +112,7 @@ const TableCoursesPending = () => {
     setComment("");
   };
 
-  if (loading) return <Spin tip="Loading course details..." />;
+
 
   const columns = [
     {
@@ -245,23 +236,21 @@ const TableCoursesPending = () => {
 
   return (
     <div className="w-full">
-      {isDataEmpty ? (
-        <div className="text-center text-red-500">No courses found.</div>
-      ) : (
-        <Table<GetCourseResponsePageData>
-          columns={columns}
-          dataSource={filteredCourses}
-          rowKey="_id"
-          className="w-full shadow-md rounded-lg overflow-hidden"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total, range) =>
-              `${range[0]}-${range[1]} of ${total} courses`,
-          }}
-        />
-      )}
+
+      <Table<GetCourseResponsePageData>
+        columns={columns}
+        dataSource={filteredCourses}
+        rowKey="_id"
+        className="w-full shadow-md rounded-lg overflow-hidden"
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total} courses`,
+        }}
+      />
+
 
       <Modal
         title="Change Course Status"
