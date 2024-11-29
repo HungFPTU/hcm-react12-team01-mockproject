@@ -1,41 +1,41 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState, useRef } from "react";
 import { Modal, Button, Form, Input, message, Spin } from "antd";
-// import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CategoryService } from "../../../services/category/category.service";
 import { Category } from "../../../model/admin/response/Category.response";
 
-interface EditCategoryProps {
-  categoryId: string;
-  visible: boolean;
-  onClose: () => void;
-}
-
-const EditCategory: React.FC<EditCategoryProps> = ({ categoryId, visible, onClose }) => {
+const EditCategory: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);  
+  const navigate = useNavigate();
+  const hasMounted = useRef(false);
+
 
   const fetchCategoryDetails = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await CategoryService.getCategoryDetails(categoryId);
-      form.setFieldsValue(res.data?.data);
+      const res = await CategoryService.getCategoryDetails(id as string);
+      form.setFieldsValue(res.data?.data);  // Set the form values directly
     } catch {
       message.error("Failed to load category details.");
     } finally {
       setLoading(false);
     }
-  }, [categoryId, form]);
+  }, [id, form]);
 
   useEffect(() => {
-    if (visible) fetchCategoryDetails();
-  }, [visible, fetchCategoryDetails]);
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+    if (id) fetchCategoryDetails();
+  }, [id, fetchCategoryDetails]);
 
   const handleSave = async (values: Category) => {
     setLoading(true);
     try {
-      await CategoryService.updateCategory(categoryId, values);
+      await CategoryService.updateCategory(id as string, values);
       message.success("Category updated successfully");
-      onClose();
+      navigate(-1);
     } catch {
       message.error("Failed to update category.");
     } finally {
@@ -46,10 +46,10 @@ const EditCategory: React.FC<EditCategoryProps> = ({ categoryId, visible, onClos
   return (
     <Modal
       title="Edit Category"
-      visible={visible}
-      onCancel={onClose}
+      visible={true}
+      onCancel={() => navigate(-1)}
       footer={[
-        <Button key="cancel" onClick={onClose}>
+        <Button key="cancel" onClick={() => navigate(-1)}>
           Cancel
         </Button>,
         <Button
@@ -78,9 +78,8 @@ const EditCategory: React.FC<EditCategoryProps> = ({ categoryId, visible, onClos
           </Form.Item>
         </Form>
       )}
-    </Modal>
+    </Modal>  
   );
 };
 
 export default EditCategory;
-

@@ -3,8 +3,8 @@ import { Table, Modal, message, Empty } from "antd";
 import { GetCategoryRequest } from "../../../model/admin/request/Category.request";
 import { CategoryService } from "../../../services/category/category.service";
 import { Category } from "../../../model/admin/response/Category.response";
-// import { useNavigate } from "react-router-dom";
-const EditCategory = lazy(() => import("./EditCategory"));
+import { useNavigate } from "react-router-dom";
+
 const SearchBar = lazy(() => import("./SearchBar"));
 const ActionButtons = lazy(() => import("./ActionButtons"));
 const AddCategoryButton = lazy(() => import("./AddCategoryButton"));
@@ -13,9 +13,8 @@ const CategoryManagement: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDataEmpty, setIsDataEmpty] = useState(false);
-  const [isEditModalVisible, setEditModalVisible] = useState(false);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const hasMounted = useRef(false);
+  const  navigate  = useNavigate();
 
   const fetchCategories = async (params: GetCategoryRequest) => {
     try {
@@ -72,15 +71,8 @@ const CategoryManagement: React.FC = () => {
   };
 
   const handleEditCategory = (categoryId: string) => {
-    setSelectedCategoryId(categoryId);
-    setEditModalVisible(true);
-  };
-
-  const closeEditModal = () => {
-    setEditModalVisible(false);
-    setSelectedCategoryId(null);
-    loadCategories();
-  };
+    navigate(`/admin/category-management/${categoryId}`);
+  };  
 
   const handleDeleteCategory = useCallback(
     (categoryId: string) => {
@@ -103,6 +95,7 @@ const CategoryManagement: React.FC = () => {
     },
     []
   );
+
 
   const columns = [
     {
@@ -147,25 +140,11 @@ const CategoryManagement: React.FC = () => {
         columns={columns}
         dataSource={categories}
         rowKey="_id"
-        pagination={{
-          defaultPageSize: 5,
-          showSizeChanger: true,
-          pageSizeOptions: ["4", "8"],
-          position: ["bottomRight"],
-        }}
+        pagination={{ defaultPageSize: 5, showSizeChanger: true, pageSizeOptions: ["4", "8"], position: ["bottomRight"] }}
         locale={{ emptyText: isDataEmpty ? <Empty description="No categories found." /> : <Empty /> }}
       />
-
-      {isEditModalVisible && selectedCategoryId && (
-        <EditCategory
-          categoryId={selectedCategoryId}
-          visible={isEditModalVisible}
-          onClose={closeEditModal}
-        />
-      )}
     </div>
   );
 };
 
 export default CategoryManagement;
-
