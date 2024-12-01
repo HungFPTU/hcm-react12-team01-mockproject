@@ -14,7 +14,7 @@ interface CourseProps {
 
 const fetchCoursePublic = async (
     searchCondition = {},
-    pageInfo = { pageNum: 1, pageSize: 4 }
+    pageInfo = { pageNum: 1, pageSize: 8 }
 ) => {
     const response = await CourseService.getPublicCourse({
         searchCondition: {
@@ -31,7 +31,7 @@ const fetchCoursePublic = async (
     return response.data;
 };
 
-const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => {
+const CategoryTable: React.FC<CourseProps> = ({ pageSize = 8, pageNum = 1 }) => {
     const [courses, setCourses] = useState<GetPublicCourseResponse | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -45,7 +45,7 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
         setIsLoggedIn(!!localStorage.getItem("user"));
     }, []);
 
-
+    // Hàm fetch data được tối ưu hóa bằng useCallback
     const fetchCourses = useCallback(async () => {
         try {
             const coursesData = await fetchCoursePublic({}, { pageNum: currentPage, pageSize: pageSizeState });
@@ -56,8 +56,6 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
             setError("Unable to fetch courses. Please try again later.");
         }
     }, [currentPage, pageSizeState]);
-    
-    
 
     useEffect(() => {
         fetchCourses();
@@ -97,7 +95,7 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 4, pageNum = 1 }) => 
                     toast.error("Failed to add course to cart. Please try again.");
                 }
             }
-        } catch (error) { 
+        } catch (error) {
             console.error("Error handling cart operation:", error);
         }
     };

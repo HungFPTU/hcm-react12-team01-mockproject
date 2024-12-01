@@ -26,25 +26,24 @@ const App = () => {
       case "admin":
         return ROUTER_URL.ADMIN.DASHBOARD;
       case "instructor":
-        return ROUTER_URL.INSTRUCTOR.INSTRUCTOR_DASHBOARD;
       case "student":
-        return ROUTER_URL.STUDENT.STUDENT_DASHBOARD;
+        return ROUTER_URL.COMMON.HOME; // Điều hướng về trang chủ chung
       default:
         return ROUTER_URL.COMMON.HOME;
     }
   };
+  
 
   useEffect(() => {
     const currentRole = role || (localStorage.getItem("role") as UserRole);
     const defaultPath = getDefaultPath(currentRole);
   
-    // Điều hướng chỉ khi ở trang mặc định ("/") và role có sẵn
-    if (currentRole && window.location.pathname === "/") {
-      if (window.location.href !== defaultPath) {
-        window.location.href = defaultPath;
-      }
+    // Chỉ điều hướng khi đang ở trang mặc định ("/") và chưa ở đúng defaultPath
+    if (currentRole && window.location.pathname === "/" && window.location.pathname !== defaultPath) {
+      window.location.href = defaultPath;
     }
   }, [role]);
+  
   
 
 

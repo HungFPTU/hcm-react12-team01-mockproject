@@ -33,4 +33,8 @@ export interface GetCategoryRequest {
       pageSize: number;
     };
   }
-  
+  export interface EditCategoryProps {
+    categoryId: string;
+    visible: boolean;
+    onClose: () => void;
+  }
