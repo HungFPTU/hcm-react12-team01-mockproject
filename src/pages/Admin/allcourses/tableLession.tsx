@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { message, Table } from "antd";
+import { Input, message, Table } from "antd";
 import { LessonService } from "../../../services/LessonService/lesson.service";
 import { GetLessonsResponsePageData } from "../../../model/admin/response/Lesson.response";
 import { GetLessonRequest } from "../../../model/admin/request/Lesson.request";
@@ -7,9 +7,8 @@ import { GetLessonRequest } from "../../../model/admin/request/Lesson.request";
 const TableLesson = () => {
   const [lessonsData, setLessonsData] = useState<GetLessonsResponsePageData[]>([]);
   const [filteredLessons, setFilteredLessons] = useState<GetLessonsResponsePageData[]>([]);
-  const [isDataEmpty, setIsDataEmpty] = useState(false);
-  const [searchQuery] = useState("");
   const hasMounted = useRef(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchLesson = async (params: GetLessonRequest) => {
     try {
@@ -19,7 +18,6 @@ const TableLesson = () => {
       console.error("Fail to fetch lessons:", error);
     }
   };
-
   const fetchLessonsData = async () => {
     try {
       const searchCondition = {
@@ -43,7 +41,6 @@ const TableLesson = () => {
         const data: GetLessonsResponsePageData[] = response.data.pageData;
         setLessonsData(data);
         setFilteredLessons(data);
-        setIsDataEmpty(data.length === 0);
       } else {
         message.error("Không tìm thấy khóa học nào.");
       }
@@ -99,24 +96,35 @@ const TableLesson = () => {
 
 
   ];
-
+  const handleSearch = async () => {
+    await fetchLessonsData();
+  };
   return (
-    <div>
-      {isDataEmpty ? (
-        <div className="text-center text-red-500">No lessons found.</div>
-      ) : (
-        <Table
-          dataSource={filteredLessons}
-          columns={columns}
-          rowKey="key"
-          className="w-full shadow-md rounded-lg overflow-hidden"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showQuickJumper: true,
-          }}
+    <div className="w-full">
+      <div className="flex mb-4 justify-between items-center">
+        <Input.Search
+          placeholder="Search lessons..."
+          value={searchQuery}
+          onPressEnter={handleSearch}
+          onSearch={handleSearch}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          enterButton
+          style={{ width: '20%' }}
         />
-      )}
+
+      </div>
+      <Table
+        dataSource={filteredLessons}
+        columns={columns}
+        rowKey="key"
+        className="w-full shadow-md rounded-lg overflow-hidden"
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+        }}
+      />
+
     </div>
   );
 };

@@ -17,7 +17,6 @@ import {
   PlusOutlined,
   DownOutlined,
   UserOutlined,
-  EditOutlined,
 } from "@ant-design/icons";
 import { UserService } from "../../../services/UserService/user.service";
 import AddUserModal from "./AddUserModal";
@@ -142,7 +141,7 @@ const UserManagement: React.FC = () => {
       bank_account_no,
       bank_account_name,
     } = values;
-  
+
     UserService.createUser(
       name,
       email,
@@ -165,7 +164,7 @@ const UserManagement: React.FC = () => {
       message.error("Tạo người dùng thất bại.");
     });
   };
-  
+
 
   const confirmDeleteUser = (id: string) => {
     confirm({
@@ -225,97 +224,93 @@ const UserManagement: React.FC = () => {
     },
     ...(activeTab === "unverified"
       ? [
-          {
-            title: "Role",
-            dataIndex: "role",
-            key: "role",
-            render: (role: string) => <span>{role}</span>,
-          },
-          {
-            title: "Status",
-            key: "status",
-            render: (record: User) => (
-              <Button
-                disabled
-                onClick={() => toggleStatus(record)}
-                style={{
-                  backgroundColor: "green",
-                  color: "#fff",
-                  fontSize: 13,
-                }}
-              >
-                Activate
-              </Button>
-            ),
-          },
-          {
-            title: "Verified",
-            dataIndex: "is_verified",
-            key: "verified",
-            render: () => (
-              <Button
-                disabled
-                style={{
-                  backgroundColor: "grey",
-                  color: "#fff",
-                  fontSize: 13,
-                }}
-              >
-                Not Verified
-              </Button>
-            ),
-          },
-        ]
+        {
+          title: "Role",
+          dataIndex: "role",
+          key: "role",
+          render: (role: string) => <span>{role}</span>,
+        },
+        {
+          title: "Status",
+          key: "status",
+          render: (record: User) => (
+            <Button
+              disabled
+              onClick={() => toggleStatus(record)}
+              style={{
+                backgroundColor: "green",
+                color: "#fff",
+                fontSize: 13,
+              }}
+            >
+              Activate
+            </Button>
+          ),
+        },
+        {
+          title: "Verified",
+          dataIndex: "is_verified",
+          key: "verified",
+          render: () => (
+            <Button
+              disabled
+              style={{
+                backgroundColor: "grey",
+                color: "#fff",
+                fontSize: 13,
+              }}
+            >
+              Not Verified
+            </Button>
+          ),
+        },
+      ]
       : [
-          {
-            title: "Role",
-            dataIndex: "role",
-            key: "role",
-            render: (role: string, record: User) => (
-              <Dropdown
-                menu={{
-                  items: roleMenuItems,
-                  onClick: ({ key }) => {
-                    console.log("Changing role to:", key);
-                    changeUserRole(record._id, key);
-                  },
-                }}
-                trigger={["click"]}
-              >
-                <Button>
-                  {role} <DownOutlined />
-                </Button>
-              </Dropdown>
-            ),
-          },
-          {
-            title: "Status",
-            dataIndex: "status",
-            key: "status",
-            render: (status: boolean, record: User) => (
-              <Switch checked={status} onChange={() => toggleStatus(record)} />
-            ),
-          },
-          {
-            title: "Actions",
-            key: "actions",
-            render: (_: any, record: User) => (
-              <>
-                <Button
-                  icon={<EditOutlined />}
-                  type="primary"
-                  style={{ marginRight: 8 }}
-                />
-                <Button
-                  icon={<DeleteOutlined />}
-                  type="primary"
-                  danger
-                  onClick={() => confirmDeleteUser(record._id)}
-                />
-              </>
-            ),
-          },
-        ]),
+        {
+          title: "Role",
+          dataIndex: "role",
+          key: "role",
+          render: (role: string, record: User) => (
+            <Dropdown
+              menu={{
+                items: roleMenuItems,
+                onClick: ({ key }) => {
+                  console.log("Changing role to:", key);
+                  changeUserRole(record._id, key);
+                },
+              }}
+              trigger={["click"]}
+            >
+              <Button>
+                {role} <DownOutlined />
+              </Button>
+            </Dropdown>
+          ),
+        },
+        {
+          title: "Status",
+          dataIndex: "status",
+          key: "status",
+          render: (status: boolean, record: User) => (
+            <Switch checked={status} onChange={() => toggleStatus(record)} />
+          ),
+        },
+        {
+          title: "Actions",
+          key: "actions",
+          render: (_: any, record: User) => (
+            <>
+
+              <Button
+                icon={<DeleteOutlined />}
+                type="primary"
+                danger
+                onClick={() => confirmDeleteUser(record._id)}
+              />
+            </>
+          ),
+        },
+      ]),
 
   ];
 

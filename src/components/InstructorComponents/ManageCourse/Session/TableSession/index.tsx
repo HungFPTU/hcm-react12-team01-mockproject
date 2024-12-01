@@ -171,7 +171,7 @@ const TableSession = () => {
 
 
 
-  const fetchSessionsData = async () => {
+  const fetchSessionsData = useCallback(async () => {
     try {
       const searchCondition = {
         keyword: searchQuery.trim(),
@@ -198,7 +198,7 @@ const TableSession = () => {
     } catch (error) {
       console.error("Failed to fetch sessions:", error);
     }
-  };
+  }, [searchQuery])
 
   useEffect(() => {
     if (hasMounted.current) return;
