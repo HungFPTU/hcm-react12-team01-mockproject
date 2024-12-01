@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, lazy, useRef, Suspense } from "react";
-import { Table, Modal, message, Empty } from "antd";
+import { Table, Modal, message, Empty, Button, Form, Input, Spin } from "antd";
 import { GetCategoryRequest } from "../../../model/admin/request/Category.request";
 import { CategoryService } from "../../../services/category/category.service";
 import { Category } from "../../../model/admin/response/Category.response";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const SearchBar = lazy(() => import("./SearchBar"));
 const ActionButtons = lazy(() => import("./ActionButtons"));
@@ -13,8 +13,12 @@ const CategoryManagement: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDataEmpty, setIsDataEmpty] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
   const hasMounted = useRef(false);
-  const  navigate  = useNavigate();
+  // const navigate = useNavigate();
 
   const fetchCategories = async (params: GetCategoryRequest) => {
     try {
@@ -62,7 +66,7 @@ const CategoryManagement: React.FC = () => {
   }, [loadCategories]);
 
   const handleSearch = (query: string) => {
-    setSearchQuery(query); // Update searchQuery state
+    setSearchQuery(query);
   };
 
   const handleAddCategory = async () => {
@@ -70,9 +74,11 @@ const CategoryManagement: React.FC = () => {
     message.success("Categories updated successfully.");
   };
 
-  const handleEditCategory = (categoryId: string) => {
-    navigate(`/admin/category-management/${categoryId}`);
-  };  
+  const handleEditCategory = (category: Category) => {
+    setEditingCategory(category);
+    form.setFieldsValue(category);
+    setEditModalVisible(true);
+  };
 
   const handleDeleteCategory = useCallback(
     (categoryId: string) => {
@@ -96,6 +102,22 @@ const CategoryManagement: React.FC = () => {
     []
   );
 
+  const handleSave = async (values: Category) => {
+    if (!editingCategory) return;
+
+    setLoading(true);
+    try {
+      await CategoryService.updateCategory(editingCategory._id, values);
+      message.success("Category updated successfully.");
+      setEditModalVisible(false);
+      setEditingCategory(null);
+      loadCategories();
+    } catch {
+      message.error("Failed to update category.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const columns = [
     {
@@ -120,7 +142,7 @@ const CategoryManagement: React.FC = () => {
       render: (record: Category) => (
         <ActionButtons
           recordKey={record._id}
-          onEdit={() => handleEditCategory(record._id)}
+          onEdit={() => handleEditCategory(record)}
           onDelete={() => handleDeleteCategory(record._id)}
         />
       ),
@@ -129,7 +151,13 @@ const CategoryManagement: React.FC = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "20px",
+        }}
+      >
         <Suspense>
           <SearchBar onSearch={handleSearch} />
           <AddCategoryButton onAdd={handleAddCategory} />
@@ -140,9 +168,59 @@ const CategoryManagement: React.FC = () => {
         columns={columns}
         dataSource={categories}
         rowKey="_id"
-        pagination={{ defaultPageSize: 5, showSizeChanger: true, pageSizeOptions: ["4", "8"], position: ["bottomRight"] }}
-        locale={{ emptyText: isDataEmpty ? <Empty description="No categories found." /> : <Empty /> }}
+        pagination={{
+          defaultPageSize: 5,
+          showSizeChanger: true,
+          pageSizeOptions: ["4", "8"],
+          position: ["bottomRight"],
+        }}
+        locale={{
+          emptyText: isDataEmpty ? (
+            <Empty description="No categories found." />
+          ) : (
+            <Empty />
+          ),
+        }}
       />
+
+      {/* Edit Category Modal */}
+      <Modal
+        title="Edit Category"
+        visible={editModalVisible}
+        onCancel={() => setEditModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setEditModalVisible(false)}>
+            Cancel
+          </Button>,
+          <Button
+            key="save"
+            type="primary"
+            onClick={() => form.submit()}
+            loading={loading}
+          >
+            Save
+          </Button>,
+        ]}
+      >
+        {loading ? (
+          <Spin />
+        ) : (
+          <Form form={form} onFinish={handleSave} layout="vertical">
+            <Form.Item
+              label="Category Name"
+              name="name"
+              rules={[
+                { required: true, message: "Please enter the category name" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item label="Description" name="description">
+              <Input.TextArea rows={4} />
+            </Form.Item>
+          </Form>
+        )}
+      </Modal>
     </div>
   );
 };
