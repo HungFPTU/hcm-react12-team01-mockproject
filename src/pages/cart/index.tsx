@@ -22,6 +22,7 @@ import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { CartStatusEnum } from "../../model/Cart";
 import { useCart } from "../../context/CartContext";
 import { helpers } from "../../utils";
+import { toast } from "react-toastify";
 const { Title, Text } = Typography;
 
 const CartPage: React.FC = () => {
@@ -108,6 +109,7 @@ const CartPage: React.FC = () => {
         setActiveTab(CartStatusEnum.completed);
         updateCartItemsByStatus(CartStatusEnum.completed); // Fetch items for the "Waiting" status
         updateCartItems(CartStatusEnum.completed);
+        toast.success("Buy course success!");
       }
 
       setSelectAll(false);
