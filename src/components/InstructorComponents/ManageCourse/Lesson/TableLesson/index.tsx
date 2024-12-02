@@ -44,11 +44,11 @@ const TableLesson = () => {
   const [filteredLessons, setFilteredLessons] = useState<
     GetLessonsResponsePageData[]
   >([]);
-  const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedLesson, setSelectedLesson] =
     useState<GetLessonsResponsePageData | null>(null);
+  const [form] = Form.useForm();
 
   const fetchLesson = async (params: GetLessonRequest) => {
     try {
@@ -64,6 +64,7 @@ const TableLesson = () => {
 
   const handleCancel = () => {
     setIsAddModalVisible(false);
+    form.resetFields();
   };
   const handleSubmit = async (values: CreateLessonRequest) => {
     try {
@@ -94,6 +95,7 @@ const TableLesson = () => {
       if (response && response.data.success) {
         toast.success("Created lesson successfully!");
         setIsAddModalVisible(false);
+        form.resetFields();
         await fetchLessonsData();
       } else {
         toast.error("Can't create lesson");
@@ -144,13 +146,10 @@ const TableLesson = () => {
         const data: GetLessonsResponsePageData[] = response.data.pageData;
         setLessonsData(data);
         setFilteredLessons(data);
-        setIsDataEmpty(data.length === 0);
       } else {
         toast.error("Failed to fetch lessons");
       }
-    } catch {
-      toast.error("Failed to fetch lessons:");
-    }
+    } catch {}
   }, [searchQuery, lessonsData]);
   const fetchCoursesData = async () => {
     try {
@@ -173,9 +172,7 @@ const TableLesson = () => {
         const data = response.data.pageData;
         setCoursesData(data);
       }
-    } catch (error) {
-      console.error("Failed to fetch courses:", error);
-    }
+    } catch (error) {}
   };
   useEffect(() => {
     if (hasMounted.current) return;
@@ -199,9 +196,7 @@ const TableLesson = () => {
           setSessionData(response.data.data.pageData);
         }
       })
-      .catch((error) => {
-        console.error("Error fetching sessions:", error);
-      });
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -221,9 +216,7 @@ const TableLesson = () => {
         toast.success("Course deleted successfully!");
         await fetchLessonsData();
       }
-    } catch {
-      toast.error("Failed to delete course!");
-    }
+    } catch {}
   };
   const showDeleteConfirm = (courseId: string) => {
     Modal.confirm({
@@ -322,22 +315,18 @@ const TableLesson = () => {
         </Button>
       </div>
       <div>
-        {isDataEmpty ? (
-          <div className="text-center text-red-500">No lessons found.</div>
-        ) : (
-          <Table
-            dataSource={filteredLessons}
-            columns={columns}
-            rowKey="key"
-            className="w-full shadow-md rounded-lg overflow-hidden"
-            pagination={{
-              defaultPageSize: 10,
-              showSizeChanger: true,
-              pageSizeOptions: ["15", "20"],
-              position: ["bottomRight"],
-            }}
-          />
-        )}
+        <Table
+          dataSource={filteredLessons}
+          columns={columns}
+          rowKey="key"
+          className="w-full shadow-md rounded-lg overflow-hidden"
+          pagination={{
+            defaultPageSize: 10,
+            showSizeChanger: true,
+            pageSizeOptions: ["15", "20"],
+            position: ["bottomRight"],
+          }}
+        />
       </div>
       <Modal
         title="Create Lesson"
@@ -346,7 +335,7 @@ const TableLesson = () => {
         onCancel={handleCancel}
         footer={null}
       >
-        <Form onFinish={handleSubmit}>
+        <Form form={form} onFinish={handleSubmit}>
           <Form.Item
             name="name"
             label="Name"

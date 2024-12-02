@@ -71,12 +71,12 @@ const CourseTable = () => {
   const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [coursesData, setCoursesData] = useState<Course[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
   const [categories, setCategories] = useState<any[]>([]);
   const [courseType, setCourseType] = useState("free");
+  const [form] = Form.useForm();
   const [filterValue, setFilterValue] = useState<CourseStatusEnum | undefined>(
     undefined
   );
@@ -117,6 +117,7 @@ const CourseTable = () => {
   };
   const handleCancel = () => {
     setAddIsModalVisible(false);
+    form.resetFields();
   };
   const handleSubmit = async (values: any) => {
     try {
@@ -140,6 +141,8 @@ const CourseTable = () => {
       const response = await CourseService.createCourse(newCourse);
       if (response && response.data.success) {
         toast.success("Course created successfully!");
+        form.resetFields();
+
         setAddIsModalVisible(false);
       }
       await fetchCoursesData();
@@ -172,7 +175,7 @@ const CourseTable = () => {
       if (response && response.data.success) {
         setCategories(response.data.data.pageData);
       }
-    } catch{
+    } catch {
       toast.error("Error fetching categories:");
     }
   };
@@ -198,7 +201,6 @@ const CourseTable = () => {
       if (response && response.success) {
         const convertedData = response.data.pageData.map(convertToCourse);
         setCoursesData(convertedData);
-        setIsDataEmpty(convertedData.length === 0);
       }
     } catch {
       toast.error("Failed to fetch courses:");
@@ -234,7 +236,7 @@ const CourseTable = () => {
         setIsModalVisible(true);
         await fetchCoursesData();
       }
-    } catch  {
+    } catch {
       toast.error("Error fetching course details:");
     }
   };
@@ -273,7 +275,7 @@ const CourseTable = () => {
       } else {
         toast.error("Failed to update course.");
       }
-    } catch  {
+    } catch {
       toast.error("Error updating course.");
     }
   };
@@ -329,7 +331,7 @@ const CourseTable = () => {
         toast.success("Course deleted successfully!");
         await fetchCoursesData();
       }
-    } catch  {
+    } catch {
       toast.error("Failed to delete course!");
     }
   };
@@ -547,16 +549,18 @@ const CourseTable = () => {
 
           {[CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(
             record.status
-          ) && (
-            <Popover content="Send course to admin">
-              <Button
-                className="bg-green-400 hover:bg-green-600 text-white"
-                onClick={() => handleSendClick(record._id)}
-              >
-                <SendOutlined />
-              </Button>
-            </Popover>
-          )}
+          ) &&
+            record.session_count > 0 &&
+            record.lesson_count > 0 && ( // Check for session or lesson count
+              <Popover content="Send course to admin">
+                <Button
+                  className="bg-green-400 hover:bg-green-600 text-white"
+                  onClick={() => handleSendClick(record._id)}
+                >
+                  <SendOutlined />
+                </Button>
+              </Popover>
+            )}
         </div>
       ),
     },
@@ -596,17 +600,14 @@ const CourseTable = () => {
         </Button>
       </div>
 
-      {isDataEmpty ? (
-        <div className="text-center text-red-500">No courses found.</div>
-      ) : (
-        <Table<Course>
-          columns={columns}
-          dataSource={coursesData}
-          rowKey="_id"
-          className="w-full shadow-md rounded-lg overflow-hidden"
-          pagination={{ pageSize: 10 }}
-        />
-      )}
+      <Table<Course>
+        columns={columns}
+        dataSource={coursesData}
+        rowKey="_id"
+        className="w-full shadow-md rounded-lg overflow-hidden"
+        pagination={{ pageSize: 10 }}
+      />
+
       <Modal
         title="Create Course"
         open={isAddModalVisible}
@@ -614,7 +615,7 @@ const CourseTable = () => {
         onCancel={handleCancel}
         footer={null}
       >
-        <Form onFinish={handleSubmit}>
+        <Form form={form} onFinish={handleSubmit}>
           <Form.Item
             name="name"
             label="Name"

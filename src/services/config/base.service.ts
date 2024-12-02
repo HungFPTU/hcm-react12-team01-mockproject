@@ -2,10 +2,11 @@ import { toggleLoading } from '../../app/loadingSlice';
 import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
 import { ApiRequestModel } from '../../model/ApiRequestModel';
 import { toast } from 'react-toastify';
-import { getItemInLocalStorage, removeItemInLocalStorage } from '../../utils/localStorage';
+import { getItemInLocalStorage } from '../../utils/localStorage';
 import { store } from "../../app/store";
 import { DOMAIN_ADMIN, LOCAL_STORAGE } from '../../const/const';
 import { ROUTER_URL } from '../../const/router.const';
+import { HttpException } from '../../app/toastException';
 
 export const axiosInstance = axios.create({
     baseURL: DOMAIN_ADMIN,
@@ -131,14 +132,39 @@ axiosInstance.interceptors.response.use(
         return Promise.resolve(config);
     },
     (err) => {
+        setTimeout(() => store.dispatch(toggleLoading(false)), 2000);
         const { response } = err;
-        if (response && response.status === 401) {
-            setTimeout(() => {
-                removeItemInLocalStorage(LOCAL_STORAGE.ACCOUNT_ADMIN);
-                window.location.href = ROUTER_URL.LOGIN;
-            }, 2000);
-        }
-        return handleErrorByToast(err);
+        if (response) {
+      switch (response.status) {
+        case 401:
+          localStorage.clear();
+          setTimeout(() => {
+            window.location.href = ROUTER_URL.LOGIN;
+          }, 10000);
+          break;
+        case 403:
+          handleErrorByToast(err);
+          localStorage.clear();
+          setTimeout(() => {
+            window.location.href = ROUTER_URL.LOGIN;
+          }, 2000);
+          break;
+        case 404:
+          handleErrorByToast(err);
+          // setTimeout(() => {
+          //   window.location.href = ROUTER_URL.LOGIN;
+          // }, 2000);
+          break;
+        case 500:
+          handleErrorByToast(err);
+          break;
+        default:
+          handleErrorByToast(response.data?.message || "An error occurred. Please try again.");
+      }
+    } else {
+      handleErrorByToast(err || "An error occurred. Please try again.");
+    }
+    return Promise.reject(new HttpException(err, response?.status || 500));
     }
 );
 
