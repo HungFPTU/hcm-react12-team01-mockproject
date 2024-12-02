@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { message, Descriptions } from 'antd';
+import { Descriptions } from 'antd';
 import { Session } from '../../../../../model/admin/response/Session.response';
 import { SessionService } from '../../../../../services/SessionService/session.service';
-
+import { toast } from 'react-toastify';
 
 
 const ViewDetailSession = () => {
@@ -23,11 +23,10 @@ const ViewDetailSession = () => {
         if (sessionData) {
           setSession(sessionData);
         } else {
-          message.error("No page data available for this session.");
+          toast.error("No page data available for this session.");
         }
-      } catch (error) {
-        console.log("error>>>>", error)
-        message.error("Failed to fetch session details. Please try again.");
+      } catch{
+        toast.error("Failed to fetch session details. Please try again.");
       }
     },
     []

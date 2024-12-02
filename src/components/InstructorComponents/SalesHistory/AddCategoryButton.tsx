@@ -1,9 +1,9 @@
 import React, { useEffect, useState,useRef } from "react";
-import { Button, message, Form, Modal, Input, Select } from "antd";
+import { Button, Form, Modal, Input, Select } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { CategoryService } from "../../../services/category/category.service";
 import { GetCategoryResponse } from "../../../model/admin/response/Category.response";
-
+import { toast } from "react-toastify";
 interface AddCategoryButtonProps {
   onAdd: () => void;
 }
@@ -21,9 +21,8 @@ const AddCategoryButton: React.FC<AddCategoryButtonProps> = ({ onAdd }) => {
         searchCondition: { keyword: "", is_parent: false, is_delete: false },
       });
       setCategories(response.data?.data || null);
-    } catch (error) {
-      message.error("An unexpected error occurred while fetching categories");
-      console.error("Fetch categories error:", error);
+    } catch  {
+      toast.error("An unexpected error occurred while fetching categories");
     }
   };
 
@@ -64,11 +63,10 @@ const AddCategoryButton: React.FC<AddCategoryButtonProps> = ({ onAdd }) => {
       setCategories(resolvedCategory);
       form.resetFields();
       setOpen(false);
-      message.success("Category created successfully!");
+      toast.success("Category created successfully!");
       onAdd();
-    } catch (error) {
-      console.error("Error creating category:", error);
-      message.error("Failed to create category. Please try again.");
+    } catch  {
+      toast.error("Failed to create category. Please try again.");
     }
   };
 

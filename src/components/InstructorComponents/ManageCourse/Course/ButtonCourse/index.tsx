@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef, useState } from "react";
-import { Button, Modal, Form, Input, Select, Radio, message } from "antd";
+import { Button, Modal, Form, Input, Select, Radio } from "antd";
 import { CreateCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { CategoryService } from "../../../../../services/category/category.service";
 import { Category } from "../../../../../model/admin/response/Category.response";
 import { Editor } from "@tinymce/tinymce-react";
-
+import { toast } from "react-toastify";
 const { Option } = Select;
 interface ButtonCourseProps {
   onAdd: () => void;
@@ -71,13 +71,13 @@ const ButtonCourse: React.FC<ButtonCourseProps> = ({ onAdd }) => {
 
       const response = await CourseService.createCourse(newCourse);
       if (response && response.data.success) {
-        message.success("Khóa học đã được tạo thành công!");
-        console.log("API Response:", response);
+        toast.success("Khóa học đã được tạo thành công!");
+        // console.log("API Response:", response);
         onAdd();
         setAddIsModalVisible(false);
       }
-    } catch (error) {
-      console.error("Error creating course:", error);
+    } catch {
+      toast.error("Error creating course:");
     }
   };
 

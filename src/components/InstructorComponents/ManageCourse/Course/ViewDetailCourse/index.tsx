@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Descriptions, message, Image, Spin, Button } from 'antd';
+import { Descriptions, Image, Spin, Button } from 'antd';
 import { GetCourseByIdResponse } from "../../../../../model/admin/response/Course.response";
 import { CourseService } from '../../../../../services/CourseService/course.service';
 import { useParams } from 'react-router-dom';
 import UpdateDetailCourse from '../UpdateDetailCourse'; // Import modal Update
-
+import { toast } from 'react-toastify';
 const ViewDetailCourse = () => {
   const { id } = useParams<{ id: string }>();
   const [course, setCourse] = useState<GetCourseByIdResponse | null>(null);
@@ -23,11 +23,10 @@ const ViewDetailCourse = () => {
         if (courseData) {
           setCourse(courseData);
         } else {
-          message.error("No course data available.");
+          toast.error("No course data available.");
         }
-      } catch (error) {
-        console.error("Failed to fetch course details. Please try again.", error);
-        message.error("Failed to fetch course details. Please try again.");
+      } catch{
+        toast.error("Failed to fetch course details. Please try again.");
       } finally {
         setLoading(false);
       }

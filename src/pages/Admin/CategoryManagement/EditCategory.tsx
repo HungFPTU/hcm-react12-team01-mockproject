@@ -1,9 +1,9 @@
 import React, { useEffect, useCallback, useState, useRef } from "react";
-import { Modal, Button, Form, Input, message, Spin } from "antd";
+import { Modal, Button, Form, Input, Spin } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { CategoryService } from "../../../services/category/category.service";
 import { Category } from "../../../model/admin/response/Category.response";
-
+import { toast } from "react-toastify";
 const EditCategory: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [form] = Form.useForm();
@@ -18,7 +18,7 @@ const EditCategory: React.FC = () => {
       const res = await CategoryService.getCategoryDetails(id as string);
       form.setFieldsValue(res.data?.data);  // Set the form values directly
     } catch {
-      message.error("Failed to load category details.");
+      toast.error("Failed to load category details.");
     } finally {
       setLoading(false);
     }
@@ -34,10 +34,10 @@ const EditCategory: React.FC = () => {
     setLoading(true);
     try {
       await CategoryService.updateCategory(id as string, values);
-      message.success("Category updated successfully");
+      toast.success("Category updated successfully");
       navigate(-1);
     } catch {
-      message.error("Failed to update category.");
+      toast.error("Failed to update category.");
     } finally {
       setLoading(false);
     }

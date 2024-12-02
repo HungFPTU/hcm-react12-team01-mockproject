@@ -1,10 +1,10 @@
 import React, { useState, useEffect, lazy, useRef } from "react";
-import { Table, message, Empty, Popover, Button } from "antd";
+import { Table, Empty, Popover, Button } from "antd";
 import { GetPurchaseRequest } from "../../../model/admin/request/Purchase.request";
 import { PurchaseService } from "../../../services/PurchaseService/purchase.service";
 import { Purchase } from "../../../model/admin/response/Purchase.response";
 import { CreatePayoutRequest } from "../../../model/admin/request/Payout.request";
-
+import { toast } from "react-toastify";
 const SearchBar = lazy(() => import("./SearchBar"));
 
 const CategoryManagement: React.FC = () => {
@@ -45,13 +45,12 @@ const CategoryManagement: React.FC = () => {
       });
 
       if (response && response.success) {
-        console.log("Fetched data:", response.data.pageData); // Log the data here
         const data = response.data.pageData;
         setPurchase(data);
         setIsDataEmpty(data.length === 0);
       }
-    } catch (error) {
-      console.error("Failed to fetch categories:", error);
+    } catch  {
+      toast.error("Failed to fetch categories:");
     }
   };
   useEffect(() => {
@@ -89,18 +88,16 @@ const CategoryManagement: React.FC = () => {
         setPurchase(data);
         setIsDataEmpty(data.length === 0);
       }
-    } catch (error) {
-      console.error("Failed to fetch categories:", error);
+    } catch  {
+      toast.error("Failed to fetch categories:");
     }
   };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
   const handleClick = async () => {
-    console.log("Selected _ids:", selectedRowKeys);
     try {
       let instructorId = "";
 
@@ -110,11 +107,11 @@ const CategoryManagement: React.FC = () => {
         try {
           const parsedUserInfo = JSON.parse(userInfo);
           instructorId = parsedUserInfo._id;
-        } catch (error) {
-          console.error("Error parsing userInfo:", error);
+        } catch{
+          toast.error("Error parsing userInfo:");
         }
       } else {
-        console.log("userInfo not found in localStorage.");
+        toast.error("userInfo not found in localStorage.");
       }
 
       const request: CreatePayoutRequest = {
@@ -126,12 +123,12 @@ const CategoryManagement: React.FC = () => {
 
       const response = await PurchaseService.createPayout(request);
       if (response && response.data.success) {
-        message.success("Create payout successfully!");
+        toast.success("Create payout successfully!");
         fetchPurchaseData();
         setSelectedRowKeys([]);
       }
-    } catch (error) {
-
+    } catch  {
+      toast.error("Faild");
     }
   };
 
