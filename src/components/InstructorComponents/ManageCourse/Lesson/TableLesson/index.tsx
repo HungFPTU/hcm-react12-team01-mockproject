@@ -1,10 +1,22 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Table, Button, Popover, Modal, Input, Form, InputNumber, Select } from "antd";
+import {
+  Table,
+  Button,
+  Popover,
+  Modal,
+  Input,
+  Form,
+  InputNumber,
+  Select,
+} from "antd";
 import { LessonService } from "../../../../../services/LessonService/lesson.service";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { CreateLessonRequest, GetLessonRequest } from "../../../../../model/admin/request/Lesson.request";
+import {
+  CreateLessonRequest,
+  GetLessonRequest,
+} from "../../../../../model/admin/request/Lesson.request";
 import { GetLessonsResponsePageData } from "../../../../../model/admin/response/Lesson.response";
-import UpdateDetailLesson from '../UpdateDetailLesson/index';
+import UpdateDetailLesson from "../UpdateDetailLesson/index";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { SessionService } from "../../../../../services/SessionService/session.service";
@@ -26,12 +38,18 @@ const TableLesson = () => {
   const [lessonType, setLessonType] = useState<string>(""); // Theo dõi loại bài học
   const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
   const hasMounted = useRef(false);
-  const [lessonsData, setLessonsData] = useState<GetLessonsResponsePageData[]>([]);
-  const [filteredLessons, setFilteredLessons] = useState<GetLessonsResponsePageData[]>([]);
+  const [lessonsData, setLessonsData] = useState<GetLessonsResponsePageData[]>(
+    []
+  );
+  const [filteredLessons, setFilteredLessons] = useState<
+    GetLessonsResponsePageData[]
+  >([]);
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedLesson, setSelectedLesson] = useState<GetLessonsResponsePageData | null>(null);
+  const [selectedLesson, setSelectedLesson] =
+    useState<GetLessonsResponsePageData | null>(null);
+  const [form] = Form.useForm();
 
   const fetchLesson = async (params: GetLessonRequest) => {
     try {
@@ -47,14 +65,13 @@ const TableLesson = () => {
 
   const handleCancel = () => {
     setIsAddModalVisible(false);
+    form.resetFields();
   };
   const handleSubmit = async (values: CreateLessonRequest) => {
     try {
       const description = editorRef.current
         ? editorRef.current.getContent()
         : ""; // Lấy nội dung từ editor
-
-
 
       // Tạo đối tượng bài học dựa vào loại bài học
       const newLesson: CreateLessonRequest = {
@@ -77,15 +94,13 @@ const TableLesson = () => {
 
       const response = await LessonService.createLesson(newLesson);
       if (response && response.data.success) {
-        toast.success("Bài học đã được tạo thành công!");
+        toast.success("Create lesson successful!");
+        form.resetFields();
+
         setIsAddModalVisible(false);
         await fetchLessonsData();
-      } else {
-        toast.error("Có lỗi khi tạo bài học.");
       }
-    } catch {
-      toast.error("Không thể tạo bài học, vui lòng thử lại!");
-    }
+    } catch {}
   };
 
   const handleChange = (courses_id: string) => {
@@ -131,11 +146,9 @@ const TableLesson = () => {
         setFilteredLessons(data);
         setIsDataEmpty(data.length === 0);
       } else {
-        toast.error("Không tìm thấy khóa học nào.");
+        toast.error("Not found lesson!");
       }
-    } catch {
-      toast.error("Failed to fetch lessons:");
-    }
+    } catch {}
   }, [searchQuery, lessonsData]);
   const fetchCoursesData = async () => {
     try {
@@ -158,14 +171,11 @@ const TableLesson = () => {
         const data = response.data.pageData;
         setCoursesData(data);
       }
-    } catch (error) {
-      console.error("Failed to fetch courses:", error);
-    }
+    } catch (error) {}
   };
   useEffect(() => {
     if (hasMounted.current) return;
     hasMounted.current = true;
-
 
     fetchLessonsData();
     fetchCoursesData();
@@ -173,7 +183,11 @@ const TableLesson = () => {
 
   useEffect(() => {
     SessionService.getSessions({
-      searchCondition: { keyword: '', is_position_order: false, is_delete: false },
+      searchCondition: {
+        keyword: "",
+        is_position_order: false,
+        is_delete: false,
+      },
       pageInfo: { pageNum: 1, pageSize: 10 },
     })
       .then((response) => {
@@ -181,9 +195,7 @@ const TableLesson = () => {
           setSessionData(response.data.data.pageData);
         }
       })
-      .catch((error) => {
-        console.error("Error fetching sessions:", error);
-      });
+      .catch((error) => {});
   }, []);
 
   useEffect(() => {
@@ -202,11 +214,8 @@ const TableLesson = () => {
         );
         toast.success("Course deleted successfully!");
         await fetchLessonsData();
-
       }
-    } catch {
-      toast.error("Failed to delete course!");
-    }
+    } catch {}
   };
   const showDeleteConfirm = (courseId: string) => {
     Modal.confirm({
@@ -225,14 +234,13 @@ const TableLesson = () => {
     await fetchLessonsData();
   };
 
-
   const handleModalClose = () => {
     setIsModalVisible(false);
     setSelectedLesson(null);
   };
   const handleEditCourse = (lesson: GetLessonsResponsePageData) => {
     setSelectedLesson(lesson); // Set the selected lesson
-    setIsModalVisible(true);    // Show the modal for editing
+    setIsModalVisible(true); // Show the modal for editing
   };
 
   const columns = [
@@ -299,7 +307,7 @@ const TableLesson = () => {
           onSearch={handleSearch}
           onChange={(e) => setSearchQuery(e.target.value)}
           enterButton
-          style={{ width: '20%' }}
+          style={{ width: "20%" }}
         />
         <Button onClick={showModal} style={{ marginRight: "10px" }}>
           Create Lesson
@@ -330,7 +338,7 @@ const TableLesson = () => {
         onCancel={handleCancel}
         footer={null}
       >
-        <Form onFinish={handleSubmit}>
+        <Form form={form} onFinish={handleSubmit}>
           <Form.Item
             name="name"
             label="Name"

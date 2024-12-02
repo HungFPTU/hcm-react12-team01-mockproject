@@ -1,17 +1,31 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Table, Button, Popover, Modal, Space, Input, Form, Select, Spin } from "antd";
+import {
+  Table,
+  Button,
+  Popover,
+  Modal,
+  Space,
+  Input,
+  Form,
+  Select,
+  Spin,
+} from "antd";
 import { SessionService } from "../../../../../services/SessionService/session.service";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { GetSessionResponsePageData } from "../../../../../model/admin/response/Session.response"
-import { CreateSessionRequest, GetSessionRequest } from "../../../../../model/admin/request/Session.request";
+import { GetSessionResponsePageData } from "../../../../../model/admin/response/Session.response";
+import {
+  CreateSessionRequest,
+  GetSessionRequest,
+} from "../../../../../model/admin/request/Session.request";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { toast } from "react-toastify";
 const { Option } = Select;
 const TableSession = () => {
-
-  const [sessionsData, setSessionsData] = useState<GetSessionResponsePageData[]>([]);
+  const [sessionsData, setSessionsData] = useState<
+    GetSessionResponsePageData[]
+  >([]);
 
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -26,13 +40,13 @@ const TableSession = () => {
     []
   );
 
-
   const showModal = () => {
     setIsModalVisible(true);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    form.resetFields();
   };
   const handleSubmit = async (values: any) => {
     try {
@@ -56,10 +70,9 @@ const TableSession = () => {
       if (response && response.data.success) {
         toast.success("Session created successfully!");
         setIsModalVisible(false);
-        await fetchSessions()
+        await fetchSessions();
       }
-
-    } catch  {
+    } catch {
       toast.error("Can't create session");
     }
   };
@@ -67,12 +80,10 @@ const TableSession = () => {
     try {
       const response = await CourseService.getCourse(params);
       return response.data;
-    } catch  {
+    } catch {
       toast.error("Fail to fetch courses:");
     }
   };
-
-
 
   const fetchSessions = useCallback(async () => {
     try {
@@ -101,7 +112,7 @@ const TableSession = () => {
       } else {
         toast.error("Failed to fetch sessions: pageData not found", response);
       }
-    } catch  {
+    } catch {
       toast.error("Error fetching sessions:");
     } finally {
       setLoading(false);
@@ -128,7 +139,6 @@ const TableSession = () => {
         });
 
         if (response && response.success) {
-
           const data = response.data.pageData;
           setCoursesData(data);
         }
@@ -139,12 +149,17 @@ const TableSession = () => {
 
     fetchCoursesData();
 
-
-
-
     const fetchCourses = async () => {
       try {
-        const response = await CourseService.getCourse({ searchCondition: { keyword: '', category_id: '', status: undefined, is_delete: false }, pageInfo: { pageNum: 1, pageSize: 10 } });
+        const response = await CourseService.getCourse({
+          searchCondition: {
+            keyword: "",
+            category_id: "",
+            status: undefined,
+            is_delete: false,
+          },
+          pageInfo: { pageNum: 1, pageSize: 10 },
+        });
         if (response.data?.success && response.data.data?.pageData) {
           setCourses(response.data.data.pageData);
         } else {
@@ -163,12 +178,10 @@ const TableSession = () => {
     try {
       const response = await SessionService.getSessions(params);
       return response.data;
-    } catch  {
+    } catch {
       toast.error("Fail to fetch sessions:");
     }
   };
-
-
 
   const fetchSessionsData = useCallback(async () => {
     try {
@@ -197,7 +210,7 @@ const TableSession = () => {
     } catch {
       toast.error("Failed to fetch sessions:");
     }
-  }, [searchQuery])
+  }, [searchQuery]);
 
   useEffect(() => {
     if (hasMounted.current) return;
@@ -211,14 +224,13 @@ const TableSession = () => {
     }
   }, [sessionsData]);
 
-
   const handleDeleteSession = async (sessionId: string) => {
     try {
       await SessionService.deleteSession(sessionId);
       setSessionsData((prevSessions) =>
         prevSessions.filter((session) => session._id !== sessionId)
       );
-      await fetchSessions()
+      await fetchSessions();
       toast.success("Session deleted successfully!");
     } catch {
       toast.error("Failed to delete session!");
@@ -257,22 +269,35 @@ const TableSession = () => {
     try {
       const updatedSession = form.getFieldsValue();
 
-      if (updatedSession.position_order && isNaN(updatedSession.position_order)) {
+      if (
+        updatedSession.position_order &&
+        isNaN(updatedSession.position_order)
+      ) {
         toast.error("Position order must be a number.");
         return;
       }
 
       updatedSession.position_order = Number(updatedSession.position_order);
 
-      if (!updatedSession.name || !updatedSession.course_id || !updatedSession.description || !updatedSession.position_order) {
+      if (
+        !updatedSession.name ||
+        !updatedSession.course_id ||
+        !updatedSession.description ||
+        !updatedSession.position_order
+      ) {
         toast.error("Please fill in all required fields.");
         return;
       }
 
-      const response = await SessionService.updateSession(updatedSession, editingSession._id);
+      const response = await SessionService.updateSession(
+        updatedSession,
+        editingSession._id
+      );
 
       if (response.data?.success) {
-        const updatedCourse = courses.find(course => course._id === updatedSession.course_id);
+        const updatedCourse = courses.find(
+          (course) => course._id === updatedSession.course_id
+        );
         const updatedSessionWithCourseName = {
           ...updatedSession,
           course_name: updatedCourse ? updatedCourse.name : "",
@@ -280,21 +305,22 @@ const TableSession = () => {
 
         setSessionsData((prevSessions) =>
           prevSessions.map((session) =>
-            session._id === editingSession._id ? { ...session, ...updatedSessionWithCourseName } : session
+            session._id === editingSession._id
+              ? { ...session, ...updatedSessionWithCourseName }
+              : session
           )
         );
         toast.success("Session updated successfully!");
         setIsEditModalVisible(false);
         setEditingSession(null);
-        await fetchSessions()
+        await fetchSessions();
       } else {
         toast.error("Failed to update session!");
       }
-    } catch{
+    } catch {
       toast.error("Failed to update session!");
     }
   };
-
 
   const columns = [
     {
@@ -319,7 +345,6 @@ const TableSession = () => {
       key: "action",
       render: (_: unknown, record: GetSessionResponsePageData) => (
         <Space size="middle">
-
           <Popover content="Edit Session">
             <Button
               onClick={() => showEditModal(record)}
@@ -352,7 +377,7 @@ const TableSession = () => {
           onSearch={handleSearch}
           onChange={(e) => setSearchQuery(e.target.value)}
           enterButton
-          style={{ width: '20%' }}
+          style={{ width: "20%" }}
         />
         <Button onClick={showModal} style={{ marginRight: "10px" }}>
           Create Session
@@ -364,7 +389,7 @@ const TableSession = () => {
         onCancel={handleCancel}
         footer={null}
       >
-        <Form onFinish={handleSubmit}>
+        <Form form={form} onFinish={handleSubmit}>
           <Form.Item
             name="sessionName"
             label="Session Name"
@@ -431,9 +456,7 @@ const TableSession = () => {
               position: ["bottomRight"],
             }}
           />
-        )
-        }
-
+        )}
 
         <Modal
           title="Edit Session"
@@ -446,16 +469,20 @@ const TableSession = () => {
             <Form.Item
               name="name"
               label="Session Name"
-              rules={[{ required: true, message: 'Please input session name!' }]}>
+              rules={[
+                { required: true, message: "Please input session name!" },
+              ]}
+            >
               <Input placeholder="Session Name" />
             </Form.Item>
 
             <Form.Item
               name="course_id"
               label="Course"
-              rules={[{ required: true, message: 'Please select a course!' }]}>
+              rules={[{ required: true, message: "Please select a course!" }]}
+            >
               <Select placeholder="Select a course">
-                {courses.map(course => (
+                {courses.map((course) => (
                   <Select.Option key={course._id} value={course._id}>
                     {course.name}
                   </Select.Option>
@@ -466,14 +493,18 @@ const TableSession = () => {
             <Form.Item
               name="description"
               label="Description"
-              rules={[{ required: true, message: 'Please input description!' }]}>
+              rules={[{ required: true, message: "Please input description!" }]}
+            >
               <Input placeholder="Description" />
             </Form.Item>
 
             <Form.Item
               name="position_order"
               label="Position Order"
-              rules={[{ required: true, message: 'Please input position order!' }]}>
+              rules={[
+                { required: true, message: "Please input position order!" },
+              ]}
+            >
               <Input type="number" placeholder="Position Order" />
             </Form.Item>
           </Form>

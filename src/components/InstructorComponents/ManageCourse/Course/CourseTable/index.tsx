@@ -77,6 +77,7 @@ const CourseTable = () => {
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
   const [categories, setCategories] = useState<any[]>([]);
   const [courseType, setCourseType] = useState("free");
+  const [form] = Form.useForm();
   const [filterValue, setFilterValue] = useState<CourseStatusEnum | undefined>(
     undefined
   );
@@ -117,6 +118,7 @@ const CourseTable = () => {
   };
   const handleCancel = () => {
     setAddIsModalVisible(false);
+    form.resetFields();
   };
   const handleSubmit = async (values: any) => {
     try {
@@ -140,6 +142,8 @@ const CourseTable = () => {
       const response = await CourseService.createCourse(newCourse);
       if (response && response.data.success) {
         toast.success("Khóa học đã được tạo thành công!");
+        form.resetFields();
+
         setAddIsModalVisible(false);
       }
       await fetchCoursesData();
@@ -172,7 +176,7 @@ const CourseTable = () => {
       if (response && response.data.success) {
         setCategories(response.data.data.pageData);
       }
-    } catch{
+    } catch {
       toast.error("Error fetching categories:");
     }
   };
@@ -234,7 +238,7 @@ const CourseTable = () => {
         setIsModalVisible(true);
         await fetchCoursesData();
       }
-    } catch  {
+    } catch {
       toast.error("Error fetching course details:");
     }
   };
@@ -273,7 +277,7 @@ const CourseTable = () => {
       } else {
         toast.error("Failed to update course.");
       }
-    } catch  {
+    } catch {
       toast.error("Error updating course.");
     }
   };
@@ -329,7 +333,7 @@ const CourseTable = () => {
         toast.success("Course deleted successfully!");
         await fetchCoursesData();
       }
-    } catch  {
+    } catch {
       toast.error("Failed to delete course!");
     }
   };
@@ -547,16 +551,18 @@ const CourseTable = () => {
 
           {[CourseStatusEnum.New, CourseStatusEnum.Rejected].includes(
             record.status
-          ) && (
-            <Popover content="Send course to admin">
-              <Button
-                className="bg-green-400 hover:bg-green-600 text-white"
-                onClick={() => handleSendClick(record._id)}
-              >
-                <SendOutlined />
-              </Button>
-            </Popover>
-          )}
+          ) &&
+            record.session_count > 0 &&
+            record.lesson_count > 0 && ( // Check for session or lesson count
+              <Popover content="Send course to admin">
+                <Button
+                  className="bg-green-400 hover:bg-green-600 text-white"
+                  onClick={() => handleSendClick(record._id)}
+                >
+                  <SendOutlined />
+                </Button>
+              </Popover>
+            )}
         </div>
       ),
     },
@@ -614,7 +620,7 @@ const CourseTable = () => {
         onCancel={handleCancel}
         footer={null}
       >
-        <Form onFinish={handleSubmit}>
+        <Form form={form} onFinish={handleSubmit}>
           <Form.Item
             name="name"
             label="Name"
