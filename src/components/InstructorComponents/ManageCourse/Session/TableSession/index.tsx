@@ -27,7 +27,6 @@ const TableSession = () => {
     GetSessionResponsePageData[]
   >([]);
 
-  const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [courses, setCourses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -203,7 +202,6 @@ const TableSession = () => {
         const data: GetSessionResponsePageData[] = response.data.pageData;
         setSessionsData(data);
         setSessionsData(data);
-        setIsDataEmpty(data.length === 0);
       } else {
         toast.error("Can't find session");
       }
@@ -441,22 +439,18 @@ const TableSession = () => {
         </Form>
       </Modal>
       <div>
-        {isDataEmpty ? (
-          <div className="text-center text-red-500">No sessions found.</div>
-        ) : (
-          <Table
-            dataSource={sessionsData}
-            columns={columns}
-            rowKey="_id"
-            className="w-full shadow-md rounded-lg overflow-hidden"
-            pagination={{
-              defaultPageSize: 10,
-              showSizeChanger: true,
-              pageSizeOptions: ["15", "20"],
-              position: ["bottomRight"],
-            }}
-          />
-        )}
+        <Table
+          dataSource={sessionsData}
+          columns={columns}
+          rowKey="_id"
+          className="w-full shadow-md rounded-lg overflow-hidden"
+          pagination={{
+            defaultPageSize: 10,
+            showSizeChanger: true,
+            pageSizeOptions: ["15", "20"],
+            position: ["bottomRight"],
+          }}
+        />
 
         <Modal
           title="Edit Session"

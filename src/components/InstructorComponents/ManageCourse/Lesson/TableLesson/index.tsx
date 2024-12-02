@@ -44,7 +44,6 @@ const TableLesson = () => {
   const [filteredLessons, setFilteredLessons] = useState<
     GetLessonsResponsePageData[]
   >([]);
-  const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedLesson, setSelectedLesson] =
@@ -144,7 +143,6 @@ const TableLesson = () => {
         const data: GetLessonsResponsePageData[] = response.data.pageData;
         setLessonsData(data);
         setFilteredLessons(data);
-        setIsDataEmpty(data.length === 0);
       } else {
         toast.error("Not found lesson!");
       }
@@ -195,7 +193,7 @@ const TableLesson = () => {
           setSessionData(response.data.data.pageData);
         }
       })
-      .catch((error) => {});
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -314,22 +312,18 @@ const TableLesson = () => {
         </Button>
       </div>
       <div>
-        {isDataEmpty ? (
-          <div className="text-center text-red-500">No lessons found.</div>
-        ) : (
-          <Table
-            dataSource={filteredLessons}
-            columns={columns}
-            rowKey="key"
-            className="w-full shadow-md rounded-lg overflow-hidden"
-            pagination={{
-              defaultPageSize: 10,
-              showSizeChanger: true,
-              pageSizeOptions: ["15", "20"],
-              position: ["bottomRight"],
-            }}
-          />
-        )}
+        <Table
+          dataSource={filteredLessons}
+          columns={columns}
+          rowKey="key"
+          className="w-full shadow-md rounded-lg overflow-hidden"
+          pagination={{
+            defaultPageSize: 10,
+            showSizeChanger: true,
+            pageSizeOptions: ["15", "20"],
+            position: ["bottomRight"],
+          }}
+        />
       </div>
       <Modal
         title="Create Lesson"

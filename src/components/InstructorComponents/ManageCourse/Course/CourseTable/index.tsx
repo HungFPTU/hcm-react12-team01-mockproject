@@ -71,7 +71,6 @@ const CourseTable = () => {
   const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [coursesData, setCoursesData] = useState<Course[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
@@ -202,7 +201,6 @@ const CourseTable = () => {
       if (response && response.success) {
         const convertedData = response.data.pageData.map(convertToCourse);
         setCoursesData(convertedData);
-        setIsDataEmpty(convertedData.length === 0);
       }
     } catch {
       toast.error("Failed to fetch courses:");
@@ -602,17 +600,14 @@ const CourseTable = () => {
         </Button>
       </div>
 
-      {isDataEmpty ? (
-        <div className="text-center text-red-500">No courses found.</div>
-      ) : (
-        <Table<Course>
-          columns={columns}
-          dataSource={coursesData}
-          rowKey="_id"
-          className="w-full shadow-md rounded-lg overflow-hidden"
-          pagination={{ pageSize: 10 }}
-        />
-      )}
+      <Table<Course>
+        columns={columns}
+        dataSource={coursesData}
+        rowKey="_id"
+        className="w-full shadow-md rounded-lg overflow-hidden"
+        pagination={{ pageSize: 10 }}
+      />
+
       <Modal
         title="Create Course"
         open={isAddModalVisible}
