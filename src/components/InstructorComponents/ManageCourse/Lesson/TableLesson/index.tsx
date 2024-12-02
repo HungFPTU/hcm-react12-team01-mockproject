@@ -93,13 +93,16 @@ const TableLesson = () => {
 
       const response = await LessonService.createLesson(newLesson);
       if (response && response.data.success) {
-        toast.success("Create lesson successful!");
-        form.resetFields();
-
+        toast.success("Created lesson successfully!");
         setIsAddModalVisible(false);
+        form.resetFields();
         await fetchLessonsData();
+      } else {
+        toast.error("Can't create lesson");
       }
-    } catch {}
+    } catch {
+      toast.error("Failed to fetch lessons");
+    }
   };
 
   const handleChange = (courses_id: string) => {
@@ -144,7 +147,7 @@ const TableLesson = () => {
         setLessonsData(data);
         setFilteredLessons(data);
       } else {
-        toast.error("Not found lesson!");
+        toast.error("Failed to fetch lessons");
       }
     } catch {}
   }, [searchQuery, lessonsData]);
@@ -339,10 +342,7 @@ const TableLesson = () => {
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
-            <Input.TextArea
-              placeholder="Nhập tên bài học"
-              style={{ width: "100%" }}
-            />
+            <Input.TextArea placeholder="name" style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
@@ -351,7 +351,7 @@ const TableLesson = () => {
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
-            <Select placeholder="Chọn khóa học" onChange={handleChange}>
+            <Select placeholder="course" onChange={handleChange}>
               {coursesData.map((courses) => (
                 <Select.Option key={courses._id} value={courses._id}>
                   {courses.name}
@@ -366,7 +366,7 @@ const TableLesson = () => {
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
-            <Select placeholder="Chọn session" disabled={!courseID}>
+            <Select placeholder="Session" disabled={!courseID}>
               {filteredSessionData.map((session) => (
                 <Select.Option key={session._id} value={session._id}>
                   {session.name}
@@ -438,11 +438,9 @@ const TableLesson = () => {
               name="video_url"
               label="Video URL"
               labelCol={{ span: 24 }}
-              rules={[
-                { required: true, message: "Vui lòng nhập URL của video" },
-              ]}
+              rules={[{ required: true, message: "Please enter URL Video!" }]}
             >
-              <Input placeholder="Nhập URL video" style={{ width: "100%" }} />
+              <Input placeholder="URL video" style={{ width: "100%" }} />
             </Form.Item>
           )}
 
@@ -451,18 +449,18 @@ const TableLesson = () => {
               name="image_url"
               label="Image URL"
               labelCol={{ span: 24 }}
-              rules={[
-                { required: true, message: "Vui lòng nhập URL của hình ảnh" },
-              ]}
+              rules={[{ required: true, message: "Please enter URL image!" }]}
             >
-              <Input
-                placeholder="Nhập URL hình ảnh"
-                style={{ width: "100%" }}
-              />
+              <Input placeholder="URL image" style={{ width: "100%" }} />
             </Form.Item>
           )}
 
-          <Form.Item name="full_time" label="Full Time" labelCol={{ span: 24 }}>
+          <Form.Item
+            name="full_time"
+            label="Full Time"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true, message: "Please enter fulltime!" }]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
 

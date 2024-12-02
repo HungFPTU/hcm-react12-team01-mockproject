@@ -1,14 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Modal, Form, Input, Button, Select } from "antd";
 import { useState, useEffect } from "react";
 
 const { Option } = Select;
 
-const AddUserModal = ({
-  isModalVisible,
-  handleCancel,
-  handleFormSubmit,
-}: any) => {
+const AddUserModal = ({isModalVisible,handleCancel,handleFormSubmit,}: any) => {
   const [form] = Form.useForm();
   const [role, setRole] = useState<string | undefined>(undefined);
 
@@ -34,10 +29,10 @@ const AddUserModal = ({
           label="Name"
           name="name"
           rules={[
-            { required: true, message: "Vui lòng nhập tên!" },
+            { required: true, message: "Please enter name!" },
             {
               pattern: /^[a-zA-Z0-9 ]+$/,
-              message: "Tên không được chứa ký tự đặc biệt!",
+              message: "Name isn't special character!",
             },
           ]}
         >
@@ -47,8 +42,8 @@ const AddUserModal = ({
           label="Email"
           name="email"
           rules={[
-            { required: true, message: "Vui lòng nhập email!" },
-            { type: "email", message: "Email không hợp lệ!" },
+            { required: true, message: "Please enter email!" },
+            { type: "email", message: "Email invalid!" },
           ]}
         >
           <Input />
@@ -56,16 +51,16 @@ const AddUserModal = ({
         <Form.Item
           label="Password"
           name="password"
-          rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+          rules={[{ required: true, message: "Please enter password!" }]}
         >
           <Input.Password />
         </Form.Item>
         <Form.Item
           label="Role"
           name="role"
-          rules={[{ required: true, message: "Vui lòng chọn vai trò!" }]}
+          rules={[{ required: true, message: "Please enter role!" }]}
         >
-          <Select onChange={handleRoleChange} placeholder="Chọn vai trò">
+          <Select onChange={handleRoleChange} placeholder="Chosen role">
             <Option value="admin">Admin</Option>
             <Option value="instructor">Instructor</Option>
             <Option value="student">Student</Option>
@@ -78,7 +73,7 @@ const AddUserModal = ({
             <Form.Item
               label="Description"
               name="description"
-              rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
+              rules={[{ required: true, message: "Please enter description!" }]}
             >
               <Input.TextArea />
             </Form.Item>
@@ -88,7 +83,7 @@ const AddUserModal = ({
               rules={[
                 {
                   pattern: /^0\d{9}$/,
-                  message: "Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số!",
+                  message: "Phone number must start with 0 and have 10 digits!",
                 },
               ]}
             >
@@ -98,7 +93,7 @@ const AddUserModal = ({
               label="Avatar URL"
               name="avatar_url"
               rules={[
-                { required: true, message: "Vui lòng nhập URL ảnh đại diện!" },
+                { required: true, message: "Please enter avatar URL!" },
               ]}
             >
               <Input />
@@ -106,7 +101,7 @@ const AddUserModal = ({
             <Form.Item
               label="Video URL"
               name="video_url"
-              rules={[{ required: true, message: "Vui lòng nhập URL video!" }]}
+              rules={[{ required: true, message: "Please enter video URL!" }]}
             >
               <Input />
             </Form.Item>
@@ -114,7 +109,7 @@ const AddUserModal = ({
               label="Bank Name"
               name="bank_name"
               rules={[
-                { required: true, message: "Vui lòng nhập tên ngân hàng!" },
+                { required: true, message: "Please enter bank name!" },
               ]}
             >
               <Input />
@@ -125,7 +120,7 @@ const AddUserModal = ({
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập số tài khoản ngân hàng!",
+                  message: "Please enter bank account number!",
                 },
               ]}
             >
@@ -137,7 +132,7 @@ const AddUserModal = ({
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập tên tài khoản ngân hàng!",
+                  message: "Please enter bank account name!",
                 },
               ]}
             >

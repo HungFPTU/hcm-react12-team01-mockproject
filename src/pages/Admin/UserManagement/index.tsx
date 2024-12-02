@@ -10,7 +10,6 @@ import {
   Tabs,
   Modal,
   Form,
-  message,
 } from "antd";
 import {
   DeleteOutlined,
@@ -20,7 +19,7 @@ import {
 } from "@ant-design/icons";
 import { UserService } from "../../../services/UserService/user.service";
 import AddUserModal from "./AddUserModal";
-
+import { toast } from "react-toastify";
 const { Search } = Input;
 const { confirm } = Modal;
 
@@ -67,11 +66,11 @@ const UserManagement: React.FC = () => {
           setUsers(fetchedUsers);
           setFilteredUsers(fetchedUsers);
         } else {
-          message.error("Failed to load user data.");
+          toast.error("Failed to load user data.");
         }
       })
       .catch(() => {
-        message.error("Error fetching user data.");
+        toast.error("Error fetching user data.");
       });
   };
   useEffect(() => {
@@ -84,13 +83,13 @@ const UserManagement: React.FC = () => {
       .then((response) => {
         if (response.data.success) {
           fetchUsersData(fetchParams.status, fetchParams.isVerified); // Reload the user data after status change
-          message.success("Cập nhật trạng thái thành công!");
+          toast.success("Update status successfully!");
         } else {
-          message.error("Cập nhật trạng thái thất bại.");
+          toast.error("Update status faild");
         }
       })
       .catch(() => {
-        message.error("Lỗi khi cập nhật trạng thái.");
+        toast.error("Error update status!");
       });
   };
 
@@ -99,14 +98,14 @@ const UserManagement: React.FC = () => {
       .then((response) => {
         if (response && response.data && response.data.success) {
           fetchUsersData(fetchParams.status, fetchParams.isVerified); // Reload after changing role
-          message.success("Cập nhật vai trò thành công!");
+          toast.success("Update role successfully!");
         } else {
-          message.error("Cập nhật vai trò thất bại.");
+          toast.error("Update role faild.");
         }
       })
       .catch((error) => {
         console.error("Error changing role:", error);
-        message.error("Lỗi khi cập nhật vai trò.");
+        toast.error("Error changing role.");
       });
   };
 
@@ -158,18 +157,18 @@ const UserManagement: React.FC = () => {
     ).then(() => {
       fetchUsersData(fetchParams.status, fetchParams.isVerified); // Reload data from server
       setIsModalVisible(false);
-      message.success("Tạo người dùng thành công!");
+      toast.success("Created user successfully!");
       form.resetFields();
     }).catch(() => {
-      message.error("Tạo người dùng thất bại.");
+      toast.error("Created user faild");
     });
   };
 
 
   const confirmDeleteUser = (id: string) => {
     confirm({
-      title: "Bạn có chắc chắn muốn xóa người dùng này không?",
-      content: "Thao tác này không thể hoàn tác.",
+      title: "Are you sure you want to delete this user??",
+      content: "This action cannot be undone.",
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
@@ -184,13 +183,13 @@ const UserManagement: React.FC = () => {
       .then((response) => {
         if (response.data.success) {
           fetchUsersData(fetchParams.status, fetchParams.isVerified); // Reload data after deleting user
-          message.success("Xóa người dùng thành công!");
+          toast.success("User deleted successfully!");
         } else {
-          message.error("Xóa người dùng thất bại.");
+          toast.error("Delete user failed.");
         }
       })
       .catch(() => {
-        message.error("Lỗi khi xóa người dùng.");
+        toast.error("Error deleting user.");
       });
   };
 

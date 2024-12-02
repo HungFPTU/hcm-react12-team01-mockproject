@@ -7,59 +7,53 @@ const items: TabsProps["items"] = [
   {
     key: "1",
     label: "Courses",
-    children:
+    children: (
       <div className="manage-course-container max-w-full mx-auto px-4">
         <div className="mt-6 flex justify-between">
-
           <div className="flex">
-            <div className="flex-1 max-w-full ">
-
-            </div>
+            <div className="flex-1 max-w-full "></div>
           </div>
         </div>
         <div className="mt-6">
           <TableCourses />
         </div>
-
       </div>
-
+    ),
   },
   {
     key: "2",
     label: "Session",
-    children:
+    children: (
       <div className="manage-course-container">
-        <Row gutter={16} align="middle"> {/* Use Row for horizontal layout */}
-          <Col xs={24} sm={12} md={16}> {/* Adjust column widths as needed */}
-
+        <Row gutter={16} align="middle">
+          <Col xs={24} sm={12} md={16}>
           </Col>
-          <Col xs={24} sm={12} md={8} style={{ textAlign: 'right' }}>
+          <Col xs={24} sm={12} md={8} style={{ textAlign: "right" }}>
             <></>
           </Col>
         </Row>
-        <div className='mt-4'>
+        <div className="mt-4">
           <TableSession />
         </div>
       </div>
-    ,
+    ),
   },
   {
     key: "3",
     label: "Lession",
-    children:
+    children: (
       <div className="manage-course-container">
         <Row gutter={16} align="middle">
-          <Col xs={24} sm={12} md={16}>
-
-          </Col>
-          <Col xs={24} sm={12} md={8} style={{ textAlign: 'right' }}>
+          <Col xs={24} sm={12} md={16}></Col>
+          <Col xs={24} sm={12} md={8} style={{ textAlign: "right" }}>
             <></>
           </Col>
         </Row>
-        <div className='mt-4'>
+        <div className="mt-4">
           <TableLession />
         </div>
-      </div>,
+      </div>
+    ),
   },
 ];
 function AllCourses() {

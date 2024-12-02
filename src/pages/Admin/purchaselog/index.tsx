@@ -34,7 +34,7 @@ const PurchaseLogTable = () => {
     } catch (error) {
       console.error("Error fetching purchase logs:", error);
     }
-  }, [searchQuery, filterValue])
+  }, [searchQuery, filterValue]);
 
   useEffect(() => {
     if (hasMounted.current) return;
@@ -157,7 +157,6 @@ const PurchaseLogTable = () => {
         <Option value={"new"}>New</Option>
         <Option value={"completed"}>Completed</Option>
         <Option value={"request_paid"}>Request Paid</Option>
-
       </Select>
       <div className="w-full">
         <Table<GetPurchaseResponseData>

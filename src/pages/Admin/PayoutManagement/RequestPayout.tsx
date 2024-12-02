@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Table, Popover, Empty, Modal, Button, Space, message, Input, } from 'antd';
+import { Table, Popover, Empty, Modal, Button, Space, Input, } from 'antd';
 import { Payout } from '../../../model/admin/response/Payout.response';
 import { GetPayoutRequest } from '../../../model/admin/request/Payout.request';
 import { PurchaseService } from '../../../services/PurchaseService/purchase.service';
 import SearchBar from './SearchBar';
+import { toast } from 'react-toastify';
 const RequestPayout: React.FC = () => {
 
     const hasMounted = useRef(false);
@@ -29,12 +30,12 @@ const RequestPayout: React.FC = () => {
                     comment: rejectComment,
                 });
                 if (response && response.data.success) {
-                    message.success(`Payout ${payoutToReject} rejected successfully!`);
+                    toast.success(`Payout ${payoutToReject} rejected successfully!`);
                     fetchPurchaseData();
                     setIsRejectModalVisible(false);
                     setRejectComment("");
                 } else {
-                    message.error(`Failed to reject payout ${payoutToReject}`);
+                    toast.error(`Failed to reject payout ${payoutToReject}`);
                 }
             } catch (error) {
                 console.error("Error rejecting payout:", error);
@@ -109,10 +110,10 @@ const RequestPayout: React.FC = () => {
                 comment: "",
             });
             if (response && response.data.success) {
-                message.success(`Payout ${id} approved successfully!`);
+                toast.success(`Payout ${id} approved successfully!`);
                 fetchPurchaseData();
             } else {
-                message.error(`Failed to approve payout ${id}`);
+                toast.error(`Failed to approve payout ${id}`);
             }
         } catch (error) {
             console.error("Error approving payout:", error);

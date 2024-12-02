@@ -9,7 +9,7 @@ import { ROUTER_URL } from "../../const/router.const";
 import { UserRole } from "../../model/User";
 import { useCart } from "../../context/CartContext";
 const { Header } = Layout;
-
+import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
 
 
@@ -70,6 +70,7 @@ export default function Home() {
       localStorage.removeItem("userInfo");
       navigate("/login");
       window.location.reload();
+      toast.success("Logout successfully");
     } catch (error) {
       console.error("Error logging out:", error);
     }

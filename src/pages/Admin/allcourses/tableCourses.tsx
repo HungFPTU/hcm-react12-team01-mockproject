@@ -4,24 +4,21 @@ import { CourseStatusEnum } from "../../../model/Course";
 import { CourseService } from "../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../model/admin/request/Course.request";
+import { toast } from "react-toastify";
 const { Option } = Select;
 
 const TableCourses = () => {
-  const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>(
-    []
-  );
+  const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [filterValue, setFilterValue] = useState<CourseStatusEnum | undefined>(
-    undefined
-  );
+  const [filterValue, setFilterValue] = useState<CourseStatusEnum | undefined>(undefined);
   const hasMounted = useRef(false);
   const fetchCourse = async (params: GetCourseRequest) => {
     try {
       const response = await CourseService.getCourse(params);
       return response.data;
-    } catch (error) {
-      console.error("Fail to fetch courses:", error);
+    } catch {
+      toast.error("Fail to fetch courses:");
     }
   };
   const fetchCoursesData = useCallback(async () => {
@@ -48,14 +45,13 @@ const TableCourses = () => {
 
         const data = response.data.pageData;
         setCoursesData(data);
-
       }
     } catch (error) {
       console.error("Failed to fetch courses:", error);
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, filterValue])
+  }, [searchQuery, filterValue]);
   useEffect(() => {
     if (hasMounted.current) return;
     hasMounted.current = true;
@@ -202,8 +198,6 @@ const TableCourses = () => {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-4">
-
-
         <div className="flex items-center">
           <Input.Search
             placeholder="Search courses..."
@@ -244,7 +238,6 @@ const TableCourses = () => {
             `${range[0]}-${range[1]} of ${total} courses`,
         }}
       />
-
     </div>
   );
 };

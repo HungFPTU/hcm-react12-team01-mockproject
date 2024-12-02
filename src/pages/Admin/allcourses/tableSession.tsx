@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { Input, Table, message } from "antd";
+import { Input, Table } from "antd";
 import { SessionService } from "../../../services/SessionService/session.service";
 import { GetSessionRequest } from "../../../model/admin/request/Session.request";
 import { GetSessionResponsePageData } from "../../../model/admin/response/Session.response";
-
+import { toast } from "react-toastify";
 const TableSession = () => {
   const [sessionsData, setSessionsData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,9 +34,8 @@ const TableSession = () => {
       if (response && response.success) {
         const data: GetSessionResponsePageData[] = response.data.pageData;
         setSessionsData(data);
-        setSessionsData(data);
       } else {
-        message.error("Không tìm thấy khóa học nào.");
+        toast.error("Can't find session.");
       }
     } catch (error) {
       console.error("Failed to fetch sessions:", error);

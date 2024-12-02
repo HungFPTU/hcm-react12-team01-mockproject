@@ -1,4 +1,4 @@
-import { Button, Spin, Table, Typography } from "antd";
+import { Button, Table, Typography } from "antd";
 import { Link } from "react-router-dom";
 import { CartStatusEnum } from "../../model/Cart";
 import { helpers } from "../../utils";
@@ -9,12 +9,10 @@ const { Title } = Typography;
 
 const MyLearning = () => {
   const [cartItems, setCartItems] = useState<CartResponse[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const hasMounted = useRef(false);
 
   const fetchCompletedCartItems = async () => {
     try {
-      setLoading(true);
       const response = await CartService.getCarts({
         searchCondition: {
           status: CartStatusEnum.completed,
@@ -31,8 +29,6 @@ const MyLearning = () => {
       setCartItems(items);
     } catch (error) {
       console.error("Error fetching cart items:", error);
-    } finally {
-      setLoading(false);
     }
   };
   useEffect(() => {
@@ -40,7 +36,6 @@ const MyLearning = () => {
     hasMounted.current = true;
     fetchCompletedCartItems();
   }, []);
-  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
     <>

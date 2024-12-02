@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useState, useEffect } from "react";
-
+import { toast } from "react-toastify";
 import { CartStatusEnum } from "../model/Cart";
 import { CartService } from "../services/cart/cart.service";
 
@@ -86,9 +85,9 @@ export const CartProvider: React.FC<React.PropsWithChildren<{}>> = ({
   const deleteCartItem = async (cartId: string) => {
     try {
       await CartService.DeleteCart(cartId);
-      console.log(`Cart item with ID ${cartId} deleted`);
       updateCartItems(CartStatusEnum.new);
       getCartCount();
+      toast.success("The item has been removed from your cart.");
     } catch (error) {
       console.error("Error deleting cart item:", error);
     }
@@ -96,7 +95,6 @@ export const CartProvider: React.FC<React.PropsWithChildren<{}>> = ({
 
   const getCartCount = async () => {
     if (!token) {
-      console.log("No token found, skipping cart count fetch");
       setCartCount(0); // Đặt giá trị mặc định nếu chưa đăng nhập
       return;
     }

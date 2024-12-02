@@ -1,8 +1,8 @@
-import { notification } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CartList from "../../../components/StudentComponents/cart/list";
 import OrderSummary from "../../../components/StudentComponents/order/summary";
+import { toast } from "react-toastify";
 
 const mockCartItems = [
   {
@@ -48,10 +48,7 @@ const MyCartPage = () => {
 
   const handleDeleteItem = (id: number) => {
     setCartItems(cartItems.filter((item) => item.id !== id));
-    notification.success({
-      message: "Item Removed",
-      description: "The item has been removed from your cart.",
-    });
+    toast.success("The item has been removed from your cart.");
   };
 
   const handleCheckout = () => {
@@ -64,10 +61,7 @@ const MyCartPage = () => {
         state: { selectedOrderItems: selectedItemsData },
       });
     } else {
-      notification.warning({
-        message: "No Items Selected",
-        description: "Please select items to proceed to checkout.",
-      });
+      toast.error("Please select items to proceed to checkout.");
     }
   };
 

@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
-import { Button, message, Radio, RadioChangeEvent } from "antd";
+import { Button, Radio, RadioChangeEvent } from "antd";
 import * as Yup from "yup";
 import RegisterStudent from "../../components/RegisterStudent/RegisterStudent";
 import RegisterInstructor from "../../components/RegisterInstructor/RegisterInstructor";
@@ -10,7 +10,7 @@ import LOGO from "../../assets/logo.png";
 import { FirebaseError } from "firebase/app";
 import { HomeOutlined } from "@ant-design/icons";
 import { AuthService } from "../../services/authService/auth.service";
-
+import { toast } from "react-toastify";
 interface FormValues {
   name: string;
   email: string;
@@ -27,14 +27,18 @@ interface FormValues {
 }
 
 const validationSchema = Yup.object({
-
-    name: Yup.string().required('Please input your full name!').min(2, 'Name must be at least 2 characters!'),
-    email: Yup.string().email('Invalid email!').required('Please input your email!'),
-    password: Yup.string().required('Please input your password!').min(6, 'Password must be at least 6 characters!'),
-    confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password')], 'Confirm password does not match!')
-        .required('Please confirm your password!'),
-
+  name: Yup.string()
+    .required("Please input your full name!")
+    .min(2, "Name must be at least 2 characters!"),
+  email: Yup.string()
+    .email("Invalid email!")
+    .required("Please input your email!"),
+  password: Yup.string()
+    .required("Please input your password!")
+    .min(6, "Password must be at least 6 characters!"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "Confirm password does not match!")
+    .required("Please confirm your password!"),
 });
 
 const Register = () => {
@@ -99,32 +103,24 @@ const Register = () => {
         // Gọi API để đăng ký
         await AuthService.register(registerPayload);
 
-        message.success({
-          content:
-            "Register successful! Please check your email to verify your account.",
-          duration: 6,
-        });
+        toast.success("Register successful! Please check your email to verify your account.",);
         navigate("/login");
       } catch (error) {
         console.error("Error during registration:", error);
         const firebaseError = error as FirebaseError;
         if (firebaseError.code === "auth/email-already-in-use") {
-          message.error({
-            content:
-              "This email is already registered. Please use a different email.",
-            duration: 6,
-          });
+          toast.error("This email is already registered. Please use a different email.",);
         } else if (firebaseError.code === "auth/weak-password") {
-          message.error(
+          toast.error(
             "Password is too weak. Please choose a stronger password."
           );
         } else if (firebaseError.code === "auth/invalid-email") {
-          message.error(
+          toast.error(
             "Invalid email format. Please enter a valid email address."
           );
         } else {
           console.error("Error registering:", firebaseError);
-          message.error("Registration failed! Please try again.");
+          toast.error("Registration failed! Please try again.");
         }
       } finally {
         setLoading(false);

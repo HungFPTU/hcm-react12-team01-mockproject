@@ -3,8 +3,6 @@ import type { ColumnsType } from "antd/es/table";
 import { useState } from "react";
 import { Plession } from "../../../model/PendingLession";
 
-
-
 // Dữ liệu mẫu
 const initialLessons: Plession[] = [
   {
@@ -36,11 +34,10 @@ const initialLessons: Plession[] = [
   },
 ];
 
-
 // Component để hiển thị bảng các bài học
 function TableLessonPending() {
   const [lessions] = useState<Plession[]>(initialLessons);
-  
+
   // Cấu hình các cột cho bảng
   const columns: ColumnsType<Plession> = [
     {

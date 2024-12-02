@@ -14,11 +14,7 @@ const ActionsRenderer: React.FC<ActionsRendererProps> = ({
 }) => {
   return (
     <>
-      <Button
-        type="primary"
-        onClick={onApprove}
-        style={{ marginRight: 8 }}
-      >
+      <Button type="primary" onClick={onApprove} style={{ marginRight: 8 }}>
         Approve
       </Button>
       <Button type="primary" danger onClick={onReject}>

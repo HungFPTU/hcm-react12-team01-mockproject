@@ -123,7 +123,7 @@ const CategoryManagement: React.FC = () => {
 
       const response = await PurchaseService.createPayout(request);
       if (response && response.data.success) {
-        toast.success("Create payout successfully!");
+        // toast.success("Create payout successfully!");
         fetchPurchaseData();
         setSelectedRowKeys([]);
       }

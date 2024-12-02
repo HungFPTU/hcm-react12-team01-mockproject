@@ -140,7 +140,7 @@ const CourseTable = () => {
 
       const response = await CourseService.createCourse(newCourse);
       if (response && response.data.success) {
-        toast.success("Khóa học đã được tạo thành công!");
+        toast.success("Course created successfully!");
         form.resetFields();
 
         setAddIsModalVisible(false);
@@ -622,7 +622,7 @@ const CourseTable = () => {
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
-            <Input placeholder="Nhập tên khóa học" />
+            <Input placeholder="Name" />
           </Form.Item>
 
           <Form.Item
@@ -631,7 +631,7 @@ const CourseTable = () => {
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
-            <Select placeholder="Chọn thể loại">
+            <Select placeholder="Category">
               {categoryData.map((category) => (
                 <Option key={category._id} value={category._id}>
                   {category.name}
@@ -700,7 +700,7 @@ const CourseTable = () => {
             // rules={[{ required: true }]}
           >
             <Input
-              placeholder="Nhập đường dẫn video"
+              placeholder="URL video"
               style={{ width: "100%" }}
             />
           </Form.Item>
@@ -712,7 +712,7 @@ const CourseTable = () => {
             rules={[{ required: true }]}
           >
             <Input
-              placeholder="Nhập đường dẫn hình ảnh"
+              placeholder="URL image"
               style={{ width: "100%" }}
             />
           </Form.Item>
@@ -740,20 +740,20 @@ const CourseTable = () => {
               label="Price"
               labelCol={{ span: 24 }}
               rules={[
-                { required: true, message: "Giá là trường bắt buộc" },
+                { required: true, message: "Price is a required field" },
                 {
                   validator: (_, value) => {
                     if (value && !isNaN(value) && Number(value) >= 0) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(new Error("Giá phải là số không âm"));
+                    return Promise.reject(new Error("Price must be non-negative"));
                   },
                 },
               ]}
             >
               <Input
                 type="number"
-                placeholder="Nhập giá khóa học"
+                placeholder="Enter course price"
                 onChange={(e) => {
                   const value = e.target.value.replace(/[^0-9]/g, "");
                   e.target.value = value;
@@ -771,7 +771,7 @@ const CourseTable = () => {
             >
               <Input
                 type="number"
-                placeholder="Nhập phần trăm giảm giá (nếu có)"
+                placeholder="Enter discount percentage (if applicable)"
               />
             </Form.Item>
           )}
