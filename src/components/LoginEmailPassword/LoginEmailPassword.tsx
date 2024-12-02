@@ -1,13 +1,13 @@
 import { useCallback, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { Input, Button, Checkbox, message } from "antd";
+import { Input, Button, Checkbox } from "antd";
 import * as Yup from "yup";
 import { signInWithEmailAndPassword } from "../../firebase-config";
 import { FirebaseError } from "firebase/app";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthService } from "../../services/authService/auth.service";
 import { useAuth } from "../../context/AuthContent"; 
-
+import { toast } from "react-toastify";
 const validationSchema = Yup.object({
   email: Yup.string()
     .email("Invalid email!")
@@ -54,7 +54,7 @@ const LoginEmailPassword = () => {
       const apiSignInSuccess = await handleAPISignIn(email, password);
   
       if (apiSignInSuccess) {
-        message.success("Login successful!");
+        toast.success("Login successful!");
         navigate("/");
       } else {
         try {
@@ -62,7 +62,7 @@ const LoginEmailPassword = () => {
           const user = userCredential.user;
   
           if (!user.emailVerified) {
-            message.error("Your email is not verified. Please check your email for verification.");
+            toast.error("Your email is not verified. Please check your email for verification.");
             setLoading(false);
             return;
           }
@@ -70,13 +70,13 @@ const LoginEmailPassword = () => {
           if (user) {
             const idToken = await user.getIdToken();
             localStorage.setItem("token", idToken);
-            message.success("Login successful!");
+            toast.success("Login successful!");
             navigate("/");
           }
         } catch (error) {
           const firebaseError = error as FirebaseError;
           console.error("Login failed:", firebaseError);
-          message.error("Login failed. Please check your email and password.");
+          toast.error("Login failed. Please check your email and password.");
         }
       }
   

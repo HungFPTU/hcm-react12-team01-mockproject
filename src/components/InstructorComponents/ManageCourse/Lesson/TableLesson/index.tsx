@@ -1,10 +1,22 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Table, Button, Popover, Modal, Input, Form, InputNumber, Select } from "antd";
+import {
+  Table,
+  Button,
+  Popover,
+  Modal,
+  Input,
+  Form,
+  InputNumber,
+  Select,
+} from "antd";
 import { LessonService } from "../../../../../services/LessonService/lesson.service";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { CreateLessonRequest, GetLessonRequest } from "../../../../../model/admin/request/Lesson.request";
+import {
+  CreateLessonRequest,
+  GetLessonRequest,
+} from "../../../../../model/admin/request/Lesson.request";
 import { GetLessonsResponsePageData } from "../../../../../model/admin/response/Lesson.response";
-import UpdateDetailLesson from '../UpdateDetailLesson/index';
+import UpdateDetailLesson from "../UpdateDetailLesson/index";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { SessionService } from "../../../../../services/SessionService/session.service";
@@ -26,12 +38,17 @@ const TableLesson = () => {
   const [lessonType, setLessonType] = useState<string>(""); // Theo dõi loại bài học
   const editorRef = useRef<any>(null); // Tham chiếu đến TinyMCE editor
   const hasMounted = useRef(false);
-  const [lessonsData, setLessonsData] = useState<GetLessonsResponsePageData[]>([]);
-  const [filteredLessons, setFilteredLessons] = useState<GetLessonsResponsePageData[]>([]);
+  const [lessonsData, setLessonsData] = useState<GetLessonsResponsePageData[]>(
+    []
+  );
+  const [filteredLessons, setFilteredLessons] = useState<
+    GetLessonsResponsePageData[]
+  >([]);
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedLesson, setSelectedLesson] = useState<GetLessonsResponsePageData | null>(null);
+  const [selectedLesson, setSelectedLesson] =
+    useState<GetLessonsResponsePageData | null>(null);
 
   const fetchLesson = async (params: GetLessonRequest) => {
     try {
@@ -54,8 +71,6 @@ const TableLesson = () => {
         ? editorRef.current.getContent()
         : ""; // Lấy nội dung từ editor
 
-
-
       // Tạo đối tượng bài học dựa vào loại bài học
       const newLesson: CreateLessonRequest = {
         name: values.name,
@@ -77,14 +92,14 @@ const TableLesson = () => {
 
       const response = await LessonService.createLesson(newLesson);
       if (response && response.data.success) {
-        toast.success("Bài học đã được tạo thành công!");
+        toast.success("Created lesson successfully!");
         setIsAddModalVisible(false);
         await fetchLessonsData();
       } else {
-        toast.error("Có lỗi khi tạo bài học.");
+        toast.error("Can't create lesson");
       }
     } catch {
-      toast.error("Không thể tạo bài học, vui lòng thử lại!");
+      toast.error("Failed to fetch lessons");
     }
   };
 
@@ -131,7 +146,7 @@ const TableLesson = () => {
         setFilteredLessons(data);
         setIsDataEmpty(data.length === 0);
       } else {
-        toast.error("Không tìm thấy khóa học nào.");
+        toast.error("Failed to fetch lessons");
       }
     } catch {
       toast.error("Failed to fetch lessons:");
@@ -166,14 +181,17 @@ const TableLesson = () => {
     if (hasMounted.current) return;
     hasMounted.current = true;
 
-
     fetchLessonsData();
     fetchCoursesData();
   }, [searchQuery]);
 
   useEffect(() => {
     SessionService.getSessions({
-      searchCondition: { keyword: '', is_position_order: false, is_delete: false },
+      searchCondition: {
+        keyword: "",
+        is_position_order: false,
+        is_delete: false,
+      },
       pageInfo: { pageNum: 1, pageSize: 10 },
     })
       .then((response) => {
@@ -202,7 +220,6 @@ const TableLesson = () => {
         );
         toast.success("Course deleted successfully!");
         await fetchLessonsData();
-
       }
     } catch {
       toast.error("Failed to delete course!");
@@ -225,14 +242,13 @@ const TableLesson = () => {
     await fetchLessonsData();
   };
 
-
   const handleModalClose = () => {
     setIsModalVisible(false);
     setSelectedLesson(null);
   };
   const handleEditCourse = (lesson: GetLessonsResponsePageData) => {
     setSelectedLesson(lesson); // Set the selected lesson
-    setIsModalVisible(true);    // Show the modal for editing
+    setIsModalVisible(true); // Show the modal for editing
   };
 
   const columns = [
@@ -299,7 +315,7 @@ const TableLesson = () => {
           onSearch={handleSearch}
           onChange={(e) => setSearchQuery(e.target.value)}
           enterButton
-          style={{ width: '20%' }}
+          style={{ width: "20%" }}
         />
         <Button onClick={showModal} style={{ marginRight: "10px" }}>
           Create Lesson
@@ -337,10 +353,7 @@ const TableLesson = () => {
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
-            <Input.TextArea
-              placeholder="Nhập tên bài học"
-              style={{ width: "100%" }}
-            />
+            <Input.TextArea placeholder="name" style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
@@ -349,7 +362,7 @@ const TableLesson = () => {
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
-            <Select placeholder="Chọn khóa học" onChange={handleChange}>
+            <Select placeholder="course" onChange={handleChange}>
               {coursesData.map((courses) => (
                 <Select.Option key={courses._id} value={courses._id}>
                   {courses.name}
@@ -364,7 +377,7 @@ const TableLesson = () => {
             labelCol={{ span: 24 }}
             rules={[{ required: true }]}
           >
-            <Select placeholder="Chọn session" disabled={!courseID}>
+            <Select placeholder="Session" disabled={!courseID}>
               {filteredSessionData.map((session) => (
                 <Select.Option key={session._id} value={session._id}>
                   {session.name}
@@ -436,11 +449,9 @@ const TableLesson = () => {
               name="video_url"
               label="Video URL"
               labelCol={{ span: 24 }}
-              rules={[
-                { required: true, message: "Vui lòng nhập URL của video" },
-              ]}
+              rules={[{ required: true, message: "Please enter URL Video!" }]}
             >
-              <Input placeholder="Nhập URL video" style={{ width: "100%" }} />
+              <Input placeholder="URL video" style={{ width: "100%" }} />
             </Form.Item>
           )}
 
@@ -449,18 +460,18 @@ const TableLesson = () => {
               name="image_url"
               label="Image URL"
               labelCol={{ span: 24 }}
-              rules={[
-                { required: true, message: "Vui lòng nhập URL của hình ảnh" },
-              ]}
+              rules={[{ required: true, message: "Please enter URL image!" }]}
             >
-              <Input
-                placeholder="Nhập URL hình ảnh"
-                style={{ width: "100%" }}
-              />
+              <Input placeholder="URL image" style={{ width: "100%" }} />
             </Form.Item>
           )}
 
-          <Form.Item name="full_time" label="Full Time" labelCol={{ span: 24 }}>
+          <Form.Item
+            name="full_time"
+            label="Full Time"
+            labelCol={{ span: 24 }}
+            rules={[{ required: true, message: "Please enter fulltime!" }]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
 

@@ -27,22 +27,9 @@ const PayoutInstructorPage = () => {
   };
 
   return (
-    <>
-
-      <div className="flex justify-between items-center">
-
-        <div>
-          {/* <SearchSales onSearch={() => { }} /> */}
-        </div>
-        <div>
-          {/* <ButtonSales /> */}
-        </div>
-      </div>
       <div>
         <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
       </div>
-
-    </>
 
   );
 }

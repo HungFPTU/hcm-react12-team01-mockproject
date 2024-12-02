@@ -18,10 +18,10 @@ const ResendVerification = () => {
     try {
       const response = await AuthService.resendToken({ email });
       if (response.data) {
-        setMessage('Email xác thực đã được gửi thành công!');
+        setMessage('Verification email sent successfully!');
       }
     } catch {
-      setMessage('Có lỗi xảy ra, vui lòng thử lại sau.');
+      setMessage('An error occurred, please try again later.');
     } finally {
       setLoading(false);
     }
@@ -31,7 +31,7 @@ const ResendVerification = () => {
    
     <div className='bg-gradient-to-r from-[#330933] to-[#f5f5f5] w-full min-h-screen flex justify-center items-center'>
     <div className='bg-white rounded-lg shadow-lg p-8 border border-gray-200 max-w-md w-full'>
-      <h2 className='text-center text-2xl font-semibold text-[#330933] mb-6'>Gửi lại Email Xác Thực</h2>
+      <h2 className='text-center text-2xl font-semibold text-[#330933] mb-6'>Resend Verification Email</h2>
       <div className='flex items-center'>
         <input
           type="email"
@@ -47,7 +47,6 @@ const ResendVerification = () => {
           onClick={handleResend}
           disabled={loading}
         >
-          {loading ? 'Loading...' : 'Gửi Email'}
         </button>
       </div>
       {message && <p className='text-center text-rose-600 mt-4'>{message}</p>}

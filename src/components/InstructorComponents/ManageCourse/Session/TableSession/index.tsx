@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Table, Button, Popover, Modal, Space, Input, Form, Select, Spin } from "antd";
+import { Table, Button, Popover, Modal, Space, Input, Form, Select } from "antd";
 import { SessionService } from "../../../../../services/SessionService/session.service";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { GetSessionResponsePageData } from "../../../../../model/admin/response/Session.response"
@@ -14,7 +14,6 @@ const TableSession = () => {
   const [sessionsData, setSessionsData] = useState<GetSessionResponsePageData[]>([]);
 
   const [isDataEmpty, setIsDataEmpty] = useState(false);
-  const [loading, setLoading] = useState<boolean>(true);
   const [courses, setCourses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [editingSession, setEditingSession] = useState<any>(null);
@@ -76,8 +75,6 @@ const TableSession = () => {
 
   const fetchSessions = useCallback(async () => {
     try {
-      setLoading(true);
-
       const params: GetSessionRequest = {
         searchCondition: {
           keyword: "",
@@ -103,9 +100,7 @@ const TableSession = () => {
       }
     } catch  {
       toast.error("Error fetching sessions:");
-    } finally {
-      setLoading(false);
-    }
+    } 
   }, [searchQuery]);
   useEffect(() => {
     if (hasMounted.current) return;
@@ -207,7 +202,7 @@ const TableSession = () => {
 
   useEffect(() => {
     if (sessionsData.length > 0) {
-      console.log("Có khóa học trong sessionsData:", sessionsData);
+      console.log("Can't find sessionsData:", sessionsData);
     }
   }, [sessionsData]);
 
@@ -340,7 +335,6 @@ const TableSession = () => {
       ),
     },
   ];
-  if (loading) return <Spin tip="Loading course details..." />;
 
   return (
     <div className="w-full">
@@ -369,18 +363,18 @@ const TableSession = () => {
             name="sessionName"
             label="Session Name"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: "Vui lòng nhập tên session" }]}
+            rules={[{ required: true, message: "Please enter session name" }]}
           >
-            <Input placeholder="Nhập tên session" />
+            <Input placeholder="session name" />
           </Form.Item>
 
           <Form.Item
             name="course_id"
             label="Course "
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}
+            rules={[{ required: true, message: "please enter course" }]}
           >
-            <Select placeholder="Chọn khóa học">
+            <Select placeholder="course">
               {coursesData.map((course) => (
                 <Option key={course._id} value={course._id}>
                   {course.name}
@@ -395,7 +389,7 @@ const TableSession = () => {
             labelCol={{ span: 24 }}
           >
             <Input.TextArea
-              placeholder="Nhập mô tả"
+              placeholder="description"
               style={{ width: "100%", height: "100px" }}
             />
           </Form.Item>
@@ -405,7 +399,7 @@ const TableSession = () => {
             label="Position Order"
             labelCol={{ span: 24 }}
           >
-            <Input type="number" placeholder="Nhập thứ tự vị trí " />
+            <Input type="number" placeholder="position " />
           </Form.Item>
 
           <Form.Item>
@@ -472,8 +466,7 @@ const TableSession = () => {
 
             <Form.Item
               name="position_order"
-              label="Position Order"
-              rules={[{ required: true, message: 'Please input position order!' }]}>
+              label="Position Order">
               <Input type="number" placeholder="Position Order" />
             </Form.Item>
           </Form>

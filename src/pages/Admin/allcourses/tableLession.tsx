@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { Input, message, Table } from "antd";
+import { Input, Table } from "antd";
 import { LessonService } from "../../../services/LessonService/lesson.service";
 import { GetLessonsResponsePageData } from "../../../model/admin/response/Lesson.response";
 import { GetLessonRequest } from "../../../model/admin/request/Lesson.request";
+import { toast } from "react-toastify";
 
 const TableLesson = () => {
-  const [lessonsData, setLessonsData] = useState<GetLessonsResponsePageData[]>([]);
   const [filteredLessons, setFilteredLessons] = useState<GetLessonsResponsePageData[]>([]);
   const hasMounted = useRef(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,10 +39,9 @@ const TableLesson = () => {
       });
       if (response && response.success) {
         const data: GetLessonsResponsePageData[] = response.data.pageData;
-        setLessonsData(data);
         setFilteredLessons(data);
       } else {
-        message.error("Không tìm thấy khóa học nào.");
+        toast.error("Can't find lessons.");
       }
     } catch (error) {
       console.error("Failed to fetch lessons:", error);
@@ -54,12 +53,6 @@ const TableLesson = () => {
     hasMounted.current = true;
     fetchLessonsData();
   }, []);
-
-  useEffect(() => {
-    if (lessonsData.length > 0) {
-      console.log("Có khóa học trong lessonsData:", lessonsData);
-    }
-  }, [lessonsData]);
 
   const columns = [
     {

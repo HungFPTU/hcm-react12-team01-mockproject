@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input, Space, message } from "antd";
+import { Button, Form, Input, Space } from "antd";
 import { useForm } from "antd/es/form/Form";
 import LOGO from "../../assets/LogoCourseApp.png";
 import YOUR_IMAGE from "../../assets/Login&Register.jpg";
 import { AuthService } from "../../services/authService/auth.service";
-
+import { toast } from "react-toastify";
 // Xác định kiểu của form values
 interface FormValues {
   email: string;
@@ -25,11 +25,11 @@ const ForgotPassword = () => {
     try {
       await AuthService.forgotPassword(values.email); // Gọi hàm forgotPassword với email đầu vào
       setSubmitted(true);
-      message.success("Reset password link has been sent to your email");
+      toast.success("Reset password link has been sent to your email");
     } catch (error) {
       // Ép kiểu cho error
       const typedError = error as any;
-      message.error("Error sending reset link");
+      toast.error("Error sending reset link");
       console.error(
         typedError.response
           ? typedError.response.data.error

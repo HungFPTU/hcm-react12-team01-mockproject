@@ -1,9 +1,9 @@
 // src/components/LoginGoogle.jsx
 import { useCallback } from 'react';
-import { message } from 'antd';
 import { signInWithGoogle } from '../../firebase-config';
 import GOOGLE_ICON from '../../assets/LOGOGOOGLE.png';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const LoginGoogle = () => {
   const navigate = useNavigate();
@@ -15,12 +15,11 @@ const LoginGoogle = () => {
       if (user) {
         const idToken = await user.getIdToken();
         sessionStorage.setItem('Token', idToken);
-        message.success("Login successful!");
+        toast.success("Login successful!");
         navigate('/');
       }
-    } catch (error) {
-      console.error("Google Sign In Failed:", error);
-      message.error("Login failed. Please try again.");
+    } catch{
+      toast.error("Login failed. Please try again.");
     }
   }, [navigate]);
 

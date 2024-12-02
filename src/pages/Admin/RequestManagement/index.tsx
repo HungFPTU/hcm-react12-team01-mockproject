@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Table, message, Modal, Input, Button, Form } from "antd";
+import { Table, Modal, Input, Button, Form } from "antd";
 import AvatarRenderer from "./AvatarRenderer";
 import SearchBar from "./SearchBar";
 import { UserService } from "../../../services/UserService/user.service";
 import ActionsRenderer from "./ActionsRenderer";
-
+import { toast } from "react-toastify";
 interface Request {
   key: string;
   avatar: string;
@@ -20,10 +20,12 @@ const RequestManagement: React.FC = () => {
   const [filteredRequests, setFilteredRequests] = useState<Request[]>([]);
 
   // State cho modal reject và confirm modal approve
-  const [isRejectModalVisible, setIsRejectModalVisible] = useState<boolean>(false);
-  const [rejectReason, setRejectReason] = useState<string>(''); // Lý do từ chối
-  const [currentRequestKey, setCurrentRequestKey] = useState<string>('');
-  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState<boolean>(false); // Modal xác nhận duyệt
+  const [isRejectModalVisible, setIsRejectModalVisible] =
+    useState<boolean>(false);
+  const [rejectReason, setRejectReason] = useState<string>(""); // Lý do từ chối
+  const [currentRequestKey, setCurrentRequestKey] = useState<string>("");
+  const [isConfirmModalVisible, setIsConfirmModalVisible] =
+    useState<boolean>(false); // Modal xác nhận duyệt
 
   useEffect(() => {
     UserService.getUsersWatingManager()
@@ -43,11 +45,11 @@ const RequestManagement: React.FC = () => {
           setRequests(fetchedRequests);
           setFilteredRequests(fetchedRequests);
         } else {
-          message.error("Failed to load request data.");
+          toast.error("Failed to load request data.");
         }
       })
       .catch(() => {
-        message.error("Error fetching request data.");
+        toast.error("Error fetching request data.");
       });
   }, []);
 
@@ -63,28 +65,29 @@ const RequestManagement: React.FC = () => {
   const handleApprove = () => {
     // Gọi API để duyệt yêu cầu
     UserService.reviewProfileInstructor({
-        userId: currentRequestKey, // Truyền userId
-        status: "approve" // Truyền status là "approve"
+      userId: currentRequestKey, // Truyền userId
+      status: "approve", // Truyền status là "approve"
     })
-    .then((response) => {
+      .then((response) => {
         if (response.data.success) {
-            message.success(`Request with key ${currentRequestKey} approved.`);
-            setRequests((prevRequests) =>
-                prevRequests.filter((request) => request.key !== currentRequestKey)
-            );
-            setFilteredRequests((prevFilteredRequests) =>
-                prevFilteredRequests.filter((request) => request.key !== currentRequestKey)
-            );
-            setIsConfirmModalVisible(false); // Đóng modal xác nhận
+          toast.success(`Request with key ${currentRequestKey} approved.`);
+          setRequests((prevRequests) =>
+            prevRequests.filter((request) => request.key !== currentRequestKey)
+          );
+          setFilteredRequests((prevFilteredRequests) =>
+            prevFilteredRequests.filter(
+              (request) => request.key !== currentRequestKey
+            )
+          );
+          setIsConfirmModalVisible(false); // Đóng modal xác nhận
         } else {
-            message.error("Failed to approve request.");
+          toast.error("Failed to approve request.");
         }
-    })
-    .catch(() => {
-        message.error("Error approving request.");
-    });
-};
-
+      })
+      .catch(() => {
+        toast.error("Error approving request.");
+      });
+  };
 
   const showConfirmModal = (key: string) => {
     setCurrentRequestKey(key); // Lưu key yêu cầu đang duyệt
@@ -93,39 +96,40 @@ const RequestManagement: React.FC = () => {
 
   const handleReject = () => {
     if (!rejectReason) {
-        message.error("Please provide a reason for rejection.");
-        return;
+      toast.error("Please provide a reason for rejection.");
+      return;
     }
 
     // Gọi API với lý do từ chối
     UserService.reviewProfileInstructor({
-        userId: currentRequestKey, // Truyền userId
-        status: "reject", // Truyền status là "reject"
-        comment: rejectReason // Thêm lý do từ chối
+      userId: currentRequestKey, // Truyền userId
+      status: "reject", // Truyền status là "reject"
+      comment: rejectReason, // Thêm lý do từ chối
     })
-    .then((response) => {
+      .then((response) => {
         if (response.data.success) {
-            message.success(`Request with key ${currentRequestKey} rejected.`);
-            setRequests((prevRequests) =>
-                prevRequests.filter((request) => request.key !== currentRequestKey)
-            );
-            setFilteredRequests((prevFilteredRequests) =>
-                prevFilteredRequests.filter((request) => request.key !== currentRequestKey)
-            );
-            setIsRejectModalVisible(false); // Đóng modal reject
+          toast.success(`Request with key ${currentRequestKey} rejected.`);
+          setRequests((prevRequests) =>
+            prevRequests.filter((request) => request.key !== currentRequestKey)
+          );
+          setFilteredRequests((prevFilteredRequests) =>
+            prevFilteredRequests.filter(
+              (request) => request.key !== currentRequestKey
+            )
+          );
+          setIsRejectModalVisible(false); // Đóng modal reject
         } else {
-            message.error("Failed to reject request.");
+          toast.error("Failed to reject request.");
         }
-    })
-    .catch(() => {
-        message.error("Error rejecting request.");
-    });
-};
-
+      })
+      .catch(() => {
+        toast.error("Error rejecting request.");
+      });
+  };
 
   const showRejectModal = (key: string) => {
-    setCurrentRequestKey(key);  // Set the current request key
-    setIsRejectModalVisible(true);  // Show the modal
+    setCurrentRequestKey(key); // Set the current request key
+    setIsRejectModalVisible(true); // Show the modal
   };
 
   const columns = [
