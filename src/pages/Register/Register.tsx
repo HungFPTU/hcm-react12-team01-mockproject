@@ -27,31 +27,14 @@ interface FormValues {
 }
 
 const validationSchema = Yup.object({
-  name: Yup.string()
-    .required("Please input your full name!")
-    .min(2, "Name must be at least 2 characters!"),
-  email: Yup.string()
-    .email("Invalid email!")
-    .required("Please input your email!"),
-  password: Yup.string()
-    .required("Please input your password!")
-    .min(6, "Password must be at least 6 characters!"),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password")], "Confirm password does not match!")
-    .required("Please confirm your password!"),
-  // role: Yup.string().required('Role is required!'),
-  // phone_number: Yup.string()
-  //     .required('Phone number is required!')
-  //     .matches(/^[0-9]+$/, 'Phone number must be numeric')
-  //     .min(10, 'Phone number must be at least 10 digits!'),
-  // description: Yup.string().required('Description is required!'),
-  // avatar_url: Yup.string().url('Invalid URL format!').required('Avatar URL is required!'),
-  // video_url: Yup.string().url('Invalid URL format!').required('Video URL is required!'),
-  // bank_name: Yup.string().required('Bank name is required!'),
-  // bank_account_no: Yup.string()
-  //     .required('Bank account number is required!')
-  //     .matches(/^[0-9]+$/, 'Bank account number must be numeric!'),
-  // bank_account_name: Yup.string().required('Bank account name is required!'),
+
+    name: Yup.string().required('Please input your full name!').min(2, 'Name must be at least 2 characters!'),
+    email: Yup.string().email('Invalid email!').required('Please input your email!'),
+    password: Yup.string().required('Please input your password!').min(6, 'Password must be at least 6 characters!'),
+    confirmPassword: Yup.string()
+        .oneOf([Yup.ref('password')], 'Confirm password does not match!')
+        .required('Please confirm your password!'),
+
 });
 
 const Register = () => {

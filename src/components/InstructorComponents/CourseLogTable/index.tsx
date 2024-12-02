@@ -1,24 +1,22 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Table, Popover, Input } from "antd";
-import { CourseLogResponseData, GetCourseResponsePageData } from "../../../model/admin/response/Course.response";
+import { CourseLogResponseData } from "../../../model/admin/response/Course.response";
 import { CourseStatusEnum } from "../../../model/Course";
 import { CourseService } from "../../../services/CourseService/course.service";
 
 const CoursesLogTable = () => {
     const [coursesLogData, setCoursesLogData] = useState<CourseLogResponseData[]>([]);
-    const [coursesData, setCoursesData] = useState<GetCourseResponsePageData[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
-    const [activeSearch, setActiveSearch] = useState("");
     const [isDataEmpty, setIsDataEmpty] = useState(false);
     const hasMounted = useRef(false);
-    
-    // Hàm gọi API để lấy dữ liệu
-    const fetchCourseLogData = async () => {
+
+
+    const fetchCourseLogData = useCallback(async () => {
         try {
-            // Fetch courses first
+            // 1. Fetch courses first
             const courseResponse = await CourseService.getCourse({
                 searchCondition: {
-                    keyword: activeSearch, // Tìm kiếm với từ khóa activeSearch
+                    keyword: searchQuery,
                     category_id: "",
                     status: undefined,
                     is_delete: false,
@@ -30,14 +28,13 @@ const CoursesLogTable = () => {
             });
 
             if (courseResponse && courseResponse.data.success) {
-                setCoursesData(courseResponse.data.data.pageData);
 
-                // Fetch logs for each course
+                // 2. Map over courses and fetch logs for each
                 const coursesLogPromises = courseResponse.data.data.pageData.map(async (course) => {
                     const courseLogResponse = await CourseService.getCourseLog({
                         searchCondition: {
-                            keyword: activeSearch,
-                            course_id: course._id,
+                            keyword: "",
+                            course_id: course._id, // Fetch logs for this specific course ID
                             old_status: undefined,
                             new_status: undefined,
                             is_delete: false,
@@ -49,42 +46,39 @@ const CoursesLogTable = () => {
                     });
 
                     if (courseLogResponse && courseLogResponse.data.success) {
-                        return courseLogResponse.data.data.pageData;
+                        return courseLogResponse.data.data.pageData; // Return log data for this course
                     } else {
-                        return [];
+                        return []; // Return an empty array if there's an error or no logs
                     }
                 });
 
+                // 3. Wait for all log fetches to complete
                 const allCoursesLogs = await Promise.all(coursesLogPromises);
+
+                // 4. Flatten the array of arrays and update state
                 const flattenedLogs = allCoursesLogs.flat();
                 setCoursesLogData(flattenedLogs);
                 setIsDataEmpty(flattenedLogs.length === 0);
             }
+
         } catch (error) {
             console.error("Failed to fetch data:", error);
         }
-    };
+    }, [searchQuery])
 
-    // Lọc dữ liệu khóa học
-    const filteredCourses = coursesLogData.filter((course) =>
-        course.course_name.toLowerCase().includes(activeSearch.toLowerCase())
-    );
 
-    const handleSearch = () => {
-        setActiveSearch(searchQuery);
-    };
 
     useEffect(() => {
         if (hasMounted.current) return;
         hasMounted.current = true;
         fetchCourseLogData();
-    }, [activeSearch]);
+    }, []);
 
-    useEffect(() => {
-        if (coursesData.length > 0) {
-          console.log("Có khóa học trong coursesData:", coursesData);
-        }
-    }, [coursesData]);
+
+    const handleSearch = () => {
+        fetchCourseLogData();
+    };
+
 
 
     const columns = [
@@ -113,7 +107,7 @@ const CoursesLogTable = () => {
                     case CourseStatusEnum.WaitingApprove:
                         statusText = "Waiting for Approval";
                         statusColor = "text-orange-300";
-                        borderColor = "border-orange-300"
+                        borderColor = "border-orange-300";
                         popoverContent = "Please watting for the approval from admin";
 
                         break;
@@ -265,13 +259,13 @@ const CoursesLogTable = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 enterButton
             />
-            <div className="w-full mt-4"> {/* Add margin-top here */}
+            <div className="w-full">
                 {isDataEmpty ? (
                     <div className="text-center text-red-500">No courses found.</div>
                 ) : (
                     <Table<CourseLogResponseData>
                         columns={columns}
-                        dataSource={filteredCourses}
+                        dataSource={coursesLogData}
                         rowKey="_id"
                         className="w-full shadow-md rounded-lg overflow-hidden"
                         pagination={{

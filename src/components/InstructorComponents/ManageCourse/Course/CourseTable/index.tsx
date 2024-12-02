@@ -3,7 +3,6 @@ import {
   Table,
   Button,
   Switch,
-  message,
   Popover,
   Modal,
   Form,
@@ -22,7 +21,7 @@ import { SendOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { GetCategoryRequest } from "../../../../../model/admin/request/Category.request";
 import { Editor } from "@tinymce/tinymce-react";
 import { Category } from "../../../../../model/admin/response/Category.response";
-
+import { toast } from "react-toastify";
 const { Option } = Select;
 interface Course {
   _id: string;
@@ -112,7 +111,7 @@ const CourseTable = () => {
           }
         })
         .catch((error) => {
-          console.error("Error fetching categories:", error);
+          toast.error("Error fetching categories:", error);
         });
     }
   };
@@ -140,20 +139,20 @@ const CourseTable = () => {
 
       const response = await CourseService.createCourse(newCourse);
       if (response && response.data.success) {
-        message.success("Khóa học đã được tạo thành công!");
+        toast.success("Khóa học đã được tạo thành công!");
         setAddIsModalVisible(false);
       }
       await fetchCoursesData();
-    } catch (error) {
-      console.error("Error creating course:", error);
+    } catch {
+      toast.error("Error creating course:");
     }
   };
   const fetchCourse = async (params: GetCourseRequest) => {
     try {
       const response = await CourseService.getCourse(params);
       return response.data;
-    } catch (error) {
-      console.error("Fail to fetch courses:", error);
+    } catch {
+      toast.error("Fail to fetch courses:");
     }
   };
   const params: GetCategoryRequest = {
@@ -173,8 +172,8 @@ const CourseTable = () => {
       if (response && response.data.success) {
         setCategories(response.data.data.pageData);
       }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
+    } catch{
+      toast.error("Error fetching categories:");
     }
   };
 
@@ -201,8 +200,8 @@ const CourseTable = () => {
         setCoursesData(convertedData);
         setIsDataEmpty(convertedData.length === 0);
       }
-    } catch (error) {
-      console.error("Failed to fetch courses:", error);
+    } catch {
+      toast.error("Failed to fetch courses:");
     }
   }, [searchQuery, filterValue, coursesData]);
 
@@ -235,8 +234,8 @@ const CourseTable = () => {
         setIsModalVisible(true);
         await fetchCoursesData();
       }
-    } catch (error) {
-      console.error("Error fetching course details:", error);
+    } catch  {
+      toast.error("Error fetching course details:");
     }
   };
 
@@ -267,16 +266,15 @@ const CourseTable = () => {
         updatedCourse
       );
       if (response && response.data.success) {
-        message.success("Course updated successfully!");
+        toast.success("Course updated successfully!");
         fetchCoursesData();
         setIsModalVisible(false);
         await fetchCoursesData();
       } else {
-        message.error("Failed to update course.");
+        toast.error("Failed to update course.");
       }
-    } catch (error) {
-      message.error("Error updating course.");
-      console.error("Error updating course:", error);
+    } catch  {
+      toast.error("Error updating course.");
     }
   };
 
@@ -288,12 +286,11 @@ const CourseTable = () => {
         comment: `Changed status to ${status}`,
       });
       if (response && response.data.success) {
-        message.success(`Course status updated to ${status}!`);
+        toast.success(`Course status updated to ${status}!`);
         await fetchCoursesData();
       }
-    } catch (error) {
-      message.error("Failed to update course status!");
-      console.error("Error changing status:", error);
+    } catch {
+      toast.error("Failed to update course status!");
     }
   };
 
@@ -307,7 +304,7 @@ const CourseTable = () => {
           course.status
         )
       ) {
-        message.error("Invalid course status for sending.");
+        toast.error("Invalid course status for sending.");
         return;
       }
 
@@ -317,11 +314,11 @@ const CourseTable = () => {
         comment: "Sent to admin for approval",
       });
       if (response && response.data.success) {
-        message.success("Course status updated to Waiting for Approval!");
+        toast.success("Course status updated to Waiting for Approval!");
         await fetchCoursesData();
       }
-    } catch (error) {
-      console.error("Error sending course:", error);
+    } catch {
+      toast.error("Error sending course:");
     }
   };
 
@@ -329,12 +326,11 @@ const CourseTable = () => {
     try {
       const response = await CourseService.deleteCourse(courseId);
       if (response && response.data.success) {
-        message.success("Course deleted successfully!");
+        toast.success("Course deleted successfully!");
         await fetchCoursesData();
       }
-    } catch (error) {
-      message.error("Failed to delete course!");
-      console.error("Error deleting course:", error);
+    } catch  {
+      toast.error("Failed to delete course!");
     }
   };
   const handleSearch = async () => {

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Table, Button, Popover, Modal, message, Input, Form, InputNumber, Select } from "antd";
+import { Table, Button, Popover, Modal, Input, Form, InputNumber, Select } from "antd";
 import { LessonService } from "../../../../../services/LessonService/lesson.service";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { CreateLessonRequest, GetLessonRequest } from "../../../../../model/admin/request/Lesson.request";
@@ -12,6 +12,7 @@ import { GetCourseResponsePageData } from "../../../../../model/admin/response/C
 import { Session } from "../../../../../model/admin/response/Session.response";
 import { LessonTypeEnum } from "../../../../../model/Lesson";
 import { Editor } from "@tinymce/tinymce-react";
+import { toast } from "react-toastify";
 const { Option } = Select;
 
 const TableLesson = () => {
@@ -76,16 +77,14 @@ const TableLesson = () => {
 
       const response = await LessonService.createLesson(newLesson);
       if (response && response.data.success) {
-        message.success("Bài học đã được tạo thành công!");
+        toast.success("Bài học đã được tạo thành công!");
         setIsAddModalVisible(false);
-        console.log("Lesson created successfully, fetching lessons...");
         await fetchLessonsData();
       } else {
-        message.error("Có lỗi khi tạo bài học.");
+        toast.error("Có lỗi khi tạo bài học.");
       }
-    } catch (error) {
-      console.error("Error creating lesson:", error);
-      message.error("Không thể tạo bài học, vui lòng thử lại!");
+    } catch {
+      toast.error("Không thể tạo bài học, vui lòng thử lại!");
     }
   };
 
@@ -132,10 +131,10 @@ const TableLesson = () => {
         setFilteredLessons(data);
         setIsDataEmpty(data.length === 0);
       } else {
-        message.error("Không tìm thấy khóa học nào.");
+        toast.error("Không tìm thấy khóa học nào.");
       }
-    } catch (error) {
-      console.error("Failed to fetch lessons:", error);
+    } catch {
+      toast.error("Failed to fetch lessons:");
     }
   }, [searchQuery, lessonsData]);
   const fetchCoursesData = async () => {
@@ -201,13 +200,12 @@ const TableLesson = () => {
         setLessonsData((prevLessons) =>
           prevLessons.filter((lesson) => lesson._id !== lessonId)
         );
-        message.success("Course deleted successfully!");
+        toast.success("Course deleted successfully!");
         await fetchLessonsData();
 
       }
-    } catch (error) {
-      message.error("Failed to delete course!");
-      console.error("Error deleting course:", error);
+    } catch {
+      toast.error("Failed to delete course!");
     }
   };
   const showDeleteConfirm = (courseId: string) => {

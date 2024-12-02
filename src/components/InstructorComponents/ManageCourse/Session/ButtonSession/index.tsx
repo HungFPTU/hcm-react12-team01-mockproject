@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { Button, Modal, Form, Input, Select, message } from "antd";
+import { Button, Modal, Form, Input, Select } from "antd";
 import { SessionService } from "../../../../../services/SessionService/session.service";
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
 import { CreateSessionRequest } from "../../../../../model/admin/request/Session.request";
-
+import { toast } from "react-toastify";
 const { Option } = Select;
 
 const ButtonSession = () => {
@@ -27,8 +27,8 @@ const ButtonSession = () => {
     try {
       const response = await CourseService.getCourse(params);
       return response.data;
-    } catch (error) {
-      console.error("Fail to fetch courses:", error);
+    } catch {
+      toast.error("Fail to fetch courses:");
     }
   };
 
@@ -58,8 +58,8 @@ const ButtonSession = () => {
           const data = response.data.pageData;
           setCoursesData(data);
         }
-      } catch (error) {
-        console.error("Failed to fetch courses:", error);
+      } catch {
+        toast.error("Failed to fetch courses:");
       }
     };
 
@@ -86,14 +86,12 @@ const ButtonSession = () => {
       const response = await SessionService.createSession(params);
 
       if (response && response.data.success) {
-        console.log("API Response:", response); // Check API response
-        message.success("Session đã được tạo thành công!");
+        toast.success("Session đã được tạo thành công!");
       }
 
       setIsModalVisible(false);
-    } catch (error) {
-      message.error("Có lỗi xảy ra khi tạo session!");
-      console.error("Error creating session:", error);
+    } catch {
+      toast.error("Có lỗi xảy ra khi tạo session!");
     }
   };
 

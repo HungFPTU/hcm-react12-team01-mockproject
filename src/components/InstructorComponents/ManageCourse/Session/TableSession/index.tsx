@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Table, Button, Popover, Modal, message, Space, Input, Form, Select, Spin } from "antd";
+import { Table, Button, Popover, Modal, Space, Input, Form, Select, Spin } from "antd";
 import { SessionService } from "../../../../../services/SessionService/session.service";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { GetSessionResponsePageData } from "../../../../../model/admin/response/Session.response"
@@ -7,6 +7,7 @@ import { CreateSessionRequest, GetSessionRequest } from "../../../../../model/ad
 import { CourseService } from "../../../../../services/CourseService/course.service";
 import { GetCourseResponsePageData } from "../../../../../model/admin/response/Course.response";
 import { GetCourseRequest } from "../../../../../model/admin/request/Course.request";
+import { toast } from "react-toastify";
 const { Option } = Select;
 const TableSession = () => {
 
@@ -53,23 +54,21 @@ const TableSession = () => {
       const response = await SessionService.createSession(params);
 
       if (response && response.data.success) {
-        console.log("API Response:", response); // Check API response
-        message.success("Session đã được tạo thành công!");
+        toast.success("Session created successfully!");
         setIsModalVisible(false);
         await fetchSessions()
       }
 
-    } catch (error) {
-      message.error("Có lỗi xảy ra khi tạo session!");
-      console.error("Error creating session:", error);
+    } catch  {
+      toast.error("Can't create session");
     }
   };
   const fetchSessionCourse = async (params: GetCourseRequest) => {
     try {
       const response = await CourseService.getCourse(params);
       return response.data;
-    } catch (error) {
-      console.error("Fail to fetch courses:", error);
+    } catch  {
+      toast.error("Fail to fetch courses:");
     }
   };
 
@@ -100,10 +99,10 @@ const TableSession = () => {
         );
         setSessionsData(sessionsWithKey);
       } else {
-        console.error("Failed to fetch sessions: pageData not found", response);
+        toast.error("Failed to fetch sessions: pageData not found", response);
       }
-    } catch (error) {
-      console.error("Error fetching sessions:", error);
+    } catch  {
+      toast.error("Error fetching sessions:");
     } finally {
       setLoading(false);
     }
@@ -133,8 +132,8 @@ const TableSession = () => {
           const data = response.data.pageData;
           setCoursesData(data);
         }
-      } catch (error) {
-        console.error("Failed to fetch courses:", error);
+      } catch {
+        toast.error("Failed to fetch courses:");
       }
     };
 
@@ -149,10 +148,10 @@ const TableSession = () => {
         if (response.data?.success && response.data.data?.pageData) {
           setCourses(response.data.data.pageData);
         } else {
-          console.error("Failed to fetch courses:", response);
+          toast.error("Failed to fetch courses:", response);
         }
-      } catch (error) {
-        console.error("Error fetching courses:", error);
+      } catch {
+        toast.error("Error fetching courses:");
       }
     };
 
@@ -164,8 +163,8 @@ const TableSession = () => {
     try {
       const response = await SessionService.getSessions(params);
       return response.data;
-    } catch (error) {
-      console.error("Fail to fetch sessions:", error);
+    } catch  {
+      toast.error("Fail to fetch sessions:");
     }
   };
 
@@ -193,10 +192,10 @@ const TableSession = () => {
         setSessionsData(data);
         setIsDataEmpty(data.length === 0);
       } else {
-        message.error("Không tìm thấy khóa học nào.");
+        toast.error("Can't find session");
       }
-    } catch (error) {
-      console.error("Failed to fetch sessions:", error);
+    } catch {
+      toast.error("Failed to fetch sessions:");
     }
   }, [searchQuery])
 
@@ -220,10 +219,9 @@ const TableSession = () => {
         prevSessions.filter((session) => session._id !== sessionId)
       );
       await fetchSessions()
-      message.success("Session deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting session:", error);
-      message.error("Failed to delete session!");
+      toast.success("Session deleted successfully!");
+    } catch {
+      toast.error("Failed to delete session!");
     }
   };
 
@@ -260,14 +258,14 @@ const TableSession = () => {
       const updatedSession = form.getFieldsValue();
 
       if (updatedSession.position_order && isNaN(updatedSession.position_order)) {
-        message.error("Position order must be a number.");
+        toast.error("Position order must be a number.");
         return;
       }
 
       updatedSession.position_order = Number(updatedSession.position_order);
 
       if (!updatedSession.name || !updatedSession.course_id || !updatedSession.description || !updatedSession.position_order) {
-        message.error("Please fill in all required fields.");
+        toast.error("Please fill in all required fields.");
         return;
       }
 
@@ -285,16 +283,15 @@ const TableSession = () => {
             session._id === editingSession._id ? { ...session, ...updatedSessionWithCourseName } : session
           )
         );
-        message.success("Session updated successfully!");
+        toast.success("Session updated successfully!");
         setIsEditModalVisible(false);
         setEditingSession(null);
         await fetchSessions()
       } else {
-        message.error("Failed to update session!");
+        toast.error("Failed to update session!");
       }
-    } catch (error) {
-      console.error("Error updating session:", error);
-      message.error("Failed to update session!");
+    } catch{
+      toast.error("Failed to update session!");
     }
   };
 

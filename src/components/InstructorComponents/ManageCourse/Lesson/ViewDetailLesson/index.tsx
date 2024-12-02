@@ -4,7 +4,7 @@ import { Descriptions, Image, Button } from 'antd';
 import { LessonService } from "../../../../../services/LessonService/lesson.service";
 import { LessonDetailsResponse } from "../../../../../model/admin/response/Lesson.response";
 import UpdateDetailLesson from '../UpdateDetailLesson'; // Import modal Update
-
+import { toast } from 'react-toastify';
 const ViewDetailLesson = () => {
   const { id } = useParams<{ id: string }>();
   const [lesson, setLesson] = useState<LessonDetailsResponse | null>(null);
@@ -17,14 +17,13 @@ const ViewDetailLesson = () => {
       try {
         const response = await LessonService.getLessonDetails(lessonId);
         const lessonData = response.data?.data as LessonDetailsResponse;
-        console.log("", lessonData);
         if (lessonData) {
           setLesson(lessonData);
         } else {
-          console.warn("No lesson data available."); // Thay vì message.error
+          toast.error("No lesson data available."); // Thay vì message.error
         }
-      } catch (error) {
-        console.error(error); // Thay vì message.error
+      } catch (error:any) {
+        toast.error("No lesson data available.",error); // Thay vì message.error
       }
     },
     []

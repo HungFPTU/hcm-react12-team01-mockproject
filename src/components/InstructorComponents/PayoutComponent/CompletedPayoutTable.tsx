@@ -4,6 +4,7 @@ import { Payout } from '../../../model/admin/response/Payout.response';
 import { GetPayoutRequest } from '../../../model/admin/request/Payout.request';
 import { PurchaseService } from '../../../services/PurchaseService/purchase.service';
 import SearchBar from './SearchBar';
+import { toast } from 'react-toastify';
 const CompletedPayoutTable: React.FC = () => {
 
     const hasMounted = useRef(false);
@@ -29,7 +30,7 @@ const CompletedPayoutTable: React.FC = () => {
             const response = await PurchaseService.getPayout(params);
             return response.data;
         } catch (error) {
-            console.error("Failed to fetch purchases:", error);
+            toast.error("Failed to fetch purchases:");
             throw error;
         }
     };
@@ -52,13 +53,12 @@ const CompletedPayoutTable: React.FC = () => {
             });
 
             if (response && response.success) {
-                console.log("Fetched data:", response.data.pageData);
                 const data = response.data.pageData;
                 setPayouts(data);
                 setIsDataEmpty(data.length === 0);
             }
-        } catch (error) {
-            console.error("Failed to fetch categories:", error);
+        } catch  {
+            toast.error("Failed to fetch categories:");
         }
     };
 
@@ -94,8 +94,8 @@ const CompletedPayoutTable: React.FC = () => {
                 setPayouts(data);
                 setIsDataEmpty(data.length === 0);
             }
-        } catch (error) {
-            console.error("Failed to fetch categories:", error);
+        } catch  {
+            toast.error("Failed to fetch categories:");
         }
     };
     const columns = [

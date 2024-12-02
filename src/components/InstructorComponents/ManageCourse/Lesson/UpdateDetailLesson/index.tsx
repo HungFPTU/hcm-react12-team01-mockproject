@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Modal, Input, Form, Button, message, Select, Spin } from 'antd';
+import { Modal, Input, Form, Button, Select, Spin } from 'antd';
 import { LessonService } from '../../../../../services/LessonService/lesson.service';
 import { CourseService } from '../../../../../services/CourseService/course.service';
 import { LessonDetailsResponse } from '../../../../../model/admin/response/Lesson.response';
 import { UpdateLessonRequest } from '../../../../../model/admin/request/Lesson.request';
 import { LessonTypeEnum } from '../../../../../model/Lesson';
 import { Editor } from "@tinymce/tinymce-react";
-
+import { toast } from 'react-toastify';
 const { Option } = Select;
 
 interface UpdateDetailLessonProps {
@@ -35,10 +35,10 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
             });
             if (response?.data?.success) {
                 setCourses(response.data.data.pageData);
-                console.log(courses)
+                toast.success(courses)
             }
         } catch (error: any) {
-            console.error("Failed to fetch courses:", error);
+            toast.error("Failed to fetch courses:", error);
         }
     };
 
@@ -62,7 +62,7 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
         const description = editorRef.current ? editorRef.current.getContent() : "";
         if (!formData.session_id) {
             console.log("Form Data before Save:", formData);
-            message.error("Session ID is required.");
+            toast.error("Session ID is required.");
             return;
         }
 
@@ -84,28 +84,27 @@ const UpdateDetailLesson: React.FC<UpdateDetailLessonProps> = ({ lesson, onClose
             const response = await LessonService.updateLesson(lessonId, updateData);
 
             if (response?.data?.success) {
-                message.success("Lesson updated successfully!");
+                toast.success("Lesson updated successfully!");
                 onUpdate();
                 onClose();
             } else if (response?.data?.data && Array.isArray(response.data.data)) {
                 response.data.data.forEach((err: { message: string, field: string }) => {
                     if (err.field === "course_id") {
-                        message.error("The selected course cannot be used!");
+                        toast.error("The selected course cannot be used!");
                     }
                     if (err.field === "session_id") {
-                        message.error("The selected session cannot be used!");
+                        toast.error("The selected session cannot be used!");
                     }
                     if (err.field === "video_url") {
-                        message.error("Video URL must be a valid string!");
+                        toast.error("Video URL must be a valid string!");
                     }
                     if (err.field === "image_url") {
-                        message.error("Image URL must be a valid string!");
+                        toast.error("Image URL must be a valid string!");
                     }
                 });
             }
         } catch (error: any) {
-            console.error("Error updating lesson:", error);
-            message.error("Failed to update lesson. Please try again.");
+            toast.error("Failed to update lesson. Please try again.",error);
         }
     };
 

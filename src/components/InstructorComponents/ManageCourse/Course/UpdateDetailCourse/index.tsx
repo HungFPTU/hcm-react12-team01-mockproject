@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Modal, Input, Form, Button, message } from 'antd';
+import { Modal, Input, Form, Button } from 'antd';
 import { CourseService } from '../../../../../services/CourseService/course.service';
 import { GetCourseByIdResponse } from '../../../../../model/admin/response/Course.response';
 import { UpdateCourseRequest } from '../../../../../model/admin/request/Course.request';
 import { useNavigate } from 'react-router-dom';
-
+import { toast } from 'react-toastify';
 
 interface UpdateDetailCourseProps {
   course: GetCourseByIdResponse;
@@ -33,11 +33,10 @@ const UpdateDetailCourse: React.FC<UpdateDetailCourseProps> = ({ course, onClose
   
      
       await CourseService.updateCourse(course._id, updateData);
-      message.success("Course updated successfully!");
+      toast.success("Course updated successfully!");
       navigate('/instructor/manage-course');
-    } catch (error) {
-      console.error("Failed to update course. Please try again.", error);
-      message.error("Failed to update course. Please try again.");
+    } catch {
+      toast.error("Failed to update course. Please try again.");
     }
   };
 
