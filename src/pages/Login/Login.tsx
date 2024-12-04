@@ -8,7 +8,7 @@ import { HomeOutlined } from '@ant-design/icons';
 import { CLIENT_ID } from '../../const/authentication';
 import { useAuth } from '../../context/AuthContent';
 import { toast } from 'react-toastify';
-import { Modal, Form } from 'antd';
+import {  Form } from 'antd';
 import { useState } from 'react';
 import { AuthService } from '../../services/authService/auth.service';
 import { HTTP_STATUS } from '../../app/enums';
@@ -16,7 +16,6 @@ import { ROUTER_URL } from '../../const/router.const';
 import { HttpException } from '../../app/toastException';
 const Login = () => {
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [isSignUpModalVisible, setIsSignUpModalVisible] = useState<boolean>(false);
   const { handleLogin } = useAuth();
   const navigate = useNavigate();
   const handleBackHome = () => {
@@ -47,22 +46,12 @@ const Login = () => {
         const userRole = localStorage.getItem("role");
         const defaultPath = getDefaultPath(userRole || "");
         if (typeof defaultPath === "string") {
-          toast.success("Login Success", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            style: { backgroundColor: "#1a237e" }
-          });
+          toast.success("Login Success");
 
           // Add small delay to ensure toast is visible
           setTimeout(() => {
             navigate(defaultPath);
-          }, 2000);
+          }, 1000);
         } else {
           console.error("Invalid path:", defaultPath);
         }
@@ -71,7 +60,6 @@ const Login = () => {
       if (error instanceof HttpException) {
         if (error.message.includes("is not exists")) {
           setLoginError("Your email is not registered. Please sign up.");
-          setIsSignUpModalVisible(true);
         } else {
           setLoginError(error.message);
         }
@@ -84,9 +72,6 @@ const Login = () => {
   const handleGoogleLoginError = (error: string) => {
     setLoginError(error);
     console.error("Google Login Error:", error);
-  };
-  const handleSignUpModalCancel = () => {
-    setIsSignUpModalVisible(false);
   };
   return (
     <div className="flex items-center justify-center w-full h-screen bg-gradient-to-r from-[#330933] to-white-600 relative">
@@ -115,7 +100,7 @@ const Login = () => {
                   <LoginGoogle
                     onLoginError={handleGoogleLoginError}
                     onLoginSuccess={onFinishGoogle}
-                    context="login" // Pass context as "login"
+                    context="login" 
                   />
                 </Form.Item>
               </GoogleOAuthProvider>
@@ -123,7 +108,7 @@ const Login = () => {
           {loginError && (
               <p className="mt-4 text-center text-red-500">
                 {loginError}
-                {loginError.includes("ERR_BLOCKED_BY_CLIENT") && <span> This may be due to ad-blocking or privacy protection software. Please disable these and try again.</span>}
+                {loginError.includes("ERR_BLOCKED_BY_CLIENT") && <span>Please disable these and try again.</span>}
               </p>
             )}
 
@@ -154,9 +139,6 @@ const Login = () => {
           <span className="group-hover:text-[#7c3076]">Back Home</span>  
         </button>
       </div>
-      <Modal title="Sign Up" open={isSignUpModalVisible} onCancel={handleSignUpModalCancel} footer={null}>
-        <div>Sign Up Test</div>
-      </Modal>
     </div>
   );
 };

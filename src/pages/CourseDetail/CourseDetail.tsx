@@ -1,29 +1,37 @@
-import { useState, useEffect,useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import bannerImage from "../../assets/bgrCourseDetail.jpg";
-import {  Row, Col, Collapse } from "antd";
+import { Row, Col, Collapse } from "antd";
 import { CourseService } from "../../services/CourseService/course.service";
 import { GetPublicCourseDetailResponse } from "../../model/admin/response/Course.response";
 import { ReviewService } from "../../services/review/review.service";
-import CourseReviews from "./courseReviews"
-import CourseCard from "./courseCard"
+import CourseReviews from "./courseReviews";
+import CourseCard from "./courseCard";
 import { useNavigate } from "react-router-dom";
-import {
-    UserOutlined,
-    StarFilled,
-} from "@ant-design/icons";
+import { UserOutlined, StarFilled } from "@ant-design/icons";
 const { Panel } = Collapse;
 
+const CourseDetail = () => {
+  const { id } = useParams();
+  const [course, setCourse] = useState<any>(null);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviewCount, setReviewCount] = useState<number | null>(null);
+  const [courseStatus, setCourseStatus] = useState({
+    is_in_cart: false,
+    is_purchased: false,
+  });
+  const navigate = useNavigate();
+  const [showFullContent, setShowFullContent] = useState(false);
 
-
-const CourseDetail =() => {
-    const { id } = useParams();
-    const [course, setCourse] = useState<any>(null);
-    const [reviews, setReviews] = useState<any[]>([]);
-    const [reviewCount, setReviewCount] = useState<number | null>(null);
-    const [courseStatus, setCourseStatus] = useState({ is_in_cart: false, is_purchased: false });
-    const navigate = useNavigate();
-
+  const toggleContent = () => {
+    setShowFullContent((prev) => !prev);
+  };
+  const getTruncatedContent = (content: string) => {
+    const maxLength = 1000; // Set max characters for truncated content
+    return content.length > maxLength
+      ? `${content.substring(0, maxLength)}...`
+      : content;
+  };
   useEffect(() => {
     const fetchCourseDetails = async () => {
       if (!id) {
@@ -36,10 +44,10 @@ const CourseDetail =() => {
         const courseData = response.data?.data as GetPublicCourseDetailResponse;
 
         setReviewCount(courseData?.review_count ?? 0);
-        
+
         setCourseStatus({
           is_in_cart: courseData?.is_in_cart,
-          is_purchased: courseData?.is_purchased
+          is_purchased: courseData?.is_purchased,
         });
 
         setCourse(courseData);
@@ -56,11 +64,8 @@ const CourseDetail =() => {
       navigate(`/view-detail/${course.instructor_id}`);
     }
   }, [course?.instructor_id, navigate]);
-  
 
-  
-
-useEffect(() => {
+  useEffect(() => {
     const fetchReviews = async () => {
       try {
         const response = await ReviewService.searchForReview({
@@ -69,12 +74,12 @@ useEffect(() => {
             rating: 0,
             is_instructor: false,
             is_rating_order: false,
-            is_delete: false
+            is_delete: false,
           },
           pageInfo: {
             pageNum: 1,
-            pageSize: 10
-          }
+            pageSize: 10,
+          },
         });
         setReviews(response.data.data.pageData);
       } catch (error) {
@@ -85,7 +90,9 @@ useEffect(() => {
   }, [id]);
 
   const renderLessons = useCallback(
-    (lessonList: GetPublicCourseDetailResponse["session_list"][0]["lesson_list"]) => {
+    (
+      lessonList: GetPublicCourseDetailResponse["session_list"][0]["lesson_list"]
+    ) => {
       return lessonList.map((lesson) => (
         <div
           key={lesson._id}
@@ -108,9 +115,6 @@ useEffect(() => {
     },
     [course?._id, courseStatus.is_purchased, navigate]
   );
-  
-
-  
 
   return (
     <div className="w-full relative">
@@ -130,10 +134,14 @@ useEffect(() => {
             </Col>
           </Row>
           <div className="mt-auto flex items-center mb-6">
-          <p className="text-white mr-8" onClick={handleInstructorClick} style={{ cursor: "pointer" }}>
-            <UserOutlined className="mr-2" />
-            Instructor: {course?.instructor_name || "N/A"}
-          </p>
+            <p
+              className="text-white mr-8"
+              onClick={handleInstructorClick}
+              style={{ cursor: "pointer" }}
+            >
+              <UserOutlined className="mr-2" />
+              Instructor: {course?.instructor_name || "N/A"}
+            </p>
             <p className="text-white flex items-center">
               Rating: {course?.average_rating || 0}{" "}
               <StarFilled className="ml-1 text-yellow-500" />
@@ -142,42 +150,75 @@ useEffect(() => {
         </div>
       </div>
       <Row gutter={24} className="w-full mt-2">
+        <Col span={14} className="w-full mt-4">
+          <h1 className="text-3xl text-left font-bold pl-12">
+            What will you learn in this course?
+          </h1>
+          <div className="text-lg mt-4 text-left pl-12">
+        <div
+          dangerouslySetInnerHTML={{
+            __html: showFullContent
+              ? course?.content || ""
+              : getTruncatedContent(course?.content || ""),
+          }}
+        ></div>
+        {course?.content && course?.content.length > 1000 && (
+          <button
+            onClick={toggleContent}
+            className="text-blue-500 underline mt-2 block"
+          >
+            {showFullContent ? "See Less" : "See More"}
+          </button>
+        )}
+      </div>
 
-                    <Col span={14} className="w-full mt-4">
-                            <h1 className="text-3xl text-left font-bold pl-12">What will you learn in this course?</h1>
-                            <div className="text-lg mt-4 text-left pl-12" dangerouslySetInnerHTML={{ __html: course?.content || "" }}>
-                            </div>
+          <h1 className="text-3xl text-left font-bold pl-12 mt-6">
+            Course Content
+          </h1>
+          <div className="courseContent ml-9 mt-5 ">
+            <Collapse accordion>
+              {course?.session_list.map(
+                (session: {
+                  position_order: any;
+                  name: any;
+                  full_time: any;
+                  _id: string | number;
+                  lesson_list: [
+                    {
+                      _id: string;
+                      name: string;
+                      lesson_type: string;
+                      full_time: number;
+                      position_order: number;
+                    }
+                  ];
+                }) => (
+                  <Panel
+                    header={`${session.position_order}. ${session.name} (${session.full_time} minutes)`}
+                    key={session._id}
+                  >
+                    {renderLessons(session.lesson_list)}
+                  </Panel>
+                )
+              )}
+            </Collapse>
+            <br />
+          </div>
 
-                            <h1 className="text-3xl text-left font-bold pl-12 mt-6">Course Content</h1>
-                            <div className="courseContent ml-9 mt-5 ">
-                            <Collapse accordion>
-                                {course?.session_list.map((session: { position_order: any; name: any; full_time: any; _id: string | number; lesson_list: [{ _id: string; name: string; lesson_type: string; full_time: number; position_order: number; }]; }) => (
-                                    <Panel
-                                    header={`${session.position_order}. ${session.name} (${session.full_time} minutes)`}
-                                    key={session._id}
-                                    >
-                                    {renderLessons(session.lesson_list)}
-                                    </Panel>
-                                ))}
-                                </Collapse>
-                                    <br />
-                            </div>
-
-                              <CourseReviews
-                                reviews={reviews}
-                                courseId={course?._id}
-                                course={course}
-                                reviewCount={reviewCount}
-                              />
-                        </Col>
-                        <Col
-                            span={8}
-                            className="absolute top-56 left-3/4 transform -translate-x-1/2 w-full sm:top-44 sm:left-3/4 "
-                        >
-                          <CourseCard course={course}/>
-                        </Col>
-
-                    </Row>
+          <CourseReviews
+            reviews={reviews}
+            courseId={course?._id}
+            course={course}
+            reviewCount={reviewCount}
+          />
+        </Col>
+        <Col
+          span={8}
+          className="absolute top-56 left-3/4 transform -translate-x-1/2 w-full sm:top-44 sm:left-3/4 "
+        >
+          <CourseCard course={course} />
+        </Col>
+      </Row>
     </div>
   );
 };
