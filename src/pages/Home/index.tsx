@@ -1,6 +1,6 @@
 import React from "react";
 import asset from "../../assets/assets";
-
+import { useRef } from "react";
 
 import Course from '../../components/home/CategoryTable'
 import "swiper/css";
@@ -10,6 +10,11 @@ import "swiper/css/navigation";
 
 const Home: React.FC = () => {
   
+  const coursesSectionRef = useRef<HTMLDivElement>(null);
+
+const handleScrollToCourses = () => {
+  coursesSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+};
   return (
     <div className="main mt-7">
       {/* Carousel */}
@@ -29,7 +34,7 @@ const Home: React.FC = () => {
               </p>
 
               <div className="toCourse flex justify-center sm:justify-start w-full sm:w-[500px] mt-[30px] sm:mt-[50px] ml-7">
-                <button className="click_course bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-full animate-pulse">
+                <button  onClick={handleScrollToCourses} className="click_course bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-full animate-pulse">
                   Go To Course
                 </button>
               </div>
@@ -47,7 +52,7 @@ const Home: React.FC = () => {
           </div>
       </div>
        
-      <div className="topCourse bg-[#f9eded] ml-auto mr-auto mt-9">
+      <div  ref={coursesSectionRef} className="topCourse bg-[#f9eded] ml-auto mr-auto mt-9">
         <h2 className="text-center mb-11 relative text-3xl sm:text-5xl font-bold">Courses</h2>
         <Course/>
       </div>

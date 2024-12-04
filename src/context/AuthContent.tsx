@@ -18,6 +18,7 @@ interface AuthContextType {
   setUserInfo: (userInfo: ReponseSuccess<User>["data"] | null) => void;
   getCurrentUser: () => Promise<void>;
   forgotPassword: (params: { email: string }) => Promise<ReponseSuccess<string>>;
+  loginGoogle: (googleId: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -57,6 +58,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [userInfo]);
   
+  const loginGoogle = async (googleId: string) => {
+    try {
+      const response = await AuthService.loginGoogle({ google_id: googleId });
+      if (!response.data?.data?.token) {
+        throw new HttpException("Invalid login response", HTTP_STATUS.BADREQUEST);
+      }
+      const token = response.data.data.token;
+      setToken(token);
+      localStorage.setItem("token", token);
+      await handleLogin(token);
+    } catch (error) {
+      console.error("Failed to login with Google:", error);
+      throw error instanceof HttpException ? error : new HttpException("Failed to login with Google", HTTP_STATUS.INTERNALSERVER_ERROR);
+    }
+  };
 
   const handleLogin = async (token: string) => {
     try {
@@ -65,7 +81,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       localStorage.setItem("token", token);
       setToken(token);
-  
+
       const response = await AuthService.getUserRole({ token });
       if (!response.data?.data) {
         throw new HttpException("Invalid user data", HTTP_STATUS.BADREQUEST);
@@ -73,13 +89,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const userData = response.data.data;
       setUserInfo(userData);
       setRole(userData.role as UserRole);
-      localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("role", userData.role);
     } catch (error) {
       console.error("Failed to get user info:", error);
-      throw error instanceof HttpException
-        ? error
-        : new HttpException("Failed to get user info", HTTP_STATUS.INTERNALSERVER_ERROR);
+      logout();
+      throw error instanceof HttpException ? error : new HttpException("Failed to get user info", HTTP_STATUS.INTERNALSERVER_ERROR);
     }
   };
   
@@ -136,6 +150,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         logout,
         forgotPassword,
         getCurrentUser,
+        loginGoogle,
       }}
     >
       {children}

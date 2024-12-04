@@ -3,7 +3,8 @@ import { BaseService } from "../config/base.service";
 import { API } from "../../const/path.api";
 import { User } from "../../model/User";
 import { ReponseSuccess } from "../../app/reponse";
-
+import { RegisterInstructorPublicParams,RegisterStudentPublicParams } from "../../model/admin/request/Register.request";
+import { RegisterGooglePublicResponse } from "../../model/admin/response/Register.response";
 export interface RegisterUser {
   name: string;
   email: string;
@@ -16,6 +17,20 @@ export const AuthService = {
       url: API.AUTH.LOGIN,
       payload: params,
       isLoading: true,
+    });
+  },
+  loginGoogle(params: { google_id: string }) {
+    return BaseService.post<ApiResponse<{ token: string }>>({
+      url: API.AUTH.LOGIN_GOOGLE,
+      payload: params,
+      isLoading: true
+    });
+  },
+  registerGooglePublic(params: RegisterStudentPublicParams | RegisterInstructorPublicParams) {
+    return BaseService.post<ApiResponse<RegisterGooglePublicResponse>>({
+      url: API.AUTH.REGISTER_GOOGLE_PUBLIC,
+      payload: params,
+      isLoading: true
     });
   },
   logout() {
