@@ -68,6 +68,7 @@ export default function Home() {
       localStorage.removeItem("user");
       localStorage.removeItem("role");
       localStorage.removeItem("userInfo");
+      localStorage.removeItem("googleToken");
       navigate("/login");
       window.location.reload();
       toast.success("Logout successfully");

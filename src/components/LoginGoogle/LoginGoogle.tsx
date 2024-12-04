@@ -1,35 +1,49 @@
-// src/components/LoginGoogle.jsx
-import { useCallback } from 'react';
-import { signInWithGoogle } from '../../firebase-config';
-import GOOGLE_ICON from '../../assets/LOGOGOOGLE.png';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import React from "react";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 
-const LoginGoogle = () => {
-  const navigate = useNavigate();
+interface LoginGoogleProps {
+  onLoginError: (error: string) => void;
+  onLoginSuccess: (token: string, googleId: string) => void;
+  context: "login" | "register"; // Add context prop
+}
 
-  const handleGoogleSignIn = useCallback(async () => {
+const LoginGoogle: React.FC<LoginGoogleProps> = ({ onLoginError, onLoginSuccess, context }) => {
+  const onSuccess = (credentialResponse: any) => {
     try {
-      const result = await signInWithGoogle();
-      const user = result.user;
-      if (user) {
-        const idToken = await user.getIdToken();
-        sessionStorage.setItem('Token', idToken);
-        toast.success("Login successful!");
-        navigate('/');
+      if (typeof onLoginSuccess !== "function") {
+        throw new Error("onLoginSuccess callback is not properly defined");
       }
-    } catch{
-      toast.error("Login failed. Please try again.");
+
+      if (!credentialResponse.credential) {
+        throw new Error("No credential received");
+      }
+
+      const decodedToken: any = jwtDecode(credentialResponse.credential);
+      const googleId = decodedToken.sub; 
+
+      localStorage.setItem("googleToken", credentialResponse.credential);
+      onLoginSuccess(credentialResponse.credential, googleId);
+    } catch (error) {
+      onLoginError("Error decoding token: " + (error as Error).message);
     }
-  }, [navigate]);
+  };
+
+  const onError = () => {
+    const errorMessage = "Google Login Failed.";
+    onLoginError(errorMessage + " (ERR_BLOCKED_BY_CLIENT)");
+  };
 
   return (
-    <div 
-      className='w-full text-black my-2 font-semibold bg-white border border-black/40 border-black rounded-md p-4 text-center flex items-center justify-center cursor-pointer mt-6'
-      onClick={handleGoogleSignIn} 
-    >
-      <img src={GOOGLE_ICON} className="h-6 mr-3" alt="Google icon" />
-      Login with Google
+    <div>
+      <GoogleLogin
+        onSuccess={onSuccess}
+        onError={onError}
+        useOneTap={false}
+        auto_select={false}
+        context="signin"
+        text={context === "login" ? "signin_with" : "signup_with"} 
+      />
     </div>
   );
 };

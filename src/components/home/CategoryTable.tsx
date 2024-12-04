@@ -42,7 +42,7 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 8, pageNum = 1 }) => 
 
     // Kiểm tra trạng thái đăng nhập
     useEffect(() => {
-        setIsLoggedIn(!!localStorage.getItem("user"));
+        setIsLoggedIn(!!localStorage.getItem("userInfo"));
     }, []);
 
     // Hàm fetch data được tối ưu hóa bằng useCallback
@@ -114,19 +114,11 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 8, pageNum = 1 }) => 
         return <p className="text-red-500 text-center">{error}</p>;
     }
 
-    // Hiển thị thông báo khi không có khóa học
-    if (!courses?.pageData.length) {
-        return (
-            <div className="text-center">
-                <p className="text-gray-500">No courses available.</p>
-            </div>
-        );
-    }
-
     return (
         <div className="container mx-auto px-4">
             <Row gutter={[16, 24]}>
-                {courses.pageData.map((course) => (
+            {courses?.pageData?.length ? (
+                courses?.pageData.map((course) => (
                     <Col
                         key={course._id}
                         xs={24}
@@ -138,7 +130,7 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 8, pageNum = 1 }) => 
                         <Card
                             style={{
                                 width: "100%",
-                                maxWidth: "280px",
+                                maxWidth: "350px",
                                 display: "flex",
                                 flexDirection: "column",
                                 justifyContent: "space-between",
@@ -249,7 +241,11 @@ const CategoryTable: React.FC<CourseProps> = ({ pageSize = 8, pageNum = 1 }) => 
                             </div>
                         </Card>
                     </Col>
-                ))}
+                ))
+            ) : (
+                <p className="text-center w-full">No courses available.</p>
+            )
+                }
             </Row>
             <Pagination
                 current={currentPage}
